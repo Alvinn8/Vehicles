@@ -1,0 +1,13 @@
+name: SVCraftVehicles
+version: ${project.version}
+main: me.alvin.vehicles.SVCraftVehicles
+api-version: "1.13"
+depend: [SVCraftMinigames]
+authors: [Alvin]
+description: A vehicles plugin for SVCraft(Minigames)
+commands:
+  vehicles:
+    description: Main command for SVCraftVehicles
+    usage: /vehicles <comming soon>
+    permission: svcraftvehicles.command.vehicles
+    aliases: [svcraftvehicles]
