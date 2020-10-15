@@ -302,7 +302,7 @@ public abstract class Vehicle {
      */
     public void updateRenderedLocation() {
         // this.entity.teleport(this.location);
-        SVCraft.getInstance().getNMS().setEntityLocation(this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
+        SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
     }
 
     /**
@@ -318,7 +318,7 @@ public abstract class Vehicle {
 
             Location location = seat.getRelativePos().relativeTo(this.location);
             if (seat.hasOffsetYaw()) location.setYaw(location.getYaw() + seat.getOffsetYaw());
-            SVCraft.getInstance().getNMS().setEntityLocation(seatData.getRiderEntity(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+            SVCraftVehicles.getInstance().getNMS().setEntityLocation(seatData.getRiderEntity(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         }
     }
     // </editor-fold>

@@ -107,6 +107,10 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         return instance;
     }
 
+    public NMS getNMS() {
+        return this.nms;
+    }
+
     public boolean isInDebugMode() {
         return this.debugMode;
     }
