@@ -1,10 +1,13 @@
 package me.alvin.vehicles;
 
 import me.alvin.vehicles.commands.VehiclesCommand;
+import me.alvin.vehicles.nms.NMS;
+import me.alvin.vehicles.nms.NMS_v1_16_R2;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleTypes;
+import me.svcraft.minigames.SVCraft;
 import me.svcraft.minigames.config.Config;
 import me.svcraft.minigames.plugin.SVCraftPlugin;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -20,6 +23,8 @@ public final class SVCraftVehicles extends SVCraftPlugin {
 
     private static SVCraftVehicles instance;
 
+    private NMS nms;
+
     private boolean debugMode = false;
     private VehicleRegistry registry;
     private final Map<ArmorStand, Vehicle> loadedVehicles = new HashMap<>();
@@ -28,6 +33,8 @@ public final class SVCraftVehicles extends SVCraftPlugin {
     @Override
     public void onPluginEnable() {
         instance = this;
+
+        if (!this.setupNMS()) return;
 
         try {
             this.reload();
@@ -56,6 +63,27 @@ public final class SVCraftVehicles extends SVCraftPlugin {
             }
         }
     }
+
+    private boolean setupNMS() {
+        String nmsVersion = SVCraft.getInstance().getNMS().getVersion();
+
+        switch (nmsVersion) {
+            case "v1_16_R2": this.nms = new NMS_v1_16_R2(); break;
+        }
+
+        if (this.nms != null) {
+            this.getLogger().info("NMS set up successfully for minecraft version "+ this.nms.getVersion());
+            return true;
+        }  else {
+            this.getLogger().severe("---");
+            this.getLogger().severe("Vehicles does not support this server version!");
+            this.getLogger().severe("Please change your server version or look for an upgraded version of this plugin");
+            this.getLogger().severe("---");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return false;
+        }
+    }
+
 
     @Override
     public void reload() throws IOException, InvalidConfigurationException {
