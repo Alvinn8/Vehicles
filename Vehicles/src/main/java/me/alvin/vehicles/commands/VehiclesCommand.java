@@ -53,8 +53,11 @@ public class VehiclesCommand extends SubCommandedCommand {
                 message.append(entry.getKey().getUniqueId().toString());
                 message.append(": ");
                 message.append(entry.getValue().getType().getId());
+                message.append(' ');
+                message.append(entry.getValue().getNIEntity() == null ? "regular armor stand" : "ni armor stand");
+                message.append(' ');
                 if (!entry.getValue().getEntity().isValid()) {
-                    message.append(" §c[INVALID ENTITY]");
+                    message.append(" §c[INVALID ENTITY]§r");
                 }
                 message.append('\n');
             }

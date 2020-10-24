@@ -2,9 +2,9 @@ package me.alvin.vehicles.vehicle.seat;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.DebugUtil;
+import me.alvin.vehicles.util.ni.NIArmorStand;
 import me.alvin.vehicles.vehicle.Vehicle;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -14,13 +14,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SeatData {
     private final LivingEntity passenger;
-    private final ArmorStand riderEntity;
+    private final NIArmorStand riderEntity;
 
     public SeatData(@NotNull Vehicle vehicle, @NotNull Seat seat, @NotNull LivingEntity passenger) {
         DebugUtil.debug("Constructing seat data");
         Location location = seat.getRelativePos().relativeTo(vehicle.getLocation());
-        this.riderEntity = Vehicle.spawnArmorStand(location);
-        this.riderEntity.addPassenger(passenger);
+        this.riderEntity = new NIArmorStand(location);
+        Vehicle.setupArmorStand(this.riderEntity.getArmorStand());
+        this.riderEntity.getArmorStand().addPassenger(passenger);
         this.passenger = passenger;
     }
 
@@ -30,7 +31,7 @@ public class SeatData {
     }
 
     @NotNull
-    public ArmorStand getRiderEntity() {
+    public NIArmorStand getRiderEntity() {
         return this.riderEntity;
     }
 
@@ -55,6 +56,6 @@ public class SeatData {
     public boolean isValid() {
         if (!this.riderEntity.isValid()) return false;
 
-        return this.passenger.getVehicle() == this.riderEntity;
+        return this.passenger.getVehicle() == this.riderEntity.getArmorStand();
     }
 }

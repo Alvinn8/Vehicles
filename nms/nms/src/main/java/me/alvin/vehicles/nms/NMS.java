@@ -20,4 +20,21 @@ public interface NMS {
      */
     void setEntityLocation(Entity entity, double x, double y, double z, float yaw, float pitch);
 
+    /**
+     * Set the yaw of an entity.
+     *
+     * @param entity The entity to change the yaw for
+     * @param yaw The yaw to change to
+     */
+    void setEntityRotation(Entity entity, float yaw);
+
+    /**
+     * Mark the entity as "dirty", this tells the server it needs to resend information to the
+     * clients. Internally this changes the "impulse" public variable of the entity to true,
+     * causing the EntityTracker to send update packets.
+     *
+     * @param entity The entity to mark dirty.
+     */
+    void markDirty(Entity entity);
+
 }

@@ -3,9 +3,9 @@ package me.alvin.vehicles.vehicle;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.util.ExtraPersistentDataTypes;
+import me.alvin.vehicles.util.ni.NIArmorStand;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
-import me.svcraft.minigames.SVCraft;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -41,6 +41,11 @@ public abstract class Vehicle {
      * The main entity of the vehicle. Used for saving persistent data
      */
     protected @NotNull ArmorStand entity;
+    /**
+     * The main entity as a non interpolating armor stand. This will only
+     * be present if the vehicle is in motion.
+     */
+    protected @Nullable NIArmorStand niEntity;
     // Movement
     private @NotNull Location location;
     private float speed = 0;
@@ -106,8 +111,12 @@ public abstract class Vehicle {
      */
     public static ArmorStand spawnArmorStand(Location location) {
         ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-        armorStand.setGravity(false);
+        setupArmorStand(armorStand);
         return armorStand;
+    }
+
+    public static void setupArmorStand(ArmorStand armorStand) {
+        armorStand.setGravity(false);
     }
 
     /**
@@ -156,6 +165,11 @@ public abstract class Vehicle {
     @NotNull
     public ArmorStand getEntity() {
         return this.entity;
+    }
+
+    @Nullable
+    public NIArmorStand getNIEntity() {
+        return this.niEntity;
     }
 
     // Coloring
@@ -252,12 +266,21 @@ public abstract class Vehicle {
         this.updateSpeed();
 
         if (this.speed != 0) {
+            if (this.niEntity == null) {
+                this.niEntity = new NIArmorStand(this.entity);
+            }
             this.calculateLocation();
             this.updateRenderedLocation();
             this.updateRenderedPassengerPositions();
 
             if (this.attachedVehicles != null) {
                 this.updateAttachedVehicles();
+            }
+        } else {
+            if (this.niEntity != null && this.seatData.size() <= 0) {
+                DebugUtil.debug("Removing niEntity");
+                this.niEntity.toArmorStand();
+                this.niEntity = null;
             }
         }
 
@@ -301,8 +324,11 @@ public abstract class Vehicle {
      * if the vehicle's speed is not 0.
      */
     public void updateRenderedLocation() {
-        // this.entity.teleport(this.location);
-        SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
+        if (this.niEntity != null) {
+            this.niEntity.setLocation(this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
+        } else {
+            SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
+        }
     }
 
     /**
@@ -318,7 +344,7 @@ public abstract class Vehicle {
 
             Location location = seat.getRelativePos().relativeTo(this.location);
             if (seat.hasOffsetYaw()) location.setYaw(location.getYaw() + seat.getOffsetYaw());
-            SVCraftVehicles.getInstance().getNMS().setEntityLocation(seatData.getRiderEntity(), location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+            seatData.getRiderEntity().setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         }
     }
     // </editor-fold>

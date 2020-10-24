@@ -9,6 +9,16 @@ public class NMS_v1_16_R2 implements NMS {
     }
 
     public void setEntityLocation(Entity entity, double x, double y, double z, float yaw, float pitch) {
-        ((CraftEntity) entity).getHandle().setPositionRotation(x, y, z, yaw, pitch);
+        ((CraftEntity) entity).getHandle().setLocation(x, y, z, yaw, pitch);
+    }
+
+    public void setEntityRotation(Entity entity, float yaw) {
+        net.minecraft.server.v1_16_R2.Entity handle = ((CraftEntity) entity).getHandle();
+        handle.yaw = yaw;
+        handle.setHeadRotation(yaw);
+    }
+
+    public void markDirty(Entity entity) {
+        ((CraftEntity) entity).getHandle().impulse = true;
     }
 }
