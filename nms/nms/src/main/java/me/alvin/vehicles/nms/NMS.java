@@ -1,5 +1,6 @@
 package me.alvin.vehicles.nms;
 
+import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.entity.Entity;
 
 public interface NMS {
@@ -36,5 +37,13 @@ public interface NMS {
      * @param entity The entity to mark dirty.
      */
     void markDirty(Entity entity);
+
+    /**
+     * Handle an incoming steer vehicle packet for the specified {@link VehicleSteeringMovement}
+     *
+     * @param movement The {@link VehicleSteeringMovement} to apply the steering to
+     * @param event The ProtocolLib PacketEvent that contains the packet
+     */
+    void handlePacket(VehicleSteeringMovement movement, PacketEvent event);
 
 }

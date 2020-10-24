@@ -1,6 +1,7 @@
 package me.alvin.vehicles.vehicle;
 
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.nms.VehicleSteeringMovement;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.util.ExtraPersistentDataTypes;
 import me.alvin.vehicles.util.ni.NIArmorStand;
@@ -49,8 +50,8 @@ public abstract class Vehicle {
     // Movement
     private @NotNull Location location;
     private float speed = 0;
-    private float forwardMovement = 0;
-    private float sideMovement = 0;
+    private double velY = 0;
+    public final VehicleSteeringMovement movement = new VehicleSteeringMovement();
     // Fuel
     private int currentFuel = 0;
     private int fuelUsage = 0;
@@ -249,20 +250,6 @@ public abstract class Vehicle {
     public void tick() {
         if (this.isAttached()) return;
 
-        LivingEntity driver = this.getDriver();
-
-        // Temporary code, packet interception will be used instead of looking at slots
-        if (driver instanceof Player) {
-            int slot = ((Player) driver).getInventory().getHeldItemSlot();
-            if (slot == 0) this.forwardMovement = 1;
-            else if (slot == 2) this.forwardMovement = -1;
-            else this.forwardMovement = 0;
-
-            if (slot == 4) this.sideMovement = -1;
-            else if (slot == 5) this.sideMovement = 1;
-            else this.sideMovement = 0;
-        }
-
         this.updateSpeed();
 
         if (this.speed != 0) {
@@ -293,8 +280,8 @@ public abstract class Vehicle {
     }
 
     public void updateSpeed() {
-        if (this.forwardMovement != 0 && this.speed < this.getMaxSpeed()) {
-            this.speed += this.getAccelerationSpeed() * this.forwardMovement;
+        if (this.movement.forward != 0 && this.speed < this.getMaxSpeed()) {
+            this.speed += this.getAccelerationSpeed() * this.movement.forward;
         }
 
         if (Math.abs(this.speed) < 0.01) {
@@ -310,8 +297,8 @@ public abstract class Vehicle {
         Vector direction = this.location.getDirection();
         direction.multiply(this.speed / 20);
         this.location.add(direction);
-        if (this.sideMovement != 0) {
-            this.location.setYaw(this.location.getYaw() + this.sideMovement * 2);
+        if (this.movement.side != 0) {
+            this.location.setYaw(this.location.getYaw() + this.movement.side * -5);
         }
 
         this.speed *= 0.9;
@@ -510,6 +497,7 @@ public abstract class Vehicle {
             SeatData oldSeatData = this.seatData.get(seat);
             this.seatData.remove(seat);
             oldSeatData.exitSeat();
+            if (this.getType().getDriverSeat() == seat) this.movement.reset();
         }
 
         if (passenger != null) {
@@ -544,7 +532,6 @@ public abstract class Vehicle {
      */
     public boolean isPassenger(LivingEntity entity) {
         for (SeatData seatData : this.seatData.values()) {
-            DebugUtil.debug("isPassenger check for seatData that is valid? "+ seatData.isValid() + " and has a passenger called "+ seatData.getPassenger().getName());
             if (seatData.getPassenger() == entity && seatData.isValid()) {
                 return true;
             }

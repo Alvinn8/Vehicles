@@ -34,11 +34,11 @@ public class TestVehicle extends Vehicle {
 
     @Override
     public float getAccelerationSpeed() {
-        return 0.5F;
+        return 0.75F;
     }
 
     @Override
     public float getMaxSpeed() {
-        return 20;
+        return 40;
     }
 }

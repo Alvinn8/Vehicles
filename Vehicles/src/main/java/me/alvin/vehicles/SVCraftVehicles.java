@@ -1,5 +1,6 @@
 package me.alvin.vehicles;
 
+import com.comphenix.protocol.ProtocolLibrary;
 import me.alvin.vehicles.commands.VehiclesCommand;
 import me.alvin.vehicles.nms.NMS;
 import me.alvin.vehicles.nms.NMS_v1_16_R2;
@@ -44,6 +45,8 @@ public final class SVCraftVehicles extends SVCraftPlugin {
 
         this.registerCommand("vehicles", new VehiclesCommand(this));
         this.registerPerWorldEvents(new EventListener());
+
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
 
         this.registry = new VehicleRegistry();
 
@@ -136,7 +139,6 @@ public final class SVCraftVehicles extends SVCraftPlugin {
     @Nullable
     public Vehicle getVehicle(LivingEntity entity) {
         Vehicle vehicle = this.currentVehicleMap.get(entity);
-        DebugUtil.debugVariable("vehicle", vehicle);
         if (vehicle == null) return null;
         if (vehicle.isPassenger(entity)) {
             return vehicle;
