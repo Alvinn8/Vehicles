@@ -1,5 +1,6 @@
 package me.alvin.vehicles.vehicle;
 
+import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.action.VehicleAction;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import org.bukkit.Location;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,8 +31,17 @@ public class VehicleType {
     private final Function<ArmorStand, Vehicle> loadConstructor;
     private final BiFunction<Location, Player, Vehicle> spawnConstructor;
     private final List<VehicleAction> actions;
+    private final List<Wheel> wheels;
+    private final List<RelativePos> gravityPoints;
 
-    public VehicleType(@NotNull String id, @NotNull Class<? extends Vehicle> vehicleClass, @NotNull Function<ArmorStand, Vehicle> loadConstructor, @NotNull BiFunction<Location, Player, Vehicle> spawnConstructor, @Nullable List<VehicleAction> actions, @NotNull Seat driverSeat, @Nullable Seat... seats) {
+    public VehicleType(@NotNull String id,
+                       @NotNull Class<? extends Vehicle> vehicleClass,
+                       @NotNull Function<ArmorStand, Vehicle> loadConstructor,
+                       @NotNull BiFunction<Location, Player, Vehicle> spawnConstructor,
+                       @Nullable List<VehicleAction> actions, @NotNull Seat driverSeat,
+                       @Nullable List<Seat> seats,
+                       @Nullable List<Wheel> wheels,
+                       @Nullable List<RelativePos> extraGravityPoints) {
         this.id = id;
         this.vehicleClass = vehicleClass;
         this.loadConstructor = loadConstructor;
@@ -39,9 +49,16 @@ public class VehicleType {
         this.actions = actions;
         Set<Seat> seatSet = new HashSet<>();
         seatSet.add(driverSeat);
-        seatSet.addAll(Arrays.asList(seats));
+        if (seats != null) seatSet.addAll(seats);
         this.seats = seatSet;
         this.driverSeat = driverSeat;
+        this.wheels = wheels != null ? wheels : Collections.emptyList();
+        List<RelativePos> gravityPoints = new ArrayList<>();
+        for (Wheel wheel : this.wheels) {
+            gravityPoints.add(wheel.getRelativePos().subtract(0, wheel.getRadius(), 0));
+        }
+        if (extraGravityPoints != null) gravityPoints.addAll(extraGravityPoints);
+        this.gravityPoints = Collections.unmodifiableList(gravityPoints);
     }
 
     /**
@@ -88,7 +105,7 @@ public class VehicleType {
     }
 
     /**
-     * Get the seats for the vehicle
+     * Get the seats for the vehicle, including the driver seat
      *
      * @return A set of seats
      */
@@ -110,5 +127,14 @@ public class VehicleType {
     @Nullable
     public List<VehicleAction> getActions() {
         return this.actions;
+    }
+
+    public boolean hasWheels() {
+        return this.wheels.size() > 0;
+    }
+
+    @NotNull
+    public List<Wheel> getWheels() {
+        return this.wheels;
     }
 }

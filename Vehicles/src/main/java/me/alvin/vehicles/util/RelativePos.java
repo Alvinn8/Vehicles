@@ -8,11 +8,14 @@ import org.jetbrains.annotations.NotNull;
  * Represents a relative position in the world. Can be applied to a
  * location using {@link #relativeTo(Location)}. Similar to the vanilla
  * minecraft ^ ^ ^ notation.
+ *
+ * This class is immutable, the {@link #add(double, double, double)} and other
+ * methods create new instances.
  */
 public class RelativePos {
-    private double left;
-    private double up;
-    private double forward;
+    private final double left;
+    private final double up;
+    private final double forward;
 
     public RelativePos(double left, double up, double forward) {
         this.left = left;
@@ -93,15 +96,11 @@ public class RelativePos {
         return this.forward;
     }
 
-    public void setLeft(double left) {
-        this.left = left;
+    public RelativePos add(double left, double up, double forward) {
+        return new RelativePos(this.left + left, this.up + up, this.forward + forward);
     }
 
-    public void setUp(double up) {
-        this.up = up;
-    }
-
-    public void setForward(double forward) {
-        this.forward = forward;
+    public RelativePos subtract(double left, double up, double forward) {
+        return new RelativePos(this.left - left, this.up - up, this.forward - forward);
     }
 }
