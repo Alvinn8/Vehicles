@@ -4,12 +4,15 @@ import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.nms.VehicleSteeringMovement;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.util.ExtraPersistentDataTypes;
+import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.util.ni.NIArmorStand;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -35,6 +38,15 @@ public abstract class Vehicle {
     public static final NamespacedKey VEHICLE_ID = new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle_id");
     public static final NamespacedKey LOCATION = new NamespacedKey(SVCraftVehicles.getInstance(), "location");
     public static final NamespacedKey CURRENT_FUEL = new NamespacedKey(SVCraftVehicles.getInstance(), "current_fuel");
+
+    // Constants
+
+    /**
+     * The amount of blocks vehicles fall per tick. Same value
+     * as for boats, minecraft and other vanilla "vehicles"
+     */
+    public static final double GRAVITY = 0.04D;
+    public RelativePos debugRelativePos; // TEMP
 
     // Fields
 
@@ -250,6 +262,11 @@ public abstract class Vehicle {
     public void tick() {
         if (this.isAttached()) return;
 
+        if (this.debugRelativePos != null) {
+            Location location = this.debugRelativePos.relativeTo(this.location);
+            location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
+        }
+
         this.updateSpeed();
 
         if (this.speed != 0) {
@@ -294,14 +311,38 @@ public abstract class Vehicle {
      * is rendered. For that use {@link #updateRenderedLocation()}
      */
     public void calculateLocation() {
-        Vector direction = this.location.getDirection();
-        direction.multiply(this.speed / 20);
-        this.location.add(direction);
         if (this.movement.side != 0) {
             this.location.setYaw(this.location.getYaw() + this.movement.side * -5);
         }
+        this.calculateGravity();
+        Vector direction = this.location.getDirection();
+        direction.multiply(this.speed / 20);
+        this.location.add(direction);
 
         this.speed *= 0.9;
+    }
+
+    /**
+     * Calculate if the vehicle should fall due to gravity.
+     * Called inside {@link #calculateLocation()}
+     */
+    public void calculateGravity() {
+        boolean fall = true;
+        for (RelativePos gravityPoint : this.getType().getGravityPoints()) {
+            Location location = gravityPoint.relativeTo(this.location);
+            Block block = location.getBlock();
+            if (!block.isPassable()) {
+                fall = false;
+                break;
+            }
+        }
+        if (fall) {
+            this.velY -= GRAVITY;
+            this.location.add(0, this.velY, 0);
+        } else if (this.velY != 0) {
+            this.velY = 0;
+            this.location.setY(this.location.getBlockY() + 1);
+        }
     }
 
     /**

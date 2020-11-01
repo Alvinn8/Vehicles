@@ -53,11 +53,15 @@ public class VehicleType {
         this.seats = seatSet;
         this.driverSeat = driverSeat;
         this.wheels = wheels != null ? wheels : Collections.emptyList();
+
         List<RelativePos> gravityPoints = new ArrayList<>();
         for (Wheel wheel : this.wheels) {
             gravityPoints.add(wheel.getRelativePos().subtract(0, wheel.getRadius(), 0));
         }
         if (extraGravityPoints != null) gravityPoints.addAll(extraGravityPoints);
+
+        // There has to be at least one gravity point
+        if (gravityPoints.isEmpty()) gravityPoints.add(new RelativePos(0, 0, 0));
         this.gravityPoints = Collections.unmodifiableList(gravityPoints);
     }
 
@@ -136,5 +140,19 @@ public class VehicleType {
     @NotNull
     public List<Wheel> getWheels() {
         return this.wheels;
+    }
+
+    /**
+     * Get the (relative) positions of where to calculate
+     * the gravity for the vehicle.
+     *
+     * For vehicles with wheels this will be the wheel
+     * locations - their radius (bottom of the wheeels)
+     *
+     * @return A list of relative positions to calculate gravity at.
+     */
+    @NotNull
+    public List<RelativePos> getGravityPoints() {
+        return this.gravityPoints;
     }
 }

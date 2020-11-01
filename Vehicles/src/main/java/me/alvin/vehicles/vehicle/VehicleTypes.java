@@ -6,6 +6,7 @@ import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicles.TestVehicle;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 public class VehicleTypes {
@@ -28,6 +29,13 @@ public class VehicleTypes {
                         new Seat(new RelativePos(0.1, -0.4, -0.4))
                 ),
                 // Wheels
+                Arrays.asList(
+                        new Wheel(new RelativePos(1.125, 0.4375, 1.5), 0.4375F),
+                        new Wheel(new RelativePos(-0.35, 0.4375, 1.5), 0.4375F),
+                        new Wheel(new RelativePos(1.125, 0.4375, -1.14), 0.4375F),
+                        new Wheel(new RelativePos(-0.3, 0.4375, -1.14), 0.4375F)
+                ),
+                // Extra gravity points
                 null
         );
     }

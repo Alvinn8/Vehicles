@@ -2,6 +2,7 @@ package me.alvin.vehicles.commands;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.registry.VehicleRegistry;
+import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.svcraft.minigames.command.SubCommandedCommand;
@@ -73,6 +74,21 @@ public class VehiclesCommand extends SubCommandedCommand {
                 e.printStackTrace();
                 commandSender.sendMessage("There was an error when reloading");
             }
+        }));
+
+        // TEMP
+        this.addSubCommand(new SubCommand("relativepos", (sender, args, isPlayer) -> {
+            double left = Double.parseDouble(args[0]);
+            double up = Double.parseDouble(args[1]);
+            double forward = Double.parseDouble(args[2]);
+
+            RelativePos relativePos = new RelativePos(left, up, forward);
+
+            sender.sendMessage(relativePos.toString());
+
+            Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(sender);
+
+            vehicle.debugRelativePos = relativePos;
         }));
     }
 }

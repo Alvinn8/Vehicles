@@ -96,6 +96,15 @@ public class RelativePos {
         return this.forward;
     }
 
+    @Override
+    public String toString() {
+        return "RelativePos{" +
+                "left=" + this.left +
+                ", up=" + this.up +
+                ", forward=" + this.forward +
+                '}';
+    }
+
     public RelativePos add(double left, double up, double forward) {
         return new RelativePos(this.left + left, this.up + up, this.forward + forward);
     }
