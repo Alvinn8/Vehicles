@@ -1,5 +1,6 @@
 package me.alvin.vehicles.vehicles;
 
+import me.alvin.vehicles.vehicle.GroundVehicle;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
@@ -11,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class TestVehicle extends Vehicle {
+public class TestVehicle extends GroundVehicle {
     public TestVehicle(ArmorStand entity) {
         super(entity);
     }

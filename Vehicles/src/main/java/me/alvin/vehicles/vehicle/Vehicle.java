@@ -60,8 +60,8 @@ public abstract class Vehicle {
      */
     protected @Nullable NIArmorStand niEntity;
     // Movement
-    private @NotNull Location location;
-    private float speed = 0;
+    protected  @NotNull Location location;
+    protected float speed = 0;
     private double velY = 0;
     public final VehicleSteeringMovement movement = new VehicleSteeringMovement();
     // Fuel
@@ -296,31 +296,13 @@ public abstract class Vehicle {
         }
     }
 
-    public void updateSpeed() {
-        if (this.movement.forward != 0 && this.speed < this.getMaxSpeed()) {
-            this.speed += this.getAccelerationSpeed() * this.movement.forward;
-        }
-
-        if (Math.abs(this.speed) < 0.01) {
-            this.speed = 0;
-        }
-    }
+    public abstract void updateSpeed();
 
     /**
      * Calculate where the vehicle should be at. Does not update where the entity
      * is rendered. For that use {@link #updateRenderedLocation()}
      */
-    public void calculateLocation() {
-        if (this.movement.side != 0) {
-            this.location.setYaw(this.location.getYaw() + this.movement.side * -5);
-        }
-        this.calculateGravity();
-        Vector direction = this.location.getDirection();
-        direction.multiply(this.speed / 20);
-        this.location.add(direction);
-
-        this.speed *= 0.9;
-    }
+    public abstract void calculateLocation();
 
     /**
      * Calculate if the vehicle should fall due to gravity.
