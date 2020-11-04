@@ -1,13 +1,18 @@
 package me.alvin.vehicles.vehicle;
 
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.actions.FuelAction;
 import me.alvin.vehicles.nms.VehicleSteeringMovement;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.util.ExtraPersistentDataTypes;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.util.ni.NIArmorStand;
+import me.alvin.vehicles.vehicle.action.VehicleAction;
+import me.alvin.vehicles.vehicle.action.VehicleClickAction;
+import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -17,17 +22,19 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -62,17 +69,20 @@ public abstract class Vehicle {
     // Movement
     protected  @NotNull Location location;
     protected float speed = 0;
-    private double velY = 0;
+    protected double velY = 0;
     public final VehicleSteeringMovement movement = new VehicleSteeringMovement();
     // Fuel
-    private int currentFuel = 0;
-    private int fuelUsage = 0;
-    private int maxFuel = 0;
+    protected int currentFuel = 0;
+    protected int fuelUsage = 0;
+    protected int maxFuel = 0;
     // Seats
     private final Map<Seat, SeatData> seatData = new HashMap<>();
     // Attachment
     private Map<Vehicle, AttachmentData> attachedVehicles;
     private Vehicle attachedTo;
+    // Actions
+    private final List<VehicleMenuAction> menuActions = new ArrayList<>();
+    private final List<VehicleClickAction> clickActions = new ArrayList<>();
 
 
     // Saving and loading
@@ -94,6 +104,8 @@ public abstract class Vehicle {
         this.currentFuel = Objects.requireNonNull(data.get(CURRENT_FUEL, PersistentDataType.INTEGER));
         this.location    = Objects.requireNonNull(data.get(LOCATION, ExtraPersistentDataTypes.LOCATION));
 
+        Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), this::setupActions, 1L);
+
         DebugUtil.debug("Constructed/Loaded vehicle of class " + this.getClass().getName());
     }
 
@@ -108,11 +120,14 @@ public abstract class Vehicle {
         this.location.setPitch(0);
         this.entity = spawnArmorStand(this.location);
 
-        this.updateRenderedLocation();
-
         DebugUtil.debug(creator.getName() + " spawned a vehicle of class " + this.getClass().getName());
 
         // TODO: VehicleSpawnReason (maybe?) for like crafting or (spawn egg) or command
+
+        Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
+            this.setupActions();
+            this.updateRenderedLocation();
+        }, 1L);
     }
 
     /**
@@ -626,6 +641,37 @@ public abstract class Vehicle {
             attachedVehicle.setLocation(attachmentData.getRelativePos().relativeTo(this.location));
             attachedVehicle.updateRenderedLocation();
             attachedVehicle.updateRenderedPassengerPositions();
+        }
+    }
+    // </editor-fold>
+
+    // Actions
+    //<editor-fold desc="Actions related methods" defaultstate="collapsed">
+
+    public void addAction(VehicleAction action) {
+        if (action instanceof VehicleMenuAction) this.menuActions.add((VehicleMenuAction) action);
+        if (action instanceof VehicleClickAction) this.clickActions.add((VehicleClickAction) action);
+    }
+
+    /**
+     * This is the method that registers all {@link VehicleAction}s for the vehicle.
+     * Override this method if want to register other actions. Calling the super
+     * method is recommended as it will register important actions like a fuel
+     * action if the vehicle uses fuel.
+     */
+    protected void setupActions() {
+        if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
+    }
+
+    /**
+     * Update the specified inventory and add all menu items.
+     *
+     * @param inventory The inventory to add the items to
+     * @param player The player that opens the menu.
+     */
+    public void updateMenuInventory(AbstractHorseInventory inventory, Player player) {
+        for (VehicleMenuAction menuAction : this.menuActions) {
+            inventory.addItem(menuAction.getEntryItem(this, player));
         }
     }
     // </editor-fold>

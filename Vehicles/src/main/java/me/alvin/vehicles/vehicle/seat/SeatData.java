@@ -9,6 +9,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mule;
+import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
@@ -28,6 +29,11 @@ public class SeatData {
         mule.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
         mule.addPassenger(passenger);
         mule.setCarryingChest(true);
+        mule.setInvulnerable(true);
+        mule.setSilent(true);
+        if (passenger instanceof Player) {
+            vehicle.updateMenuInventory(mule.getInventory(), (Player) passenger);
+        }
         this.passenger = passenger;
     }
 
