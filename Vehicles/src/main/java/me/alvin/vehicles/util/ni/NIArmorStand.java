@@ -11,7 +11,7 @@ import org.bukkit.entity.EntityType;
 
 /**
  * A Non Interpolating (NI) Armor Stand entity.
- * Consists of an AreaEffectCloud
+ * Consists of an AreaEffectCloud and an armor stand
  */
 public class NIArmorStand {
     private final AreaEffectCloud aec;
@@ -20,7 +20,7 @@ public class NIArmorStand {
     public NIArmorStand(Location location) {
         World world = location.getWorld();
         if (world == null) throw new IllegalArgumentException("The specified location has to have a world");
-        this.aec = spawnAEC(location);
+        this.aec = NIE.spawnAEC(location);
         this.armorStand = (ArmorStand) world.spawnEntity(location, EntityType.ARMOR_STAND);
         this.aec.addPassenger(this.armorStand);
     }
@@ -31,18 +31,10 @@ public class NIArmorStand {
      * @param armorStand The armor stand to convert
      */
     public NIArmorStand(ArmorStand armorStand) {
-        this.aec = spawnAEC(armorStand.getLocation());
+        this.aec = NIE.spawnAEC(armorStand.getLocation());
         this.armorStand = armorStand;
         this.aec.addPassenger(this.armorStand);
         DebugUtil.debug("Created new NIArmorStand!");
-    }
-
-    private static AreaEffectCloud spawnAEC(Location location) {
-        AreaEffectCloud aec = (AreaEffectCloud) location.getWorld().spawnEntity(location.clone().subtract(0, 0.5, 0), EntityType.AREA_EFFECT_CLOUD);
-        aec.setDuration(-1);
-        aec.setWaitTime(Integer.MIN_VALUE);
-        aec.setRadius(0);
-        return aec;
     }
 
     public AreaEffectCloud getAreaEffectCloud() {

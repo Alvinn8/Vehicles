@@ -2,11 +2,15 @@ package me.alvin.vehicles.vehicle.seat;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.DebugUtil;
-import me.alvin.vehicles.util.ni.NIArmorStand;
+import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.Vehicle;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mule;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,14 +18,16 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SeatData {
     private final LivingEntity passenger;
-    private final NIArmorStand riderEntity;
+    private final NIE<Mule> riderEntity;
 
     public SeatData(@NotNull Vehicle vehicle, @NotNull Seat seat, @NotNull LivingEntity passenger) {
         DebugUtil.debug("Constructing seat data");
         Location location = seat.getRelativePos().relativeTo(vehicle.getLocation());
-        this.riderEntity = new NIArmorStand(location);
-        Vehicle.setupArmorStand(this.riderEntity.getArmorStand());
-        this.riderEntity.getArmorStand().addPassenger(passenger);
+        this.riderEntity = new NIE<>(location, EntityType.MULE);
+        Mule mule = this.riderEntity.getEntity();
+        mule.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
+        mule.addPassenger(passenger);
+        mule.setCarryingChest(true);
         this.passenger = passenger;
     }
 
@@ -31,7 +37,7 @@ public class SeatData {
     }
 
     @NotNull
-    public NIArmorStand getRiderEntity() {
+    public NIE<Mule> getRiderEntity() {
         return this.riderEntity;
     }
 
@@ -56,6 +62,6 @@ public class SeatData {
     public boolean isValid() {
         if (!this.riderEntity.isValid()) return false;
 
-        return this.passenger.getVehicle() == this.riderEntity.getArmorStand();
+        return this.passenger.getVehicle() == this.riderEntity.getEntity();
     }
 }
