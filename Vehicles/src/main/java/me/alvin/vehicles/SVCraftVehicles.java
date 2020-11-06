@@ -11,6 +11,8 @@ import me.alvin.vehicles.vehicle.VehicleTypes;
 import me.svcraft.minigames.SVCraft;
 import me.svcraft.minigames.config.Config;
 import me.svcraft.minigames.plugin.SVCraftPlugin;
+import me.svcraft.minigames.resourcepack.ResourcePack;
+import me.svcraft.minigames.resourcepack.modelmanagerdata.RPCModelManagerData;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
@@ -31,11 +33,22 @@ public final class SVCraftVehicles extends SVCraftPlugin {
     private final Map<ArmorStand, Vehicle> loadedVehicles = new HashMap<>();
     private final Map<LivingEntity, Vehicle> currentVehicleMap = new HashMap<>();
 
+    private RPCModelManagerData resourcepackData;
+
     @Override
     public void onPluginEnable() {
         instance = this;
 
         if (!this.setupNMS()) return;
+
+        ResourcePack vehiclesResourcePack = SVCraft.getInstance().getResourcePackManager().getResourcePack("vehicles");
+        if (vehiclesResourcePack != null && vehiclesResourcePack.hasRPCModelManagerData()) {
+            this.resourcepackData = vehiclesResourcePack.getRpcModelManagerData();
+        } else {
+            this.getLogger().severe("No \"vehicles\" resource pack detected, or it doesn't have rpCompiler ModelManager data! It is required for SVCraftVehicles to know what models to use for what vehicles!");
+            this.getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         try {
             this.reload();
@@ -128,6 +141,13 @@ public final class SVCraftVehicles extends SVCraftPlugin {
 
     public Map<LivingEntity, Vehicle> getCurrentVehicleMap() {
         return this.currentVehicleMap;
+    }
+
+    /**
+     * Get the rpCompiler ModelManager data used for determining what models to use.
+     */
+    public RPCModelManagerData getResourcepackData() {
+        return this.resourcepackData;
     }
 
     /**

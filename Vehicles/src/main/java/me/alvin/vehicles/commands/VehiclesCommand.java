@@ -8,6 +8,7 @@ import me.alvin.vehicles.vehicle.VehicleType;
 import me.svcraft.minigames.command.SubCommandedCommand;
 import me.svcraft.minigames.command.subcommand.SubCommand;
 import me.svcraft.minigames.plugin.SVCraftPlugin;
+import org.bukkit.GameMode;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
 
@@ -31,6 +32,7 @@ public class VehiclesCommand extends SubCommandedCommand {
             }
 
             Vehicle vehicle = vehicleType.construct(player.getLocation(), player);
+            if (player.getGameMode() == GameMode.CREATIVE && vehicle.usesFuel()) vehicle.setCurrentFuel(vehicle.getMaxFuel());
             SVCraftVehicles.getInstance().getLoadedVehicles().put(vehicle.getEntity(), vehicle);
         }));
 

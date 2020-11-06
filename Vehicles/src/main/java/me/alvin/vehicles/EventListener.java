@@ -1,6 +1,8 @@
 package me.alvin.vehicles;
 
 import me.alvin.vehicles.util.DebugUtil;
+import me.alvin.vehicles.vehicle.action.VehicleClickAction;
+import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
@@ -11,15 +13,22 @@ import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.inventory.AbstractHorseInventory;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+import java.util.List;
 import java.util.Map;
 
 public class EventListener implements PerWorldListener {
@@ -123,6 +132,36 @@ public class EventListener implements PerWorldListener {
                 }
             } else {
                 DebugUtil.debug("Entity left something that isn't a vehicle");
+            }
+        }
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        if (event.getClickedInventory() instanceof AbstractHorseInventory && event.getWhoClicked() instanceof Player) {
+            Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(event.getWhoClicked());
+            if (vehicle != null) {
+                event.setCancelled(true);
+                int index = event.getSlot() - 2;
+                VehicleMenuAction action = vehicle.getMenuAction(index);
+                if (action != null) {
+                    action.onClick(vehicle, (Player) event.getWhoClicked());
+                }
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) return;
+
+        Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(event.getPlayer());
+        if (vehicle != null) {
+            int index = event.getPlayer().getInventory().getHeldItemSlot();
+            VehicleClickAction action = vehicle.getClickAction(index);
+            if (action != null) {
+                action.onClick(vehicle, event.getPlayer());
+                event.setCancelled(true);
             }
         }
     }

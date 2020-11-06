@@ -28,6 +28,8 @@ public class SeatData {
         Mule mule = this.riderEntity.getEntity();
         mule.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
         mule.addPassenger(passenger);
+        mule.setTamed(true);
+        mule.setAI(false);
         mule.setCarryingChest(true);
         mule.setInvulnerable(true);
         mule.setSilent(true);

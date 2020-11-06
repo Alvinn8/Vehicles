@@ -15,6 +15,7 @@ import me.alvin.vehicles.vehicle.seat.SeatData;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -72,9 +73,9 @@ public abstract class Vehicle {
     protected double velY = 0;
     public final VehicleSteeringMovement movement = new VehicleSteeringMovement();
     // Fuel
-    protected int currentFuel = 0;
-    protected int fuelUsage = 0;
-    protected int maxFuel = 0;
+    private int currentFuel = 0;
+    private int fuelUsage = 0;
+    private int maxFuel = 0;
     // Seats
     private final Map<Seat, SeatData> seatData = new HashMap<>();
     // Attachment
@@ -648,6 +649,15 @@ public abstract class Vehicle {
     // Actions
     //<editor-fold desc="Actions related methods" defaultstate="collapsed">
 
+
+    public List<VehicleMenuAction> getMenuActions() {
+        return this.menuActions;
+    }
+
+    public List<VehicleClickAction> getClickActions() {
+        return this.clickActions;
+    }
+
     public void addAction(VehicleAction action) {
         if (action instanceof VehicleMenuAction) this.menuActions.add((VehicleMenuAction) action);
         if (action instanceof VehicleClickAction) this.clickActions.add((VehicleClickAction) action);
@@ -663,6 +673,20 @@ public abstract class Vehicle {
         if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
     }
 
+    public VehicleMenuAction getMenuAction(int index) {
+        if (index >= 0 && index < this.menuActions.size()) {
+            return this.menuActions.get(index);
+        }
+        return null;
+    }
+
+    public VehicleClickAction getClickAction(int index) {
+        if (index >= 0 && index < this.clickActions.size()) {
+            return this.clickActions.get(index);
+        }
+        return null;
+    }
+
     /**
      * Update the specified inventory and add all menu items.
      *
@@ -670,8 +694,12 @@ public abstract class Vehicle {
      * @param player The player that opens the menu.
      */
     public void updateMenuInventory(AbstractHorseInventory inventory, Player player) {
-        for (VehicleMenuAction menuAction : this.menuActions) {
-            inventory.addItem(menuAction.getEntryItem(this, player));
+        inventory.setSaddle(new ItemStack(Material.BARRIER));
+
+        for (int i = 0; i < this.menuActions.size(); i++) {
+            VehicleMenuAction menuAction = this.menuActions.get(i);
+            System.out.println(menuAction.getClass().getSimpleName());
+            inventory.setItem(i + 2, menuAction.getEntryItem(this, player));
         }
     }
     // </editor-fold>

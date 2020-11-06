@@ -1,16 +1,13 @@
 package me.alvin.vehicles.vehicles;
 
+import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.actions.TestArrowAction;
 import me.alvin.vehicles.vehicle.GroundVehicle;
-import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class TestVehicle extends GroundVehicle {
     public TestVehicle(ArmorStand entity) {
@@ -20,12 +17,16 @@ public class TestVehicle extends GroundVehicle {
     public TestVehicle(Location location, Player creator) {
         super(location, creator);
 
-        ItemStack helmet = new ItemStack(Material.LEATHER_BOOTS);
-        ItemMeta meta = helmet.getItemMeta();
-        meta.setUnbreakable(true);
-        ((Damageable) meta).setDamage(6);
-        helmet.setItemMeta(meta);
-        this.entity.getEquipment().setHelmet(helmet);
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/golf_cart"));
+
+        this.setMaxFuel(10000);
+        this.setFuelUsage(1);
+    }
+
+    @Override
+    protected void setupActions() {
+        super.setupActions();
+        this.addAction(new TestArrowAction());
     }
 
     @Override

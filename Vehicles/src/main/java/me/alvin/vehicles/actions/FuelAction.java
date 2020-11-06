@@ -32,7 +32,7 @@ public class FuelAction implements VehicleMenuAction {
         // TODO: Fueling
         ItemStack temp = new ItemStack(Material.BUCKET);
         ItemMeta meta = temp.getItemMeta();
-        int percentage = vehicle.getCurrentFuel() / vehicle.getMaxFuel();
+        int percentage = vehicle.getMaxFuel() != 0 ? (int) Math.round(((double) vehicle.getCurrentFuel() / (double) vehicle.getMaxFuel()) * 100.0D) : 0;
         meta.setDisplayName(percentage + "%");
         temp.setItemMeta(meta);
         inventory.addItem(temp);
