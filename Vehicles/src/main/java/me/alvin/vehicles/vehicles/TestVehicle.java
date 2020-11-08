@@ -43,4 +43,9 @@ public class TestVehicle extends GroundVehicle {
     public float getMaxSpeed() {
         return 40;
     }
+
+    @Override
+    public boolean canBeColored() {
+        return true;
+    }
 }

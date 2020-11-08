@@ -30,7 +30,6 @@ public class VehicleType {
     private final Seat driverSeat;
     private final Function<ArmorStand, Vehicle> loadConstructor;
     private final BiFunction<Location, Player, Vehicle> spawnConstructor;
-    private final List<VehicleAction> actions;
     private final List<Wheel> wheels;
     private final List<RelativePos> gravityPoints;
 
@@ -38,7 +37,7 @@ public class VehicleType {
                        @NotNull Class<? extends Vehicle> vehicleClass,
                        @NotNull Function<ArmorStand, Vehicle> loadConstructor,
                        @NotNull BiFunction<Location, Player, Vehicle> spawnConstructor,
-                       @Nullable List<VehicleAction> actions, @NotNull Seat driverSeat,
+                       @NotNull Seat driverSeat,
                        @Nullable List<Seat> seats,
                        @Nullable List<Wheel> wheels,
                        @Nullable List<RelativePos> extraGravityPoints) {
@@ -46,7 +45,6 @@ public class VehicleType {
         this.vehicleClass = vehicleClass;
         this.loadConstructor = loadConstructor;
         this.spawnConstructor = spawnConstructor;
-        this.actions = actions;
         Set<Seat> seatSet = new HashSet<>();
         seatSet.add(driverSeat);
         if (seats != null) seatSet.addAll(seats);
@@ -126,11 +124,6 @@ public class VehicleType {
     @NotNull
     public Seat getDriverSeat() {
         return this.driverSeat;
-    }
-
-    @Nullable
-    public List<VehicleAction> getActions() {
-        return this.actions;
     }
 
     public boolean hasWheels() {

@@ -163,7 +163,6 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         if (vehicle.isPassenger(entity)) {
             return vehicle;
         } else {
-            DebugUtil.debug("Not a passenger");
             return null;
         }
     }

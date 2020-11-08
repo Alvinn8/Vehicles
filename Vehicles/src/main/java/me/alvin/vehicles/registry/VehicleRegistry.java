@@ -4,7 +4,9 @@ import me.alvin.vehicles.vehicle.VehicleType;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class VehicleRegistry {
     private final Map<String, VehicleType> data = new HashMap<>();
@@ -35,5 +37,14 @@ public class VehicleRegistry {
      */
     public Map<String, VehicleType> getRegisteredVehicles() {
         return Collections.unmodifiableMap(this.data);
+    }
+
+    /**
+     * Get an unmodifiable set of all registered vehicle ids.
+     *
+     * @return The set of ids
+     */
+    public Set<String> getVehicleTypes() {
+        return Collections.unmodifiableSet(this.data.keySet());
     }
 }

@@ -21,9 +21,12 @@ public class SeatData {
     private final LivingEntity passenger;
     private final NIE<Mule> riderEntity;
 
+    public static final double RIDER_ENTITY_Y_OFFSET = 1.0D;
+
     public SeatData(@NotNull Vehicle vehicle, @NotNull Seat seat, @NotNull LivingEntity passenger) {
         DebugUtil.debug("Constructing seat data");
         Location location = seat.getRelativePos().relativeTo(vehicle.getLocation());
+        location.subtract(0, RIDER_ENTITY_Y_OFFSET, 0);
         this.riderEntity = new NIE<>(location, EntityType.MULE);
         Mule mule = this.riderEntity.getEntity();
         mule.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
@@ -54,7 +57,7 @@ public class SeatData {
      */
     public void exitSeat() {
         DebugUtil.debug("Exiting and removing seat");
-        if (this.passenger.getVehicle() == this.riderEntity) {
+        if (this.passenger.getVehicle() == this.riderEntity.getEntity()) {
             SVCraftVehicles.getInstance().getCurrentVehicleMap().remove(this.passenger);
             DebugUtil.debug("Removing "+ this.passenger.getName() + " from current vehicles");
             this.passenger.leaveVehicle();

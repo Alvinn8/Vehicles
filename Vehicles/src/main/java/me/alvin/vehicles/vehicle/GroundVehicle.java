@@ -16,17 +16,6 @@ public abstract class GroundVehicle extends Vehicle {
     }
 
     @Override
-    public void updateSpeed() {
-        if (this.movement.forward != 0 && this.speed < this.getMaxSpeed()) {
-            this.speed += this.getAccelerationSpeed() * this.movement.forward;
-        }
-
-        if (Math.abs(this.speed) < 0.01) {
-            this.speed = 0;
-        }
-    }
-
-    @Override
     public void calculateLocation() {
         if (this.movement.side != 0) {
             this.location.setYaw(this.location.getYaw() + this.movement.side * -5);

@@ -94,6 +94,9 @@ public class EventListener implements PerWorldListener {
         DebugUtil.debug("PlayerInteractAtEntityEvent if checks passed");
 
         Vehicle vehicle = SVCraftVehicles.getInstance().getLoadedVehicles().get(entity);
+
+        event.setCancelled(true);
+        if (vehicle.isPassenger(event.getPlayer())) return; // Player is already in vehicle
         DebugUtil.debug("success?: " + vehicle.addPassenger(event.getPlayer()));
     }
 

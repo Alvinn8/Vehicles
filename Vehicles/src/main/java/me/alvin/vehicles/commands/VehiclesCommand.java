@@ -2,17 +2,27 @@ package me.alvin.vehicles.commands;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.registry.VehicleRegistry;
+import me.alvin.vehicles.util.ColorUtil;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
+import me.svcraft.minigames.command.SubCommandTabCompleter;
 import me.svcraft.minigames.command.SubCommandedCommand;
 import me.svcraft.minigames.command.subcommand.SubCommand;
 import me.svcraft.minigames.plugin.SVCraftPlugin;
+import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.StringUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class VehiclesCommand extends SubCommandedCommand {
@@ -32,9 +42,13 @@ public class VehiclesCommand extends SubCommandedCommand {
             }
 
             Vehicle vehicle = vehicleType.construct(player.getLocation(), player);
-            if (player.getGameMode() == GameMode.CREATIVE && vehicle.usesFuel()) vehicle.setCurrentFuel(vehicle.getMaxFuel());
+            if (player.getGameMode() == GameMode.CREATIVE && vehicle.usesFuel())
+                vehicle.setCurrentFuel(vehicle.getMaxFuel());
+
             SVCraftVehicles.getInstance().getLoadedVehicles().put(vehicle.getEntity(), vehicle);
-        }));
+        },
+        (sender, arg) -> StringUtil.copyPartialMatches(arg, SVCraftVehicles.getInstance().getRegistry().getVehicleTypes(), new ArrayList<>())
+        ));
 
         this.addSubCommand(new SubCommand("report", (commandSender, strings) -> {
             StringBuilder message = new StringBuilder();
@@ -91,6 +105,26 @@ public class VehiclesCommand extends SubCommandedCommand {
             Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(sender);
 
             vehicle.debugRelativePos = relativePos;
+        }));
+
+        this.addSubCommand(new SubCommand("setColor", (player, args, isPlayer) -> {
+            Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
+            if (vehicle != null) {
+                if (vehicle.canBeColored()) {
+                    ItemStack handItem = player.getInventory().getItemInMainHand();
+                    DyeColor color = ColorUtil.getDyeColorForMaterial(handItem.getType());
+                    if (color != null) {
+                        boolean success = vehicle.setColor(color.getColor());
+                        player.sendMessage("success: "+ success);
+                    } else {
+                        player.sendMessage("§cPlease hold a dye in your hand");
+                    }
+                } else {
+                    player.sendMessage("§cThe vehicle you are in can not be painted");
+                }
+            } else {
+                player.sendMessage("§cPlease sit in the vehicle you want to paint");
+            }
         }));
     }
 }

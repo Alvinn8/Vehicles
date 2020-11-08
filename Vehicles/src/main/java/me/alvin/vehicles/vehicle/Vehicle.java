@@ -2,7 +2,9 @@ package me.alvin.vehicles.vehicle;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.actions.FuelAction;
+import me.alvin.vehicles.actions.SwitchSeatAction;
 import me.alvin.vehicles.nms.VehicleSteeringMovement;
+import me.alvin.vehicles.util.ColorUtil;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.util.ExtraPersistentDataTypes;
 import me.alvin.vehicles.util.RelativePos;
@@ -128,6 +130,9 @@ public abstract class Vehicle {
         Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
             this.setupActions();
             this.updateRenderedLocation();
+            if (this.canBeColored()) {
+                this.setColor(Color.WHITE);
+            }
         }, 1L);
     }
 
@@ -225,6 +230,7 @@ public abstract class Vehicle {
         if (meta instanceof LeatherArmorMeta) {
             ((LeatherArmorMeta) meta).setColor(color);
             helmet.setItemMeta(meta);
+            equipment.setHelmet(helmet);
             return true;
         } else {
             return false;
@@ -275,6 +281,23 @@ public abstract class Vehicle {
         this.location = location;
     }
 
+    /**
+     * Called each tick.
+     *
+     * The default tick cycle is:
+     *
+     * 1: updateSpeed
+     * if (speed != 0) {
+     *     2: calculateLocation
+     *         3: calculateGravity
+     *     4: updateRenderedLocation
+     *     5: updateRenderedPassengerPositions
+     *     6: spawnParticles
+     *     if attached {
+     *         7: updateAttachedVehicles
+     *     }
+     * }
+     */
     public void tick() {
         if (this.isAttached()) return;
 
@@ -292,9 +315,17 @@ public abstract class Vehicle {
             this.calculateLocation();
             this.updateRenderedLocation();
             this.updateRenderedPassengerPositions();
+            this.spawnParticles();
 
             if (this.attachedVehicles != null) {
                 this.updateAttachedVehicles();
+            }
+
+            if (this.usesFuel()) {
+                this.currentFuel -= this.fuelUsage * (this.speed / this.getMaxSpeed());
+                if (this.currentFuel < 0) {
+                    this.currentFuel = 0;
+                }
             }
         } else {
             if (this.niEntity != null && this.seatData.size() <= 0) {
@@ -304,15 +335,20 @@ public abstract class Vehicle {
             }
         }
 
-        if (this.usesFuel()) {
-            this.currentFuel -= this.fuelUsage * (this.speed / this.getMaxSpeed());
-            if (this.currentFuel < 0) {
-                this.currentFuel = 0;
-            }
-        }
     }
 
-    public abstract void updateSpeed();
+    /**
+     * Update the speed of the vehicle based on the driver movement
+     */
+    public void updateSpeed() {
+        if (this.movement.forward != 0 && Math.abs(this.speed) < this.getMaxSpeed()) {
+            this.speed += this.getAccelerationSpeed() * this.movement.forward;
+        }
+
+        if (Math.abs(this.speed) < 0.01) {
+            this.speed = 0;
+        }
+    }
 
     /**
      * Calculate where the vehicle should be at. Does not update where the entity
@@ -370,9 +406,15 @@ public abstract class Vehicle {
 
             Location location = seat.getRelativePos().relativeTo(this.location);
             if (seat.hasOffsetYaw()) location.setYaw(location.getYaw() + seat.getOffsetYaw());
-            seatData.getRiderEntity().setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+            seatData.getRiderEntity().setLocation(location.getX(), location.getY() - SeatData.RIDER_ENTITY_Y_OFFSET, location.getZ(), location.getYaw(), location.getPitch());
         }
     }
+
+    /**
+     * Override in subclasses to display particles when the vehicle is moving. Will only
+     * be called if {@link Vehicle#speed} != 0.
+     */
+    public void spawnParticles() {}
     // </editor-fold>
 
     // Fuel
@@ -671,6 +713,7 @@ public abstract class Vehicle {
      */
     protected void setupActions() {
         if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
+        if (this.getType().getSeats().size() > 1) this.addAction(SwitchSeatAction.INSTANCE);
     }
 
     public VehicleMenuAction getMenuAction(int index) {
