@@ -29,14 +29,14 @@ public class VehicleType {
     private final Set<Seat> seats;
     private final Seat driverSeat;
     private final Function<ArmorStand, Vehicle> loadConstructor;
-    private final BiFunction<Location, Player, Vehicle> spawnConstructor;
+    private final VehicleSpawnConstructorFunction spawnConstructor;
     private final List<Wheel> wheels;
     private final List<RelativePos> gravityPoints;
 
     public VehicleType(@NotNull String id,
                        @NotNull Class<? extends Vehicle> vehicleClass,
                        @NotNull Function<ArmorStand, Vehicle> loadConstructor,
-                       @NotNull BiFunction<Location, Player, Vehicle> spawnConstructor,
+                       @NotNull VehicleSpawnConstructorFunction spawnConstructor,
                        @NotNull Seat driverSeat,
                        @Nullable List<Seat> seats,
                        @Nullable List<Wheel> wheels,
@@ -100,10 +100,10 @@ public class VehicleType {
      * Used when new vehicles are spawned in to the world by
      * a player.
      *
-     * @see Vehicle#Vehicle(Location, Player)
+     * @see Vehicle#Vehicle(Location, Player, VehicleSpawnReason)
      */
-    public Vehicle construct(Location location, Player creator) {
-        return this.spawnConstructor.apply(location, creator);
+    public Vehicle construct(Location location, Player creator, VehicleSpawnReason reason) {
+        return this.spawnConstructor.apply(location, creator, reason);
     }
 
     /**

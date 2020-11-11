@@ -17,8 +17,8 @@ public abstract class AirVehicle extends Vehicle {
         super(entity);
     }
 
-    public AirVehicle(@NotNull Location location, @NotNull Player creator) {
-        super(location, creator);
+    public AirVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
+        super(location, creator, reason);
     }
 
     /**

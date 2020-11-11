@@ -2,6 +2,10 @@ package me.alvin.vehicles.vehicle;
 
 import me.alvin.vehicles.util.RelativePos;
 
+/**
+ * Contains data on where a attached vehicle should be placed
+ * relative to the vehicle it is attached to.
+ */
 public class AttachmentData {
     private final RelativePos relativePos;
     private final int offsetYaw;

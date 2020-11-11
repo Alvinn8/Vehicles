@@ -4,8 +4,8 @@ import me.alvin.vehicles.vehicle.Vehicle;
 import org.bukkit.entity.Player;
 
 /**
- * An interface that can be added to {@link VehicleAction} which can be clicked directly
- * trough the player selecting a certain hotbar slot and left clicking.
+ * An interface that can be added to a {@link VehicleAction} class which can be
+ * clicked directly trough the player selecting a certain hotbar slot and left clicking.
  */
 public interface VehicleClickAction extends VehicleAction {
     /**

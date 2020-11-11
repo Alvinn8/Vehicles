@@ -3,6 +3,7 @@ package me.alvin.vehicles.vehicles;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.BoatVehicle;
+import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Location;
@@ -18,8 +19,8 @@ public class SimpleBoatVehicle extends BoatVehicle {
         super(entity);
     }
 
-    public SimpleBoatVehicle(@NotNull Location location, @NotNull Player creator) {
-        super(location, creator);
+    public SimpleBoatVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
+        super(location, creator, reason);
 
         this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/boat"));
     }

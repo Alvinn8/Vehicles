@@ -11,8 +11,8 @@ public abstract class GroundVehicle extends Vehicle {
         super(entity);
     }
 
-    public GroundVehicle(@NotNull Location location, @NotNull Player creator) {
-        super(location, creator);
+    public GroundVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
+        super(location, creator, reason);
     }
 
     @Override

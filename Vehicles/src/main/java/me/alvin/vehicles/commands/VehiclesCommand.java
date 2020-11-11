@@ -5,16 +5,13 @@ import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.ColorUtil;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.Vehicle;
+import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
-import me.svcraft.minigames.command.SubCommandTabCompleter;
 import me.svcraft.minigames.command.SubCommandedCommand;
 import me.svcraft.minigames.command.subcommand.SubCommand;
 import me.svcraft.minigames.plugin.SVCraftPlugin;
-import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +19,6 @@ import org.bukkit.util.StringUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class VehiclesCommand extends SubCommandedCommand {
@@ -41,7 +37,7 @@ public class VehiclesCommand extends SubCommandedCommand {
                 return;
             }
 
-            Vehicle vehicle = vehicleType.construct(player.getLocation(), player);
+            Vehicle vehicle = vehicleType.construct(player.getLocation(), player, VehicleSpawnReason.COMMAND);
             if (player.getGameMode() == GameMode.CREATIVE && vehicle.usesFuel())
                 vehicle.setCurrentFuel(vehicle.getMaxFuel());
 

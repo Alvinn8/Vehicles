@@ -4,7 +4,6 @@ import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.actions.FuelAction;
 import me.alvin.vehicles.actions.SwitchSeatAction;
 import me.alvin.vehicles.nms.VehicleSteeringMovement;
-import me.alvin.vehicles.util.ColorUtil;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.util.ExtraPersistentDataTypes;
 import me.alvin.vehicles.util.RelativePos;
@@ -91,7 +90,7 @@ public abstract class Vehicle {
     // Saving and loading
 
     /**
-     * Construct a vehicle from an existing entity, will load the vehicle
+     * Load a vehicle from an existing entity, will load the vehicle
      * using all the stored data on the entity.
      *
      * @param entity The entity to load from
@@ -113,25 +112,24 @@ public abstract class Vehicle {
     }
 
     /**
-     * Construct a new vehicle at the specified location.
+     * Create a new vehicle at the specified location.
      *
      * @param location The location to spawn the vehicle at
      * @param creator The player that created the vehicle
+     * @param reason The reason the vehicle was spawned
      */
-    public Vehicle(@NotNull Location location, @NotNull Player creator) {
+    public Vehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         this.location = location;
         this.location.setPitch(0);
         this.entity = spawnArmorStand(this.location);
 
         DebugUtil.debug(creator.getName() + " spawned a vehicle of class " + this.getClass().getName());
 
-        // TODO: VehicleSpawnReason (maybe?) for like crafting or (spawn egg) or command
-
         Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
             this.setupActions();
             this.updateRenderedLocation();
             if (this.canBeColored()) {
-                this.setColor(Color.WHITE);
+                this.setColor(this.getDefaultColor());
             }
         }, 1L);
     }
@@ -144,6 +142,7 @@ public abstract class Vehicle {
      * @return The spawned armor stand
      */
     public static ArmorStand spawnArmorStand(Location location) {
+        if (location.getWorld() == null) throw new IllegalArgumentException("location has to have a world");
         ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         setupArmorStand(armorStand);
         return armorStand;
@@ -177,7 +176,7 @@ public abstract class Vehicle {
     }
 
     /**
-     * Remove the vehicle and all entities asosiated with it.
+     * Remove the vehicle and all entities associated with it.
      * Will also remove the vehicle from the loaded vehicles list,
      * therefore it is not safe to iterate over all vehicles while
      * removing some as that will throw a ConcurrentModificationException
@@ -207,6 +206,7 @@ public abstract class Vehicle {
     }
 
     // Coloring
+    //<editor-fold desc="Coloring related methods" defaultstate="collapsed">
 
     public boolean canBeColored() {
         return false;
@@ -250,6 +250,17 @@ public abstract class Vehicle {
 
         return this.colorArmorStand(this.entity, color);
     }
+
+    /**
+     * Get the default color of the vehicle. Will be set when a new vehicle is spawned
+     * if the vehicle is colorable. The default default color is white.
+     *
+     * @return The default color
+     */
+    public Color getDefaultColor() {
+        return Color.WHITE;
+    }
+    // </editor-fold>
 
     // Movement
     //<editor-fold desc="Movement related methods" defaultstate="collapsed">
@@ -297,6 +308,8 @@ public abstract class Vehicle {
      *         7: updateAttachedVehicles
      *     }
      * }
+     *
+     * Note that vehicles that are attached do not tick at all.
      */
     public void tick() {
         if (this.isAttached()) return;

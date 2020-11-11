@@ -18,8 +18,8 @@ public abstract class BoatVehicle extends Vehicle {
         super(entity);
     }
 
-    public BoatVehicle(@NotNull Location location, @NotNull Player creator) {
-        super(location, creator);
+    public BoatVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
+        super(location, creator, reason);
     }
 
     @Override

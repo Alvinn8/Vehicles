@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * An interface that can be added to {@link VehicleAction} which make an entry in the
- * vehicle menu that can be clicked.
+ * An interface that can be added to a {@link VehicleAction} class which will make
+ * an entry in the vehicle menu that can be clicked.
  */
 public interface VehicleMenuAction extends VehicleAction {
     /**

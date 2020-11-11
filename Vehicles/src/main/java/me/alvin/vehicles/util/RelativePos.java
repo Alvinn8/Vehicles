@@ -67,14 +67,14 @@ public class RelativePos {
 
 
 
-        float radians = (float) Math.toRadians(-location.getYaw());
+        double radians = Math.toRadians(-location.getYaw());
 
-        float f1 = (float) Math.cos(radians);
-        float f2 = (float) Math.sin(radians);
+        double f1 = Math.cos(radians);
+        double f2 = Math.sin(radians);
 
-        double x = this.left * (double) f1 + this.forward * (double) f2;
+        double x = this.left * f1 + this.forward * f2;
         double y = this.up;
-        double z = this.forward * (double) f1 - this.left * (double) f2;
+        double z = this.forward * f1 - this.left * f2;
 
         return location.clone().add(x, y, z);
     }
