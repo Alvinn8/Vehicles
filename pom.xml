@@ -11,6 +11,7 @@
         <module>Vehicles</module>
         <module>nms/nms</module>
         <module>nms/v1_16_R2</module>
+        <module>nms/v1_16_R3</module>
     </modules>
     <packaging>pom</packaging>
 
