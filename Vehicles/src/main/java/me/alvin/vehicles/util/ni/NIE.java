@@ -8,6 +8,8 @@ import org.bukkit.World;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A Non Interpolating Entity (NIE).
@@ -89,5 +91,17 @@ public class NIE<T extends Entity> {
         SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.entity, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         this.aec.remove();
         return this.entity;
+    }
+
+    /**
+     * Set the location of the {@code niEntity} if it exist, otherwise
+     * set it for the {@code entity}
+     */
+    public static <T extends Entity> void setLocation(@Nullable NIE<T> niEntity, @NotNull T entity, double x, double y, double z, float yaw, float pitch) {
+        if (niEntity != null) {
+            niEntity.setLocation(x, y, z, yaw, pitch);
+        } else {
+            SVCraftVehicles.getInstance().getNMS().setEntityLocation(entity, x, y, z, yaw ,pitch);
+        }
     }
 }

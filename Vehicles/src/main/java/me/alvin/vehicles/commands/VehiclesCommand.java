@@ -122,5 +122,7 @@ public class VehiclesCommand extends SubCommandedCommand {
                 player.sendMessage("§cPlease sit in the vehicle you want to paint");
             }
         }));
+
+        this.addSubCommand(new SubCommand("leave", (player, arsg, isPlayer) -> player.leaveVehicle()));
     }
 }

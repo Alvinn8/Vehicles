@@ -7,7 +7,10 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A Non Interpolating (NI) Armor Stand entity.
@@ -74,5 +77,17 @@ public class NIArmorStand {
         SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.armorStand, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         this.aec.remove();
         return this.armorStand;
+    }
+
+    /**
+     * Set the location of the {@code niEntity} if it exist, otherwise
+     * set it for the {@code entity}
+     */
+    public static void setLocation(@Nullable NIArmorStand niEntity, @NotNull ArmorStand entity, double x, double y, double z, float yaw, float pitch) {
+        if (niEntity != null) {
+            niEntity.setLocation(x, y, z, yaw, pitch);
+        } else {
+            SVCraftVehicles.getInstance().getNMS().setEntityLocation(entity, x, y, z, yaw ,pitch);
+        }
     }
 }

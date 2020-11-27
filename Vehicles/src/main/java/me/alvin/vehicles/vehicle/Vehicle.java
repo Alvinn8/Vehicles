@@ -99,7 +99,7 @@ public abstract class Vehicle {
     public Vehicle(@NotNull ArmorStand entity) {
         this.entity = entity;
         PersistentDataContainer data = this.entity.getPersistentDataContainer();
-        // These might throw NPE's but if they do it will be caught
+        // These might throw NPEs but if they do it will be caught
         // inside the method loading the vehicle. In case of an NPE
         // the loaded vehicle is invalid.
 
@@ -108,7 +108,7 @@ public abstract class Vehicle {
 
         Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), this::setupActions, 1L);
 
-        DebugUtil.debug("Constructed/Loaded vehicle of class " + this.getClass().getName());
+        DebugUtil.debug("Loaded vehicle of class " + this.getClass().getName());
     }
 
     /**
@@ -141,6 +141,7 @@ public abstract class Vehicle {
      * @param location The location to spawn the armor stand
      * @return The spawned armor stand
      */
+    @NotNull
     public static ArmorStand spawnArmorStand(Location location) {
         if (location.getWorld() == null) throw new IllegalArgumentException("location has to have a world");
         ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
@@ -183,7 +184,9 @@ public abstract class Vehicle {
      */
     public void remove() {
         DebugUtil.debug("Removing vehicle");
-        if (this.entity.isValid()) this.entity.remove();
+
+        if (this.niEntity != null) this.niEntity.remove();
+        this.entity.remove();
 
         for (SeatData seatData : this.seatData.values()) {
             seatData.exitSeat();
@@ -193,6 +196,7 @@ public abstract class Vehicle {
     }
 
 
+    @NotNull
     public abstract VehicleType getType();
 
     @NotNull
@@ -322,8 +326,8 @@ public abstract class Vehicle {
         this.updateSpeed();
 
         if (this.speed != 0) {
-            if (this.niEntity == null) {
-                this.niEntity = new NIArmorStand(this.entity);
+            if (!this.isNonInterpolating()) {
+                this.setNonInterpolating(true);
             }
             this.calculateLocation();
             this.updateRenderedLocation();
@@ -341,10 +345,8 @@ public abstract class Vehicle {
                 }
             }
         } else {
-            if (this.niEntity != null && this.seatData.size() <= 0) {
-                DebugUtil.debug("Removing niEntity");
-                this.niEntity.toArmorStand();
-                this.niEntity = null;
+            if (this.isNonInterpolating() && this.seatData.size() <= 0) {
+                this.setNonInterpolating(false);
             }
         }
 
@@ -400,11 +402,7 @@ public abstract class Vehicle {
      * if the vehicle's speed is not 0.
      */
     public void updateRenderedLocation() {
-        if (this.niEntity != null) {
-            this.niEntity.setLocation(this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
-        } else {
-            SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
-        }
+        NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
     }
 
     /**
@@ -429,6 +427,43 @@ public abstract class Vehicle {
      * be called if {@link Vehicle#speed} != 0.
      */
     public void spawnParticles() {}
+
+    /**
+     * Check if the vehicle is currently made of non interpolating entites.
+     *
+     * Subclasses should not need to override this method as if the main
+     * entity is non interpolating, all entities should be non interpolating,
+     * and the other way around.
+     *
+     * @return Whether the vehicle is non interpolating
+     */
+    public boolean isNonInterpolating() {
+        return this.niEntity != null;
+    }
+
+    /**
+     * Make the entity non interpolating or not.
+     *
+     * This method should be overridden in subclasses that use multiple
+     * entities to render the model to make sure all entities are marked
+     * as non interpolating or not.
+     *
+     * @param nonInterpolating Whether to be non interpolating or not, may
+     *                         not be the current state of the vehicle.
+     * @throws IllegalStateException If the vehicle already is non interpolating
+     * and {@code nonInterpolating} was true, or the other way around.
+     */
+    public void setNonInterpolating(boolean nonInterpolating) {
+        if (this.isNonInterpolating() == nonInterpolating) throw new IllegalStateException("The vehicle is already non interpolating");
+        if (nonInterpolating) {
+            DebugUtil.debug("Creating niEntity");
+            this.niEntity = new NIArmorStand(this.entity);
+        } else {
+            DebugUtil.debug("Removing niEntity");
+            this.niEntity.toArmorStand();
+            this.niEntity = null;
+        }
+    }
     // </editor-fold>
 
     // Fuel

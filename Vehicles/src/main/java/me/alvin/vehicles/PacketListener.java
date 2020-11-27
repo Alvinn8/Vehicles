@@ -23,6 +23,8 @@ public class PacketListener extends PacketAdapter {
             if (vehicle != null) {
                 if (vehicle.getDriver() == event.getPlayer()) {
                     this.nms.handlePacket(vehicle.movement, event);
+                    if (vehicle.movement.shift) System.out.println("Shift!");
+                    if (vehicle.movement.space) System.out.println("Space!");
                 }
             }
         }

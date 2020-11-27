@@ -31,6 +31,7 @@ public class TestVehicle extends GroundVehicle {
         this.addAction(new TestArrowAction());
     }
 
+    @NotNull
     @Override
     public VehicleType getType() {
         return VehicleTypes.TEST_VEHICLE;
