@@ -1,7 +1,6 @@
 package me.alvin.vehicles.vehicle;
 
 import me.alvin.vehicles.util.RelativePos;
-import me.alvin.vehicles.vehicle.action.VehicleAction;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -14,7 +13,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**

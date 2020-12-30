@@ -55,7 +55,6 @@ public abstract class Vehicle {
      * as for boats, minecraft and other vanilla "vehicles"
      */
     public static final double GRAVITY = 0.04D;
-    public RelativePos debugRelativePos; // TEMP
 
     // Fields
 
@@ -68,10 +67,13 @@ public abstract class Vehicle {
      * be present if the vehicle is in motion.
      */
     protected @Nullable NIArmorStand niEntity;
+    public RelativePos debugRelativePos; // TEMP
     // Movement
-    protected  @NotNull Location location;
+    protected @NotNull Location location;
     protected float speed = 0;
-    protected double velY = 0;
+    protected double velX = 0.0;
+    protected double velY = 0.0;
+    protected double velZ = 0.0;
     public final VehicleSteeringMovement movement = new VehicleSteeringMovement();
     // Fuel
     private int currentFuel = 0;
@@ -299,21 +301,23 @@ public abstract class Vehicle {
     /**
      * Called each tick.
      *
-     * The default tick cycle is:
-     *
+     * <p>The default tick cycle is:</p>
+     * <pre>
      * 1: updateSpeed
-     * if (speed != 0) {
-     *     2: calculateLocation
+     * if (isMoving()) {
+     *     2: calculateVelocity
      *         3: calculateGravity
-     *     4: updateRenderedLocation
-     *     5: updateRenderedPassengerPositions
-     *     6: spawnParticles
+     *     4: applyVelocity
+     *     5: updateRenderedLocation
+     *     6: updateRenderedPassengerPositions
+     *     7: spawnParticles
      *     if attached {
      *         7: updateAttachedVehicles
      *     }
      * }
+     * </pre>
      *
-     * Note that vehicles that are attached do not tick at all.
+     * <p>Note that vehicles that are attached do not tick at all.</p>
      */
     public void tick() {
         if (this.isAttached()) return;
@@ -325,11 +329,12 @@ public abstract class Vehicle {
 
         this.updateSpeed();
 
-        if (this.speed != 0) {
+        if (this.isMoving()) {
             if (!this.isNonInterpolating()) {
                 this.setNonInterpolating(true);
             }
-            this.calculateLocation();
+            this.calculateVelocity();
+            this.applyVelocity();
             this.updateRenderedLocation();
             this.updateRenderedPassengerPositions();
             this.spawnParticles();
@@ -349,11 +354,36 @@ public abstract class Vehicle {
                 this.setNonInterpolating(false);
             }
         }
-
     }
 
     /**
-     * Update the speed of the vehicle based on the driver movement
+     * Determine whether the vehicle is moving or not. The return value
+     * of this method determines whether the vehicle should tick or skip
+     * most of the tick cycle.
+     *
+     * <p>Default implementation is to check whether the {@link #speed}
+     * has a non-zero value.</p>
+     *
+     * <p>If this returns false the vehicle will skip most of the tick
+     * cycle.</p>
+     *
+     * @return Whether the vehicle is moving and should tick.
+     *
+     * @see #tick()
+     */
+    public boolean isMoving() {
+        return this.speed != 0;
+    }
+
+    /**
+     * Update the speed of the vehicle based on the driver movement. This method
+     * does not update the velocity.
+     * <br>
+     * Default implementation increases the speed by {@link #getAccelerationSpeed()}
+     * if forward movement is positive, also sets speed to 0 if it's absolute value
+     * is less than <code>0.01</code>.
+     *
+     * @see #tick()
      */
     public void updateSpeed() {
         if (this.movement.forward != 0 && Math.abs(this.speed) < this.getMaxSpeed()) {
@@ -366,14 +396,28 @@ public abstract class Vehicle {
     }
 
     /**
-     * Calculate where the vehicle should be at. Does not update where the entity
-     * is rendered. For that use {@link #updateRenderedLocation()}
+     * Calculate the velocity for the vehicle, this is then applied to the
+     * location using {@link #applyVelocity()} (next in the tick cycle).
+     *
+     * @see #tick()
      */
-    public abstract void calculateLocation();
+    public abstract void calculateVelocity();
+
+    /**
+     * Apply the vehicle's current velocity to the {@link #location} field.
+     *
+     * <p>This does not update where the entity is rendered. For that use
+     * {@link #updateRenderedLocation()}.</p>
+     *
+     * @see #tick()
+     */
+    public void applyVelocity() {
+        this.location.add(this.velX, this.velY, this.velZ);
+    }
 
     /**
      * Calculate if the vehicle should fall due to gravity.
-     * Called inside {@link #calculateLocation()}
+     * Called inside {@link #calculateVelocity()}
      */
     public void calculateGravity() {
         boolean fall = true;
@@ -431,9 +475,9 @@ public abstract class Vehicle {
     /**
      * Check if the vehicle is currently made of non interpolating entites.
      *
-     * Subclasses should not need to override this method as if the main
+     * <p>Subclasses should not need to override this method as if the main
      * entity is non interpolating, all entities should be non interpolating,
-     * and the other way around.
+     * and the other way around.</p>
      *
      * @return Whether the vehicle is non interpolating
      */
@@ -444,9 +488,9 @@ public abstract class Vehicle {
     /**
      * Make the entity non interpolating or not.
      *
-     * This method should be overridden in subclasses that use multiple
+     * <p>This method should be overridden in subclasses that use multiple
      * entities to render the model to make sure all entities are marked
-     * as non interpolating or not.
+     * as non interpolating or not.</p>
      *
      * @param nonInterpolating Whether to be non interpolating or not, may
      *                         not be the current state of the vehicle.

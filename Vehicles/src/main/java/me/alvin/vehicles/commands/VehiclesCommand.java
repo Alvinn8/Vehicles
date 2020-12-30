@@ -1,5 +1,10 @@
 package me.alvin.vehicles.commands;
 
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.LiteralMessage;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.ColorUtil;
@@ -8,12 +13,18 @@ import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.svcraft.minigames.command.SubCommandedCommand;
+import me.svcraft.minigames.command.brigadier.Cmd;
 import me.svcraft.minigames.command.subcommand.SubCommand;
+import me.svcraft.minigames.nms.CommandSource;
 import me.svcraft.minigames.plugin.SVCraftPlugin;
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
@@ -22,6 +33,156 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class VehiclesCommand extends SubCommandedCommand {
+    private final static DynamicCommandExceptionType UNKNOWN_VEHICLE_TYPE = new DynamicCommandExceptionType(type -> new LiteralMessage("Unknown vehicle type '"+ type +"'"));
+
+    public static void register(CommandDispatcher<Object> dispatcher) {
+        dispatcher.register(
+            Cmd.literal("vehicles")
+                .requires(obj -> Cmd.getSource(obj).hasPermission("svcraftvehicles.command.vehicles"))
+                .then(
+                    Cmd.literal("spawn")
+                        .then(
+                            Cmd.argument("type", StringArgumentType.word())
+                            .suggests((context, builder) -> {
+                                for (String vehicleType : SVCraftVehicles.getInstance().getRegistry().getVehicleTypes()) {
+                                    if (StringUtil.startsWithIgnoreCase(vehicleType, builder.getRemaining())) {
+                                        builder.suggest(vehicleType);
+                                    }
+                                }
+                                return builder.buildFuture();
+                            })
+                            .executes(context -> {
+                                String id = StringArgumentType.getString(context, "type");
+                                VehicleType vehicleType = SVCraftVehicles.getInstance().getRegistry().getVehicle(id);
+                                if (vehicleType == null) {
+                                    throw UNKNOWN_VEHICLE_TYPE.create(id);
+                                }
+
+                                CommandSource source = Cmd.getSource(context);
+                                Player player = source.getPlayerRequired();
+
+                                Vehicle vehicle = vehicleType.construct(player.getLocation(), player, VehicleSpawnReason.COMMAND);
+                                if (player.getGameMode() == GameMode.CREATIVE && vehicle.usesFuel()) {
+                                    vehicle.setCurrentFuel(vehicle.getMaxFuel());
+                                }
+
+                                SVCraftVehicles.getInstance().getLoadedVehicles().put(vehicle.getEntity(), vehicle);
+                                return 1;
+                            })
+                        )
+                )
+                .then(
+                    Cmd.literal("report")
+                        .executes(context -> {
+                            StringBuilder message = new StringBuilder();
+
+                            message.append("Registered vehicle types:\n");
+                            VehicleRegistry registry = SVCraftVehicles.getInstance().getRegistry();
+                            Map<String, VehicleType> registeredVehicles = registry.getRegisteredVehicles();
+                            message.append(registeredVehicles.size());
+                            message.append('\n');
+                            for (String id : registeredVehicles.keySet()) {
+                                message.append(id).append('\n');
+                            }
+                            message.append('\n');
+
+                            Map<ArmorStand, Vehicle> loadedVehicles = SVCraftVehicles.getInstance().getLoadedVehicles();
+                            message.append(loadedVehicles.size()).append(" loaded vehicles");
+                            message.append('\n');
+                            for (Map.Entry<ArmorStand, Vehicle> entry : loadedVehicles.entrySet()) {
+                                message.append(entry.getKey().getUniqueId().toString());
+                                message.append(": ");
+                                message.append(entry.getValue().getType().getId());
+                                message.append(' ');
+                                message.append(entry.getValue().getNIEntity() == null ? "regular armor stand" : "ni armor stand");
+                                message.append(' ');
+                                if (!entry.getValue().getEntity().isValid()) {
+                                    message.append(" §c[INVALID ENTITY]§r");
+                                }
+                                message.append('\n');
+                            }
+
+                            Cmd.getSource(context).getCommandSender().sendMessage(message.toString());
+                            return 1;
+                        })
+            )
+            .then(
+                Cmd.literal("reload")
+                    .executes(context -> {
+                        CommandSender sender = Cmd.getSource(context).getCommandSender();
+                        try {
+                            SVCraftVehicles.getInstance().reload();
+                            sender.sendMessage(ChatColor.GREEN + "The configuration was reloaded.");
+                        } catch (IOException | InvalidConfigurationException e) {
+                            e.printStackTrace();
+                            sender.sendMessage(ChatColor.RED + "There was an error when reloading");
+                        }
+                        return 1;
+                    })
+            )
+            .then(
+                Cmd.literal("relativepos")
+                    .then(
+                        Cmd.argument("left", DoubleArgumentType.doubleArg(-20, 20))
+                            .then(
+                                Cmd.argument("up", DoubleArgumentType.doubleArg(-20, 20))
+                                    .then(
+                                        Cmd.argument("forward", DoubleArgumentType.doubleArg(-20, 20))
+                                        .executes(context -> {
+                                            double left = DoubleArgumentType.getDouble(context, "left");
+                                            double up = DoubleArgumentType.getDouble(context, "up");
+                                            double forward = DoubleArgumentType.getDouble(context, "forward");
+
+                                            RelativePos relativePos = new RelativePos(left, up, forward);
+
+                                            Player player = Cmd.getSource(context).getPlayerRequired();
+
+                                            player.sendMessage(relativePos.toString());
+
+                                            Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
+
+                                            vehicle.debugRelativePos = relativePos;
+                                            return 1;
+                                        })
+                                    )
+                            )
+                    )
+            )
+            .then(
+                Cmd.literal("color")
+                    .executes(context -> {
+                        Player player = Cmd.getSource(context).getPlayerRequired();
+                        Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
+                        if (vehicle != null) {
+                            if (vehicle.canBeColored()) {
+                                ItemStack handItem = player.getInventory().getItemInMainHand();
+                                DyeColor color = ColorUtil.getDyeColorForMaterial(handItem.getType());
+                                if (color != null) {
+                                    boolean success = vehicle.setColor(color.getColor());
+                                    player.sendMessage("success: "+ success);
+                                } else {
+                                    player.sendMessage(ChatColor.RED + "Please hold a dye in your hand");
+                                }
+                            } else {
+                                player.sendMessage(ChatColor.RED + "The vehicle you are in can not be painted");
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Please sit in the vehicle you want to paint");
+                        }
+                        return 1;
+                    })
+            )
+            .then(
+                Cmd.literal("leave")
+                    .executes(context -> {
+                        Entity entity = Cmd.getSource(context).getEntityRequired();
+                        entity.leaveVehicle();
+                        return 1;
+                    })
+            )
+        );
+    }
+    @Deprecated
     public VehiclesCommand(SVCraftPlugin plugin) {
         super(plugin);
 

@@ -67,8 +67,9 @@ public class VehicleTypes {
                 // Seats
                 new Seat(new RelativePos(0.2, 0.5, 0.1)),
                 Arrays.asList(
-                        new Seat(new RelativePos(-0.2, 0.5, 0.1)),
-                        new Seat(new RelativePos(0, 0.5, -1)) // TODO
+                        new Seat(new RelativePos(-0.5, 0.5, 0.1)),
+                        new Seat(new RelativePos(0, 0.5, -1)),
+                        new Seat(new RelativePos(-0.5, 0.5, -1))
                 ),
                 // Wheels
                 null,

@@ -8,8 +8,8 @@ depend:
 authors: [Alvin]
 description: A vehicles plugin for SVCraft(Minigames)
 commands:
-  vehicles:
-    description: Main command for SVCraftVehicles
-    usage: /vehicles reload|report|spawn
-    permission: svcraftvehicles.command.vehicles
-    aliases: [svcraftvehicles]
+  #vehicles:
+  #  description: Main command for SVCraftVehicles
+  #  usage: /vehicles reload|report|spawn
+  #  permission: svcraftvehicles.command.vehicles
+  #  aliases: [svcraftvehicles]

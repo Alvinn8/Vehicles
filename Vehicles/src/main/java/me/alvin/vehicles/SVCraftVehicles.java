@@ -57,7 +57,8 @@ public final class SVCraftVehicles extends SVCraftPlugin {
             e.printStackTrace();
         }
 
-        this.registerCommand("vehicles", new VehiclesCommand(this));
+        // this.registerCommand("vehicles", new VehiclesCommand(this));
+        this.registerCommand(VehiclesCommand::register);
         this.registerPerWorldEvents(new EventListener());
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));

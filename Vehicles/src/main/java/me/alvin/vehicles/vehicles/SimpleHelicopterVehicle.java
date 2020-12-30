@@ -26,17 +26,17 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     public SimpleHelicopterVehicle(@NotNull ArmorStand entity) {
         super(entity);
 
-        this.spawnEntities();
+        this.spawnExtraEntities();
     }
 
     public SimpleHelicopterVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
 
-        this.spawnEntities();
+        this.spawnExtraEntities();
         this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_front"));
     }
 
-    private void spawnEntities() {
+    private void spawnExtraEntities() {
         this.tailEntity = spawnArmorStand(TAIL_OFFSET.relativeTo(this.location));
         this.tailEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_tail"));
         this.rotorEntity = spawnArmorStand(ROTOR_OFFSET.relativeTo(this.location));
@@ -51,17 +51,12 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
 
     @Override
     public float getAccelerationSpeed() {
-        return 2;
+        return 0.5F;
     }
 
     @Override
     public float getMaxSpeed() {
         return 20;
-    }
-
-    @Override
-    public void updateSpeed() {
-        super.updateSpeed();
     }
 
     @Override
@@ -87,10 +82,7 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
         return this.colorArmorStand(this.rotorEntity, color);
     }
 
-    @Override
-    public void unload() {
-        super.unload();
-
+    private void removeExtraEntities() {
         if (this.tailNiEntity != null) this.tailNiEntity.remove();
         else this.tailEntity.remove();
 
@@ -98,17 +90,19 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
         else this.rotorEntity.remove();
     }
 
-    // TODO - uncomment - Can not update scheme
-    // @Override
-    // public void remove() {
-    //     super.remove();
+    @Override
+    public void unload() {
+        super.unload();
 
-    //     if (this.tailNiEntity != null) this.tailNiEntity.remove();
-    //     else this.tailEntity.remove();
+        this.removeExtraEntities();
+    }
 
-    //     if (this.rotorNiEntity != null) this.rotorNiEntity.remove();
-    //     else this.rotorEntity.remove();
-    // }
+    @Override
+    public void remove() {
+        super.remove();
+
+        this.removeExtraEntities();
+    }
 
     @Override
     public void setNonInterpolating(boolean nonInterpolating) {

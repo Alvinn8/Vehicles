@@ -5,6 +5,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 public abstract class AirVehicle extends Vehicle {
     /**
      * The milliseconds the last shot flare will expire. When a flare is fired this will be
