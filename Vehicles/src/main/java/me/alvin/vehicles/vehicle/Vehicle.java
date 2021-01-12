@@ -47,6 +47,7 @@ public abstract class Vehicle {
     public static final NamespacedKey VEHICLE_ID = new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle_id");
     public static final NamespacedKey LOCATION = new NamespacedKey(SVCraftVehicles.getInstance(), "location");
     public static final NamespacedKey CURRENT_FUEL = new NamespacedKey(SVCraftVehicles.getInstance(), "current_fuel");
+    public static final NamespacedKey COLOR = new NamespacedKey(SVCraftVehicles.getInstance(), "color");
 
     // Constants
 
@@ -108,7 +109,15 @@ public abstract class Vehicle {
         this.currentFuel = Objects.requireNonNull(data.get(CURRENT_FUEL, PersistentDataType.INTEGER));
         this.location    = Objects.requireNonNull(data.get(LOCATION, ExtraPersistentDataTypes.LOCATION));
 
-        Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), this::setupActions, 1L);
+        Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
+            this.setupActions();
+            if (this.canBeColored()) {
+                Integer rgbColor = data.get(COLOR, PersistentDataType.INTEGER);
+                if (rgbColor != null) {
+                    this.setColor(Color.fromRGB(rgbColor));
+                }
+            }
+        }, 1L);
 
         DebugUtil.debug("Loaded vehicle of class " + this.getClass().getName());
     }
@@ -163,6 +172,7 @@ public abstract class Vehicle {
         data.set(VEHICLE_ID,   PersistentDataType.STRING,         this.getType().getId());
         data.set(CURRENT_FUEL, PersistentDataType.INTEGER,        this.currentFuel);
         data.set(LOCATION,     ExtraPersistentDataTypes.LOCATION, this.location);
+        if (this.canBeColored()) data.set(COLOR, PersistentDataType.INTEGER, this.getColor().asRGB());
 
         DebugUtil.debug("Saving vehicle");
     }
@@ -255,6 +265,28 @@ public abstract class Vehicle {
         if (!this.canBeColored()) return false;
 
         return this.colorArmorStand(this.entity, color);
+    }
+
+    /**
+     * Get the current color of the vehicle. Will return {@code null}
+     * if the vehicle can not be colored.
+     *
+     * @return The color of the vehicle
+     */
+    public Color getColor() {
+        if (!this.canBeColored()) return null;
+
+        EntityEquipment equipment = this.entity.getEquipment();
+        if (equipment == null) return null;
+        ItemStack helmet = equipment.getHelmet();
+        if (helmet == null) return null;
+        ItemMeta meta = helmet.getItemMeta();
+        if (meta == null) return null;
+        if (meta instanceof LeatherArmorMeta) {
+            return ((LeatherArmorMeta) meta).getColor();
+        } else {
+            return null;
+        }
     }
 
     /**
