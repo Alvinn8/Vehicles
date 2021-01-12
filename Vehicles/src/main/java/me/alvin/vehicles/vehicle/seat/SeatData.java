@@ -27,18 +27,21 @@ public class SeatData {
         DebugUtil.debug("Constructing seat data");
         Location location = seat.getRelativePos().relativeTo(vehicle.getLocation());
         location.subtract(0, RIDER_ENTITY_Y_OFFSET, 0);
-        this.riderEntity = new NIE<>(location, EntityType.MULE);
-        Mule mule = this.riderEntity.getEntity();
-        mule.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
-        mule.addPassenger(passenger);
-        mule.setTamed(true);
-        mule.setAI(false);
-        mule.setCarryingChest(true);
-        mule.setInvulnerable(true);
-        mule.setSilent(true);
+
+        Mule spawnedMule = location.getWorld().spawn(location, Mule.class, mule -> {
+            mule.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
+            mule.setTamed(true);
+            mule.setAI(false);
+            mule.setCarryingChest(true);
+            mule.setInvulnerable(true);
+            mule.setSilent(true);
+        });
+        spawnedMule.addPassenger(passenger);
         if (passenger instanceof Player) {
-            vehicle.updateMenuInventory(mule.getInventory(), (Player) passenger);
+            vehicle.updateMenuInventory(spawnedMule.getInventory(), (Player) passenger);
         }
+
+        this.riderEntity = new NIE<>(spawnedMule);
         this.passenger = passenger;
     }
 

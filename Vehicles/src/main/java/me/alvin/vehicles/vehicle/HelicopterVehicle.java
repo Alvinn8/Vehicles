@@ -110,8 +110,8 @@ public abstract class HelicopterVehicle extends Vehicle {
             this.location.setYaw(helicopterYaw + difference * 0.15F);
         }
 
-        // Forward movement
-        double yawRadians = Math.toRadians(this.location.getYaw());
+        // Movement
+        double yawRadians = Math.toRadians(this.location.getYaw() + (this.movement.side * -90));
         double xz = Math.cos(Math.toRadians(this.location.getPitch()));
 
         double dirX = (-xz * Math.sin(yawRadians)) * this.speed / 20;
@@ -128,31 +128,13 @@ public abstract class HelicopterVehicle extends Vehicle {
             this.velX *= 0.85;
             this.velZ *= 0.85;
         }
-        // this.velY *= 0.85;
         this.speed *= 0.95;
-
-        // Temp Debug
-        if (this.getDriver() != null) {
-            if (this.getDriver() instanceof Player) {
-                Player player = (Player) this.getDriver();
-                Objective objective = player.getScoreboard().getObjective("tmp");
-                if (objective == null) {
-                    objective = player.getScoreboard().registerNewObjective("tmp", "dummy", "Variables");
-                    objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-                }
-                objective.getScore("velY").setScore((int) (this.velY * 100));
-                objective.getScore("speed").setScore((int) (this.speed * 100));
-                objective.getScore("velX").setScore((int) (this.velX * 100));
-                objective.getScore("velY").setScore((int) (this.velY * 100));
-                objective.getScore("velZ").setScore((int) (this.velZ * 100));
-                objective.getScore("currentFuel").setScore(this.getCurrentFuel());
-                objective.getScore("onGround").setScore(this.onGround ? 1 : 0);
-            }
-        }
     }
 
     @Override
     public void calculateGravity() {
+        if (this.velY == 0 && this.onGround) return;
+
         this.onGround = false;
         if (this.velY < 0) {
             for (RelativePos gravityPoint : this.getType().getGravityPoints()) {
@@ -161,12 +143,10 @@ public abstract class HelicopterVehicle extends Vehicle {
                 Block block = location.getBlock();
                 if (!block.isPassable()) {
                     this.onGround = true;
+                    this.velY = 0;
                     break;
                 }
             }
-        }
-        if (this.onGround && this.velY < 0) {
-            this.velY = 0;
         }
     }
 

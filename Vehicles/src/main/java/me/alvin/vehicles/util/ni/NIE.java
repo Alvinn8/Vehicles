@@ -44,14 +44,14 @@ public class NIE<T extends Entity> {
     /**
      * Utility method to spawn an Area Effect Cloud
      * @param location The location to spawn the entity at
-     * @return The newly created Area Effect Cloud set up and ready for working as an NIE base
+     * @return The newly created Area Effect Cloud set up and ready for working as a NIE base
      */
     public static AreaEffectCloud spawnAEC(Location location) {
-        AreaEffectCloud aec = (AreaEffectCloud) location.getWorld().spawnEntity(location.clone().subtract(0, 0.5, 0), EntityType.AREA_EFFECT_CLOUD);
-        aec.setRadius(0);
-        aec.setDuration(-1);
-        aec.setWaitTime(Integer.MIN_VALUE);
-        return aec;
+        return location.getWorld().spawn(location.clone().subtract(0, 0.5, 0), AreaEffectCloud.class, aec -> {
+            aec.setRadius(0);
+            aec.setDuration(-1);
+            aec.setWaitTime(Integer.MIN_VALUE);
+        });
     }
 
     public AreaEffectCloud getAreaEffectCloud() {
