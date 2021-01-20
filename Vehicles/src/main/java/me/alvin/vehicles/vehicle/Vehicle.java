@@ -110,7 +110,7 @@ public abstract class Vehicle {
         this.location    = Objects.requireNonNull(data.get(LOCATION, ExtraPersistentDataTypes.LOCATION));
 
         Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
-            this.setupActions();
+            this.postInit();
             if (this.canBeColored()) {
                 Integer rgbColor = data.get(COLOR, PersistentDataType.INTEGER);
                 if (rgbColor != null) {
@@ -137,12 +137,32 @@ public abstract class Vehicle {
         DebugUtil.debug(creator.getName() + " spawned a vehicle of class " + this.getClass().getName());
 
         Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
-            this.setupActions();
+            this.postInit();
             this.updateRenderedLocation();
             if (this.canBeColored()) {
                 this.setColor(this.getDefaultColor());
             }
         }, 1L);
+    }
+
+    /**
+     * Called when the vehicle has been fully constructed.
+     *
+     * <p>This is the method that registers all {@link VehicleAction}s for the vehicle.</p>
+     *
+     * <p>Override this method if want to register other actions or call methods
+     * like {@link #setMaxFuel(int)}, etc. Calling the super method is recommended
+     * as it will register important actions like a fuel action if the vehicle uses
+     * fuel and the switch seat action.</p>
+     *
+     * <p>This method is called right after a vehicle has been spawned or loaded.
+     * More specifically, 1 tick after the vehicle has been loaded (as this can
+     * not be called in the Vehicle constructor as when that is called, methods
+     * overridden by subclasses will not yet have been overridden).</p>
+     */
+    protected void postInit() {
+        if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
+        if (this.getType().getSeats().size() > 1) this.addAction(SwitchSeatAction.INSTANCE);
     }
 
     /**
@@ -408,6 +428,22 @@ public abstract class Vehicle {
     }
 
     /**
+     * Determine whether the vehicle can accelerate. The return value of this
+     * method determines whether the vehicle should be able to accelerate
+     * forward in the {@link #updateSpeed()} method.
+     *
+     * <p>The default implementation is, for vehicles that use fuel, to check
+     * whether it has fuel</p>
+     *
+     * @return Whether the vehicle can accelerate forward.
+     */
+    public boolean canAccelerate() {
+        if (!this.usesFuel()) return true;
+
+        return this.currentFuel > 0;
+    }
+
+    /**
      * Update the speed of the vehicle based on the driver movement. This method
      * does not update the velocity.
      * <br>
@@ -418,7 +454,7 @@ public abstract class Vehicle {
      * @see #tick()
      */
     public void updateSpeed() {
-        if (this.movement.forward != 0 && Math.abs(this.speed) < this.getMaxSpeed()) {
+        if (this.movement.forward != 0 && Math.abs(this.speed) < this.getMaxSpeed() && this.canAccelerate()) {
             this.speed += this.getAccelerationSpeed() * this.movement.forward;
         }
 
@@ -828,17 +864,6 @@ public abstract class Vehicle {
     public void addAction(VehicleAction action) {
         if (action instanceof VehicleMenuAction) this.menuActions.add((VehicleMenuAction) action);
         if (action instanceof VehicleClickAction) this.clickActions.add((VehicleClickAction) action);
-    }
-
-    /**
-     * This is the method that registers all {@link VehicleAction}s for the vehicle.
-     * Override this method if want to register other actions. Calling the super
-     * method is recommended as it will register important actions like a fuel
-     * action if the vehicle uses fuel.
-     */
-    protected void setupActions() {
-        if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
-        if (this.getType().getSeats().size() > 1) this.addAction(SwitchSeatAction.INSTANCE);
     }
 
     public VehicleMenuAction getMenuAction(int index) {

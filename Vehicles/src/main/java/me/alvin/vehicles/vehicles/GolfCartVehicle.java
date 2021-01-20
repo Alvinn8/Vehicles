@@ -22,6 +22,14 @@ public class GolfCartVehicle extends GroundVehicle {
     }
 
     @Override
+    protected void postInit() {
+        super.postInit();
+
+        this.setMaxFuel(10000);
+        this.setFuelUsage(1);
+    }
+
+    @Override
     public @NotNull VehicleType getType() {
         return VehicleTypes.GOLF_CART_VEHICLE;
     }

@@ -57,7 +57,7 @@ public abstract class HelicopterVehicle extends Vehicle {
 
     @Override
     public void updateSpeed() {
-        if (this.movement.forward != 0 && Math.abs(this.speed) < this.getMaxSpeed() && this.isFlying()) {
+        if (this.movement.forward != 0 && Math.abs(this.speed) < this.getMaxSpeed() && this.canAccelerate() && this.isFlying()) {
             this.speed += this.getAccelerationSpeed() * this.movement.forward;
         }
 

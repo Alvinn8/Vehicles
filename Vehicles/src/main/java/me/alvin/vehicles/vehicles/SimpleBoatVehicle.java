@@ -25,6 +25,14 @@ public class SimpleBoatVehicle extends BoatVehicle {
         this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/boat"));
     }
 
+    @Override
+    protected void postInit() {
+        super.postInit();
+
+        this.setMaxFuel(10000);
+        this.setFuelUsage(1);
+    }
+
     @NotNull
     @Override
     public VehicleType getType() {

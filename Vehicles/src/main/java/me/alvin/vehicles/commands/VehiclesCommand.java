@@ -180,6 +180,24 @@ public class VehiclesCommand extends SubCommandedCommand {
                         return 1;
                     })
             )
+            .then(
+                Cmd.literal("refuel")
+                    .executes(context -> {
+                        Player player = Cmd.getSource(context).getPlayerRequired();
+                        Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
+                        if (vehicle != null) {
+                            if (vehicle.usesFuel()) {
+                                vehicle.setCurrentFuel(vehicle.getMaxFuel());
+                                player.sendMessage(ChatColor.GREEN + "The vehicle has been refueled.");
+                            } else {
+                                player.sendMessage(ChatColor.RED + "The vehicle you are in does not use fuel");
+                            }
+                        } else {
+                            player.sendMessage(ChatColor.RED + "Please sit in the vehicle you want to refuel");
+                        }
+                        return 1;
+                    })
+            )
         );
     }
     @Deprecated

@@ -43,6 +43,14 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
         this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor"));
     }
 
+    @Override
+    protected void postInit() {
+        super.postInit();
+
+        this.setMaxFuel(20000);
+        this.setFuelUsage(5);
+    }
+
     @NotNull
     @Override
     public VehicleType getType() {

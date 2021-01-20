@@ -20,14 +20,16 @@ public class TestVehicle extends GroundVehicle {
         super(location, creator, reason);
 
         this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/golf_cart"));
-
-        this.setMaxFuel(10000);
-        this.setFuelUsage(1);
     }
 
     @Override
-    protected void setupActions() {
-        super.setupActions();
+    protected void postInit() {
+        super.postInit();
+
+        this.setMaxFuel(10000);
+        this.setFuelUsage(1);
+
+        // Actions
         this.addAction(new TestArrowAction());
     }
 
