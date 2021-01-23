@@ -887,7 +887,8 @@ public abstract class Vehicle {
      * @param player The player that opens the menu.
      */
     public void updateMenuInventory(AbstractHorseInventory inventory, Player player) {
-        inventory.setSaddle(new ItemStack(Material.BARRIER));
+        // The saddle slot has to be empty, otherwise the seats will stand up when
+        // pressing space and players will get a jump progress bar.
 
         for (int i = 0; i < this.menuActions.size(); i++) {
             VehicleMenuAction menuAction = this.menuActions.get(i);

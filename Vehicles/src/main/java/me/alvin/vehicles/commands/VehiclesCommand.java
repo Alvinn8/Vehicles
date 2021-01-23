@@ -6,12 +6,14 @@ import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.actions.TestArrowAction;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.ColorUtil;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
+import me.alvin.vehicles.vehicle.seat.Seat;
 import me.svcraft.minigames.command.SubCommandedCommand;
 import me.svcraft.minigames.command.brigadier.Cmd;
 import me.svcraft.minigames.command.subcommand.SubCommand;
@@ -29,8 +31,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 
 public class VehiclesCommand extends SubCommandedCommand {
     private final static DynamicCommandExceptionType UNKNOWN_VEHICLE_TYPE = new DynamicCommandExceptionType(type -> new LiteralMessage("Unknown vehicle type '"+ type +"'"));
@@ -195,6 +201,39 @@ public class VehiclesCommand extends SubCommandedCommand {
                         } else {
                             player.sendMessage(ChatColor.RED + "Please sit in the vehicle you want to refuel");
                         }
+                        return 1;
+                    })
+            )
+            .then(
+                Cmd.literal("update")
+                    .executes(context -> {
+                        CommandSource source = Cmd.getSource(context);
+                        source.getCommandSender().sendMessage("This command is meant to be used to update seats, please connect via intellij debug");
+                        Player player = source.getPlayerRequired();
+                        Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
+
+                        Set<Seat> seats = vehicle.getType().getSeats();
+                        seats.clear();
+                        Seat driverSeat = new Seat(new RelativePos(0.35, 0.3, 0.1));
+                        seats.add(driverSeat);
+                        seats.add(new Seat(new RelativePos(-0.35, 0.3, 0.1)));
+                        seats.add(new Seat(new RelativePos(0.35, 0.3, -1.0)));
+                        seats.add(new Seat(new RelativePos(-0.35, 0.3, -1.0)));
+
+                        try {
+                            Field field = VehicleType.class.getDeclaredField("driverSeat");
+                            field.setAccessible(true);
+
+                            Field modifiersField = Field.class.getDeclaredField("modifiers");
+                            modifiersField.setAccessible(true);
+                            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+                            field.set(vehicle.getType(), driverSeat);
+                        } catch (NoSuchFieldException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+
+                        source.getCommandSender().sendMessage("Seats updated (for car!!!)");
                         return 1;
                     })
             )

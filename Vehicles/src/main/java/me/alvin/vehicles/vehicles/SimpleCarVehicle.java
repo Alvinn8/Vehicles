@@ -10,39 +10,42 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class GolfCartVehicle extends GroundVehicle {
-    public GolfCartVehicle(@NotNull ArmorStand entity) {
+public class SimpleCarVehicle extends GroundVehicle {
+    public SimpleCarVehicle(@NotNull ArmorStand entity) {
         super(entity);
     }
 
-    public GolfCartVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
+    public SimpleCarVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
 
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/golf_cart"));
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/car"));
+    }
+
+    @Override
+    protected void postInit() {
+        super.postInit();
+
+        this.setMaxFuel(20000);
+        this.setFuelUsage(2);
     }
 
     @Override
     public @NotNull VehicleType getType() {
-        return VehicleTypes.GOLF_CART_VEHICLE;
+        return VehicleTypes.SIMPLE_CAR_VEHICLE;
     }
 
     @Override
     public float getAccelerationSpeed() {
-        return 0.75F;
+        return 1.0F;
     }
 
     @Override
     public float getMaxSpeed() {
-        return 20;
+        return 30;
     }
 
     @Override
     public boolean canBeColored() {
         return true;
-    }
-
-    @Override
-    public boolean usesFuel() {
-        return false;
     }
 }
