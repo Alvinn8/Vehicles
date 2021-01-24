@@ -13,10 +13,11 @@ import me.alvin.vehicles.vehicle.action.VehicleClickAction;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -31,6 +32,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,6 +78,14 @@ public abstract class Vehicle {
     protected double velY = 0.0;
     protected double velZ = 0.0;
     public final VehicleSteeringMovement movement = new VehicleSteeringMovement();
+    // Collision
+    /** @see #collidesRough(Location) */
+    protected BoundingBox roughBoundingBox = new BoundingBox(-2, 0, -2, 2, 2, 2);
+    /**
+     * The block the vehicle is colliding with, this is set inside
+     * {@link #collidesRough(Location)} TODO set in collidesPrecise
+     */
+    protected Block collisionBlock;
     // Fuel
     private int currentFuel = 0;
     private int fuelUsage = 0;
@@ -472,7 +482,8 @@ public abstract class Vehicle {
     public abstract void calculateVelocity();
 
     /**
-     * Apply the vehicle's current velocity to the {@link #location} field.
+     * Apply the vehicle's current velocity to the {@link #location} field
+     * to what extent is possible taking collision into account.
      *
      * <p>This does not update where the entity is rendered. For that use
      * {@link #updateRenderedLocation()}.</p>
@@ -480,7 +491,32 @@ public abstract class Vehicle {
      * @see #tick()
      */
     public void applyVelocity() {
+        String text;
+        double oldX = this.location.getX();
+        double oldY = this.location.getY();
+        double oldZ = this.location.getZ();
         this.location.add(this.velX, this.velY, this.velZ);
+        if (this.collides(this.location)) {
+            boolean collisionResolved = false;
+            if (this.collisionBlock.getY() == this.location.getBlockY()) {
+                Location upLocation = this.collisionBlock.getLocation().add(0, 1, 0);
+                if (!this.collides(upLocation)) {
+                    this.location.add(0, 1, 0);
+                    collisionResolved = true;
+                }
+            }
+            if (!collisionResolved) {
+                this.location.setX(oldX);
+                this.location.setY(oldY);
+                this.location.setZ(oldZ);
+            }
+            text = "We had collision" + (collisionResolved ? " but it was resolved" : " that wasn't resolved, collision block: "+ this.collisionBlock.getX() + " " + this.collisionBlock.getY() + " " + this.collisionBlock.getZ() + ", this.y: "+ this.location.getY());
+        } else {
+            text = "No collision :)";
+        }
+        if (this.getDriver() instanceof Player) {
+            ((Player) this.getDriver()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(text));
+        }
     }
 
     /**
@@ -577,6 +613,67 @@ public abstract class Vehicle {
         }
     }
     // </editor-fold>
+
+    // Collision
+    //<editor-fold desc="Collision related methods" defaultstate="collapsed">
+
+    /**
+     * Set the size of the vehicle to a specified width
+     * and height. This updates the {@link #roughBoundingBox}
+     * field with the specified values.
+     *
+     * <p>This sets the rough width and height of the vehicle,
+     * this should focus on including every part of the vehicle
+     * for every angle rather than fitting as good as possible.</p>
+     *
+     * @param width The width of the vehicle
+     * @param height The height of the vehicle
+     */
+    public void setSize(double width, double height) {
+        this.roughBoundingBox.resize(-width, 0, -width, width, height, width);
+    }
+
+    /**
+     * Check if the vehicle collides with blocks at the specified
+     * location, first calculating roughly, and if no collision is
+     * found false is returned. Otherwise it is calculated precisely.
+     *
+     * @param location The location of the vehicle to check collision for.
+     * @return Whether the vehicle is colliding with blocks.
+     */
+    public boolean collides(Location location) {
+        return this.collidesRough(location);
+    }
+
+    /**
+     * Whether the vehicle collides with blocks at the specified
+     * location, calculated roughly. If this method returns true
+     * it isn't guaranteed that the vehicle is colliding, but if
+     * this method returns false, the vehicle definitely isn't
+     * colliding.
+     *
+     * <p>Also sets the {@link #collisionBlock} field to the block
+     * that the vehicle collided with.</p>
+     *
+     * @param location The location of the vehicle to check collision for.
+     * @return Whether the vehicle is colliding with blocks, roughly calculated.
+     */
+    public boolean collidesRough(Location location) {
+        for (double offsetX = this.roughBoundingBox.getMinX(); offsetX <= this.roughBoundingBox.getMaxX(); offsetX++) {
+            for (double offsetY = this.roughBoundingBox.getMinY(); offsetY <= this.roughBoundingBox.getMaxY(); offsetY++) {
+                for (double offsetZ = this.roughBoundingBox.getMinZ(); offsetZ <= this.roughBoundingBox.getMaxZ(); offsetZ++) {
+                    Location blockLocation = location.clone().add(offsetX, offsetY + 0.001D, offsetZ);
+                    Block block = blockLocation.getBlock();
+                    if (!block.isPassable()) {
+                        this.collisionBlock = block;
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    //</editor-fold>
 
     // Fuel
     //<editor-fold desc="Fuel related methods" defaultstate="collapsed">
