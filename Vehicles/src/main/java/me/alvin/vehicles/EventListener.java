@@ -1,5 +1,6 @@
 package me.alvin.vehicles;
 
+import me.alvin.vehicles.crafting.VehicleCraftingTable;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.action.VehicleClickAction;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
@@ -7,15 +8,20 @@ import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.seat.SeatData;
+import me.svcraft.minigames.SVCraft;
+import me.svcraft.minigames.tileentity.CustomTileEntity;
 import me.svcraft.minigames.world.event.PerWorldListener;
 import org.bukkit.Chunk;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -28,7 +34,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
-import java.util.List;
 import java.util.Map;
 
 public class EventListener implements PerWorldListener {
@@ -86,18 +91,15 @@ public class EventListener implements PerWorldListener {
 
     @EventHandler
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
-        DebugUtil.debug("PlayerInteractAtEntityEvent called");
         Entity entity = event.getRightClicked();
         if (!(entity instanceof ArmorStand)) return;
         if (!SVCraftVehicles.getInstance().getLoadedVehicles().containsKey(entity)) return;
-
-        DebugUtil.debug("PlayerInteractAtEntityEvent if checks passed");
 
         Vehicle vehicle = SVCraftVehicles.getInstance().getLoadedVehicles().get(entity);
 
         event.setCancelled(true);
         if (vehicle.isPassenger(event.getPlayer())) return; // Player is already in vehicle
-        DebugUtil.debug("success?: " + vehicle.addPassenger(event.getPlayer()));
+        vehicle.addPassenger(event.getPlayer());
     }
 
     @EventHandler
@@ -157,6 +159,17 @@ public class EventListener implements PerWorldListener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
+
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Block clickedBlock = event.getClickedBlock();
+            if (clickedBlock != null) {
+                CustomTileEntity tileEntity = SVCraft.getInstance().getTileEntityManager().getTileEntity(clickedBlock);
+                if (tileEntity instanceof VehicleCraftingTable) {
+                    ((VehicleCraftingTable) tileEntity).openInventory(event.getPlayer());
+                    event.setCancelled(true);
+                }
+            }
+        }
 
         Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(event.getPlayer());
         if (vehicle != null) {

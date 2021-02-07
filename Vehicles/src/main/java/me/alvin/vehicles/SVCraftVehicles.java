@@ -2,6 +2,7 @@ package me.alvin.vehicles;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import me.alvin.vehicles.commands.VehiclesCommand;
+import me.alvin.vehicles.crafting.VehicleCraftingTableBlock;
 import me.alvin.vehicles.nms.NMS;
 import me.alvin.vehicles.nms.NMS_v1_16_R2;
 import me.alvin.vehicles.nms.NMS_v1_16_R3;
@@ -14,6 +15,7 @@ import me.svcraft.minigames.config.Config;
 import me.svcraft.minigames.plugin.SVCraftPlugin;
 import me.svcraft.minigames.resourcepack.ResourcePack;
 import me.svcraft.minigames.resourcepack.modelmanagerdata.RPCModelManagerData;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
@@ -60,6 +62,9 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         // this.registerCommand("vehicles", new VehiclesCommand(this));
         this.registerCommand(VehiclesCommand::register);
         this.registerPerWorldEvents(new EventListener());
+
+        this.registerCustomBlock(new NamespacedKey(SVCraft.getInstance(), "vehicle_crafting_table"), CustomBlocks.VEHICLE_CRAFTING_TABLE);
+        this.registerItem(CustomItems.VEHICLE_CRAFTING_TABLE);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
 
