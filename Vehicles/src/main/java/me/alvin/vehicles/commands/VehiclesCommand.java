@@ -19,6 +19,7 @@ import me.svcraft.minigames.command.brigadier.Cmd;
 import me.svcraft.minigames.command.subcommand.SubCommand;
 import me.svcraft.minigames.nms.CommandSource;
 import me.svcraft.minigames.plugin.SVCraftPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
@@ -68,10 +69,11 @@ public class VehiclesCommand extends SubCommandedCommand {
                                 Player player = source.getPlayerRequired();
 
                                 Vehicle vehicle = vehicleType.construct(player.getLocation(), player, VehicleSpawnReason.COMMAND);
-                                if (player.getGameMode() == GameMode.CREATIVE && vehicle.usesFuel()) {
-                                    vehicle.setCurrentFuel(vehicle.getMaxFuel());
-                                }
-
+                                Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
+                                    if (player.getGameMode() == GameMode.CREATIVE && vehicle.usesFuel()) {
+                                        vehicle.setCurrentFuel(vehicle.getMaxFuel());
+                                    }
+                                }, 1L);
                                 SVCraftVehicles.getInstance().getLoadedVehicles().put(vehicle.getEntity(), vehicle);
                                 return 1;
                             })

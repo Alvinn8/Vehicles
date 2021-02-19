@@ -64,7 +64,9 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         this.registerPerWorldEvents(new EventListener());
 
         this.registerCustomBlock(new NamespacedKey(SVCraft.getInstance(), "vehicle_crafting_table"), CustomBlocks.VEHICLE_CRAFTING_TABLE);
+
         this.registerItem(CustomItems.VEHICLE_CRAFTING_TABLE);
+        this.registerItem(CustomItems.FUEL);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
 
