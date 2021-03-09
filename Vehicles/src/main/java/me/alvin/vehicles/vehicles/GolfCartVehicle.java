@@ -23,7 +23,7 @@ public class GolfCartVehicle extends GroundVehicle {
 
     @Override
     public @NotNull VehicleType getType() {
-        return VehicleTypes.GOLF_CART_VEHICLE;
+        return VehicleTypes.GOLF_CART;
     }
 
     @Override

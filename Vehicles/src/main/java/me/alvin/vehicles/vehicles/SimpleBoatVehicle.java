@@ -36,7 +36,7 @@ public class SimpleBoatVehicle extends BoatVehicle {
     @NotNull
     @Override
     public VehicleType getType() {
-        return VehicleTypes.SIMPLE_BOAT_VEHICLE;
+        return VehicleTypes.SIMPLE;
     }
 
     @Override

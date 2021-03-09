@@ -4,6 +4,7 @@ import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicles.GolfCartVehicle;
+import me.alvin.vehicles.vehicles.MotorcycleVehicle;
 import me.alvin.vehicles.vehicles.SimpleBoatVehicle;
 import me.alvin.vehicles.vehicles.SimpleCarVehicle;
 import me.alvin.vehicles.vehicles.SimpleHelicopterVehicle;
@@ -13,15 +14,16 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class VehicleTypes {
-    public static final VehicleType TEST_VEHICLE;
-    public static final VehicleType GOLF_CART_VEHICLE;
-    public static final VehicleType SIMPLE_BOAT_VEHICLE;
-    public static final VehicleType SIMPLE_HELICOPTER_VEHICLE;
-    public static final VehicleType SIMPLE_CAR_VEHICLE;
+    public static final VehicleType TEST;
+    public static final VehicleType GOLF_CART;
+    public static final VehicleType SIMPLE;
+    public static final VehicleType SIMPLE_HELICOPTER;
+    public static final VehicleType SIMPLE_CAR;
+    public static final VehicleType MOTORCYCLE;
 
     static {
         // Test Vehicle
-        TEST_VEHICLE = new VehicleType(
+        TEST = new VehicleType(
                 "test",
                 TestVehicle.class,
                 TestVehicle::new,
@@ -43,7 +45,7 @@ public class VehicleTypes {
         );
 
         // Golf Cart
-        GOLF_CART_VEHICLE = new VehicleType(
+        GOLF_CART = new VehicleType(
             "golf_cart",
             GolfCartVehicle.class,
             GolfCartVehicle::new,
@@ -65,7 +67,7 @@ public class VehicleTypes {
         );
 
         // Simple Boat
-        SIMPLE_BOAT_VEHICLE = new VehicleType(
+        SIMPLE = new VehicleType(
                 "simple_boat",
                 SimpleBoatVehicle.class,
                 SimpleBoatVehicle::new,
@@ -85,7 +87,7 @@ public class VehicleTypes {
         );
 
         // Simple Helicopter
-        SIMPLE_HELICOPTER_VEHICLE = new VehicleType(
+        SIMPLE_HELICOPTER = new VehicleType(
                 "simple_helicopter",
                 SimpleHelicopterVehicle.class,
                 SimpleHelicopterVehicle::new,
@@ -109,7 +111,7 @@ public class VehicleTypes {
         );
 
         // Simple Car
-        SIMPLE_CAR_VEHICLE = new VehicleType(
+        SIMPLE_CAR = new VehicleType(
             "simple_car",
             SimpleCarVehicle.class,
             SimpleCarVehicle::new,
@@ -132,13 +134,33 @@ public class VehicleTypes {
             // Extra gravity points
             null
         );
+
+        // Motorcycle
+        MOTORCYCLE = new VehicleType(
+            "motorcycle",
+            MotorcycleVehicle.class,
+            MotorcycleVehicle::new,
+            MotorcycleVehicle::new,
+            // Seat
+            new Seat(new RelativePos(0.35, 0.3, 0.1)),
+            null,
+            // TODO: wheels and gravity points
+            // Wheels
+            Arrays.asList(
+                new Wheel(new RelativePos(1.125, 0.4375, 1.5), 0.4375F),
+                new Wheel(new RelativePos(-0.35, 0.4375, 1.5), 0.4375F)
+            ),
+            // Extra gravity points
+            null
+        );
     }
 
     public static void register(VehicleRegistry registry) {
-        registry.registerVehicle(TEST_VEHICLE);
-        registry.registerVehicle(GOLF_CART_VEHICLE);
-        registry.registerVehicle(SIMPLE_BOAT_VEHICLE);
-        registry.registerVehicle(SIMPLE_HELICOPTER_VEHICLE);
-        registry.registerVehicle(SIMPLE_CAR_VEHICLE);
+        registry.registerVehicle(TEST);
+        registry.registerVehicle(GOLF_CART);
+        registry.registerVehicle(SIMPLE);
+        registry.registerVehicle(SIMPLE_HELICOPTER);
+        registry.registerVehicle(SIMPLE_CAR);
+        registry.registerVehicle(MOTORCYCLE);
     }
 }

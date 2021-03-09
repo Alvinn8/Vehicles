@@ -36,7 +36,7 @@ public class TestVehicle extends GroundVehicle {
     @NotNull
     @Override
     public VehicleType getType() {
-        return VehicleTypes.TEST_VEHICLE;
+        return VehicleTypes.TEST;
     }
 
     @Override

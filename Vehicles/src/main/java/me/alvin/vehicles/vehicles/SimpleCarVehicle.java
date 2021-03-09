@@ -31,7 +31,7 @@ public class SimpleCarVehicle extends GroundVehicle {
 
     @Override
     public @NotNull VehicleType getType() {
-        return VehicleTypes.SIMPLE_CAR_VEHICLE;
+        return VehicleTypes.SIMPLE_CAR;
     }
 
     @Override

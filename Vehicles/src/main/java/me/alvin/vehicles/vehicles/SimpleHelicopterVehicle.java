@@ -54,7 +54,7 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     @NotNull
     @Override
     public VehicleType getType() {
-        return VehicleTypes.SIMPLE_HELICOPTER_VEHICLE;
+        return VehicleTypes.SIMPLE_HELICOPTER;
     }
 
     @Override
