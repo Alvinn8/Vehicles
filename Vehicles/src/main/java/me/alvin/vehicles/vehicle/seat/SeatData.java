@@ -25,7 +25,7 @@ public class SeatData {
 
     public SeatData(@NotNull Vehicle vehicle, @NotNull Seat seat, @NotNull LivingEntity passenger) {
         DebugUtil.debug("Constructing seat data");
-        Location location = seat.getRelativePos().relativeTo(vehicle.getLocation());
+        Location location = seat.getRelativePos().relativeTo(vehicle.getLocation(), vehicle.getRoll());
         location.subtract(0, RIDER_ENTITY_Y_OFFSET, 0);
 
         Mule spawnedMule = location.getWorld().spawn(location, Mule.class, mule -> {

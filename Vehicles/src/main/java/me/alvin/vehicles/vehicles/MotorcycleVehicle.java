@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class MotorcycleVehicle extends GroundVehicle {
     private float roll;
     private float rollChange;
@@ -50,8 +52,18 @@ public class MotorcycleVehicle extends GroundVehicle {
     }
 
     @Override
+    public float getRoll() {
+        return this.roll;
+    }
+
+    @Override
     public void updateRenderedLocation() {
         NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY() - 1.5D, this.location.getZ(), this.location.getYaw(), this.location.getPitch());
+
+        if (this.roll != 0) {
+            if (Math.abs(this.roll) < 1) this.roll = 0;
+            else this.roll *= 0.75;
+        }
 
         // Calculate roll
         if (this.movement.side < 0) {
@@ -70,10 +82,6 @@ public class MotorcycleVehicle extends GroundVehicle {
         // Apply roll
         if (oldRoll != this.roll) {
             this.entity.setHeadPose(new EulerAngle(0, 0, Math.toRadians(this.roll)));
-        }
-        if (this.roll != 0) {
-            if (Math.abs(this.roll) < 1) this.roll = 0;
-            else this.roll *= 0.75;
         }
     }
 

@@ -51,7 +51,7 @@ public class SimpleBoatVehicle extends BoatVehicle {
 
     @Override
     public void spawnParticles() {
-        this.location.getWorld().spawnParticle(Particle.CLOUD, PARTICLE_OFFSET.relativeTo(this.location), 5, 0.5, 0.5, 0.5, 0);
+        this.location.getWorld().spawnParticle(Particle.CLOUD, PARTICLE_OFFSET.relativeTo(this.location, this.getRoll()), 5, 0.5, 0.5, 0.5, 0);
     }
 
     @Override

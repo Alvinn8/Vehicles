@@ -52,7 +52,7 @@ public abstract class BoatVehicle extends Vehicle {
     public void calculateGravity() {
         boolean fall = true;
         for (RelativePos gravityPoint : this.getType().getGravityPoints()) {
-            Location location = gravityPoint.relativeTo(this.location);
+            Location location = gravityPoint.relativeTo(this.location, this.getRoll());
             location.subtract(0.0D, 0.001D, 0.0D);
             Block block = location.getBlock();
             BlockData blockData = block.getBlockData();

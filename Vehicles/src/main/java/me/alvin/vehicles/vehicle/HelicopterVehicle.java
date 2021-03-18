@@ -138,7 +138,7 @@ public abstract class HelicopterVehicle extends Vehicle {
         this.onGround = false;
         if (this.velY < 0) {
             for (RelativePos gravityPoint : this.getType().getGravityPoints()) {
-                Location location = gravityPoint.relativeTo(this.location);
+                Location location = gravityPoint.relativeTo(this.location, this.getRoll());
                 location.subtract(0.0D, 0.001D, 0.0D);
                 Block block = location.getBlock();
                 if (!block.isPassable()) {

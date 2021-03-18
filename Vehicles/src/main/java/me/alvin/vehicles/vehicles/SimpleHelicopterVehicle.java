@@ -37,9 +37,9 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     }
 
     private void spawnExtraEntities() {
-        this.tailEntity = spawnArmorStand(TAIL_OFFSET.relativeTo(this.location));
+        this.tailEntity = spawnArmorStand(TAIL_OFFSET.relativeTo(this.location, this.getRoll()));
         this.tailEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_tail"));
-        this.rotorEntity = spawnArmorStand(ROTOR_OFFSET.relativeTo(this.location));
+        this.rotorEntity = spawnArmorStand(ROTOR_OFFSET.relativeTo(this.location, this.getRoll()));
         this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor"));
     }
 
@@ -71,10 +71,10 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     public void updateRenderedLocation() {
         NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
 
-        Location tailLocation = TAIL_OFFSET.relativeTo(this.location);
+        Location tailLocation = TAIL_OFFSET.relativeTo(this.location, this.getRoll());
         NIArmorStand.setLocation(this.tailNiEntity, this.tailEntity, tailLocation.getX(), tailLocation.getY(), tailLocation.getZ(), tailLocation.getYaw(), 0);
 
-        Location rotorLocation = ROTOR_OFFSET.relativeTo(this.location);
+        Location rotorLocation = ROTOR_OFFSET.relativeTo(this.location, this.getRoll());
         NIArmorStand.setLocation(this.rotorNiEntity, this.rotorEntity, rotorLocation.getX(), rotorLocation.getY(), rotorLocation.getZ(), this.rotorRotation, 0);
     }
 

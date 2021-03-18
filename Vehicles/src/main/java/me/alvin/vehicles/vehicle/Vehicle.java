@@ -361,6 +361,20 @@ public abstract class Vehicle {
     }
 
     /**
+     * Get the current roll rotation of the vehicle. Subclasses can override this
+     * method and return a value other than 0 when that fits, but by default this
+     * method will simply return 0.
+     *
+     * <p>This is used in RelativePos calculations to align points correctly when
+     * vehicles are rolling.</p>
+     *
+     * @return The vehicle's current roll.
+     */
+    public float getRoll() {
+        return 0.0F;
+    }
+
+    /**
      * Called each tick.
      *
      * <p>The default tick cycle is:</p>
@@ -385,7 +399,7 @@ public abstract class Vehicle {
         if (this.isAttached()) return;
 
         if (this.debugRelativePos != null) {
-            Location location = this.debugRelativePos.relativeTo(this.location);
+            Location location = this.debugRelativePos.relativeTo(this.location, this.getRoll());
             location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
         }
 
@@ -526,7 +540,7 @@ public abstract class Vehicle {
     public void calculateGravity() {
         boolean fall = true;
         for (RelativePos gravityPoint : this.getType().getGravityPoints()) {
-            Location location = gravityPoint.relativeTo(this.location);
+            Location location = gravityPoint.relativeTo(this.location, this.getRoll());
             location.subtract(0.0D, 0.001D, 0.0D);
             Block block = location.getBlock();
             if (!block.isPassable()) {
@@ -564,7 +578,7 @@ public abstract class Vehicle {
             SeatData seatData = entry.getValue();
             if (!seatData.isValid()) continue;
 
-            Location location = seat.getRelativePos().relativeTo(this.location);
+            Location location = seat.getRelativePos().relativeTo(this.location, this.getRoll());
             if (seat.hasOffsetYaw()) location.setYaw(location.getYaw() + seat.getOffsetYaw());
             seatData.getRiderEntity().setLocation(location.getX(), location.getY() - SeatData.RIDER_ENTITY_Y_OFFSET, location.getZ(), location.getYaw(), location.getPitch());
         }
@@ -814,7 +828,7 @@ public abstract class Vehicle {
         for (Seat seat : this.getType().getSeats()) {
             if (this.getPassenger(seat) != null) continue;
 
-            double distance = seat.getRelativePos().relativeTo(vehicleLocation).distanceSquared(location);
+            double distance = seat.getRelativePos().relativeTo(vehicleLocation, this.getRoll()).distanceSquared(location);
             if (closestDistance == 0 || distance < closestDistance) {
                 closestSeat = seat;
                 closestDistance = distance;
@@ -939,7 +953,7 @@ public abstract class Vehicle {
             Vehicle attachedVehicle = entry.getKey();
             AttachmentData attachmentData = entry.getValue();
 
-            attachedVehicle.setLocation(attachmentData.getRelativePos().relativeTo(this.location));
+            attachedVehicle.setLocation(attachmentData.getRelativePos().relativeTo(this.location, this.getRoll()));
             attachedVehicle.updateRenderedLocation();
             attachedVehicle.updateRenderedPassengerPositions();
         }

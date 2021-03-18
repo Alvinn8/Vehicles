@@ -142,7 +142,7 @@ public class VehicleTypes {
             MotorcycleVehicle::new,
             MotorcycleVehicle::new,
             // Seat
-            new Seat(new RelativePos(0.35, 0.3, 0.1)),
+            new Seat(new RelativePos(0, 1.3, 0.1)),
             null,
             // TODO: wheels and gravity points
             // Wheels
