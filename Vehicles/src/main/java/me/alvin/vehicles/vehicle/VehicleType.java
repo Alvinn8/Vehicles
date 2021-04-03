@@ -1,6 +1,7 @@
 package me.alvin.vehicles.vehicle;
 
 import me.alvin.vehicles.util.RelativePos;
+import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -28,17 +29,15 @@ public class VehicleType {
     private final Seat driverSeat;
     private final Function<ArmorStand, Vehicle> loadConstructor;
     private final VehicleSpawnConstructorFunction spawnConstructor;
-    private final List<Wheel> wheels;
-    private final List<RelativePos> gravityPoints;
+    private final VehicleCollisionType collisionType;
 
     public VehicleType(@NotNull String id,
                        @NotNull Class<? extends Vehicle> vehicleClass,
                        @NotNull Function<ArmorStand, Vehicle> loadConstructor,
                        @NotNull VehicleSpawnConstructorFunction spawnConstructor,
+                       @NotNull VehicleCollisionType collisionType,
                        @NotNull Seat driverSeat,
-                       @Nullable List<Seat> seats,
-                       @Nullable List<Wheel> wheels,
-                       @Nullable List<RelativePos> extraGravityPoints) {
+                       @Nullable List<Seat> seats) {
         this.id = id;
         this.vehicleClass = vehicleClass;
         this.loadConstructor = loadConstructor;
@@ -48,17 +47,7 @@ public class VehicleType {
         if (seats != null) seatSet.addAll(seats);
         this.seats = seatSet;
         this.driverSeat = driverSeat;
-        this.wheels = wheels != null ? wheels : Collections.emptyList();
-
-        List<RelativePos> gravityPoints = new ArrayList<>();
-        for (Wheel wheel : this.wheels) {
-            gravityPoints.add(wheel.getRelativePos().subtract(0, wheel.getRadius(), 0));
-        }
-        if (extraGravityPoints != null) gravityPoints.addAll(extraGravityPoints);
-
-        // There has to be at least one gravity point
-        if (gravityPoints.isEmpty()) gravityPoints.add(new RelativePos(0, 0, 0));
-        this.gravityPoints = Collections.unmodifiableList(gravityPoints);
+        this.collisionType = collisionType;
     }
 
     /**
@@ -124,26 +113,13 @@ public class VehicleType {
         return this.driverSeat;
     }
 
-    public boolean hasWheels() {
-        return this.wheels.size() > 0;
-    }
-
-    @NotNull
-    public List<Wheel> getWheels() {
-        return this.wheels;
-    }
-
     /**
-     * Get the (relative) positions of where to calculate
-     * the gravity for the vehicle.
+     * Get the collision type the vehicle will use for
+     * collision checks.
      *
-     * For vehicles with wheels this will be the wheel
-     * locations - their radius (bottom of the wheeels)
-     *
-     * @return A list of relative positions to calculate gravity at.
+     * @return The collision type
      */
-    @NotNull
-    public List<RelativePos> getGravityPoints() {
-        return this.gravityPoints;
+    public VehicleCollisionType getCollisionType() {
+        return this.collisionType;
     }
 }

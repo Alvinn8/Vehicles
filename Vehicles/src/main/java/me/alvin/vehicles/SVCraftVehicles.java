@@ -15,6 +15,7 @@ import me.svcraft.minigames.config.Config;
 import me.svcraft.minigames.plugin.SVCraftPlugin;
 import me.svcraft.minigames.resourcepack.ResourcePack;
 import me.svcraft.minigames.resourcepack.modelmanagerdata.RPCModelManagerData;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
@@ -69,6 +70,8 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         this.registerItem(CustomItems.FUEL);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
+
+        Bukkit.getMessenger().registerOutgoingPluginChannel(SVCraftVehicles.getInstance(), "vehicles:vehicle-bb");
 
         this.registry = new VehicleRegistry();
 

@@ -1,6 +1,6 @@
 package me.alvin.vehicles.vehicle;
 
-import me.alvin.vehicles.util.RelativePos;
+import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,8 +24,11 @@ public abstract class BoatVehicle extends Vehicle {
 
     @Override
     public void updateSpeed() {
-        if (false && !this.inWater) {
-            this.speed *= 0.8;
+        if (!this.inWater) {
+            if (this.movement.forward != 0 && Math.abs(this.speed) < this.getMaxSpeed() && this.canAccelerate()) {
+                this.speed += this.getAccelerationSpeed() * 0.2 * this.movement.forward;
+            }
+
             if (Math.abs(this.speed) < 0.01) {
                 this.speed = 0;
             }
@@ -45,30 +48,36 @@ public abstract class BoatVehicle extends Vehicle {
         this.velX = direction.getX();
         this.velZ = direction.getZ();
 
-        this.speed *= 0.95;
+        if (this.inWater) {
+            this.speed *= 0.95;
+        } else {
+            this.speed *= 0.8;
+        }
+
+        // Prepare for collision checks
+        this.inWater = false;
     }
 
     @Override
-    public void calculateGravity() {
-        boolean fall = true;
-        for (RelativePos gravityPoint : this.getType().getGravityPoints()) {
-            Location location = gravityPoint.relativeTo(this.location, this.getRoll());
-            location.subtract(0.0D, 0.001D, 0.0D);
-            Block block = location.getBlock();
-            BlockData blockData = block.getBlockData();
-            this.inWater = block.getType() == Material.WATER
-                    || (blockData instanceof Waterlogged && ((Waterlogged) blockData).isWaterlogged());
-            if (this.inWater || !block.isPassable()) {
-                fall = false;
-                break;
-            }
+    protected boolean doCollisionBlockCheck(double x, double y, double z, Axis axis) {
+        Block block = this.location.getWorld().getBlockAt(Location.locToBlock(x), Location.locToBlock(y), Location.locToBlock(z));
+        BlockData blockData = block.getBlockData();
+        boolean check;
+        if (axis == Axis.Y) {
+            // On only the Y axis can water be collided with
+            boolean inWater = block.getType() == Material.WATER
+                || (blockData instanceof Waterlogged && ((Waterlogged) blockData).isWaterlogged());
+
+            check = inWater || !block.isPassable();
+            if (!this.inWater && inWater) this.inWater = true;
+        } else {
+            check = !block.isPassable();
         }
-        if (fall) {
-            this.velY -= GRAVITY;
-            this.location.add(0, this.velY, 0);
-        } else if (this.velY != 0) {
-            this.velY = 0;
-            this.location.setY(this.location.getBlockY() + 1);
+
+        if (check) {
+            if (this.highestCollisionBlock == null || block.getY() > this.highestCollisionBlock.getY()) this.highestCollisionBlock = block;
+            return true;
         }
+        return false;
     }
 }

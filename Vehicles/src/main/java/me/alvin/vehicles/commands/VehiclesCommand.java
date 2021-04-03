@@ -12,6 +12,7 @@ import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
+import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.svcraft.minigames.SVCraft;
 import me.svcraft.minigames.command.brigadier.Cmd;
@@ -28,12 +29,14 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.StringUtil;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.UUID;
 
@@ -283,6 +286,33 @@ public class VehiclesCommand {
                     // newLocation.add(0, 0.35, 0);
                     entity.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, location, 1, 0, 0,0, 0);
                     entity.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, newLocation, 1, 0, 0,0, 0);
+                    return 1;
+                })
+            )
+            .then(
+                Cmd.literal("showboundingbox")
+                .executes(context -> {
+                    CommandSource source = Cmd.getSource(context);
+                    Player player = source.getPlayerRequired();
+                    Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
+                    if (vehicle == null) {
+                        player.sendMessage("§cYou are not in a vehicle.");
+                        return 1;
+                    }
+
+                    ByteBuffer buf = ByteBuffer.allocate(60);
+                    buf.put((byte) 1);
+                    buf.putInt(vehicle.getEntity().getEntityId());
+                    BoundingBox boundingBox = ((AABBCollision) vehicle.getType().getCollisionType()).getBoundingBox();
+                    buf.putFloat((float) boundingBox.getMaxX()); // Width
+                    buf.putFloat((float) boundingBox.getMaxY()); // Height
+                    player.sendPluginMessage(SVCraftVehicles.getInstance(), "vehicles:vehicle-bb", buf.array());
+                    return 1;
+                })
+            )
+            .then(
+                Cmd.literal("hijack")
+                .executes(context -> {
                     return 1;
                 })
             )

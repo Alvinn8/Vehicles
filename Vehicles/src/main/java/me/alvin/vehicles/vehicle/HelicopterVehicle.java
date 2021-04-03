@@ -27,11 +27,6 @@ public abstract class HelicopterVehicle extends Vehicle {
      * start increasing.
      */
     protected float rotorSpeed = 0;
-    /**
-     * Whether the vehicle is on the ground or not. Is updated in
-     * {@link #calculateGravity()} and is used in some calculations.
-     */
-    protected boolean onGround = true;
 
     public HelicopterVehicle(@NotNull ArmorStand entity) {
         super(entity);
@@ -39,13 +34,6 @@ public abstract class HelicopterVehicle extends Vehicle {
 
     public HelicopterVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
-    }
-
-    /**
-     * @return Whether the helicopter is on the ground or not.
-     */
-    public boolean isOnGround() {
-        return this.onGround;
     }
 
     /**
@@ -84,14 +72,14 @@ public abstract class HelicopterVehicle extends Vehicle {
         this.rotorRotation += this.rotorSpeed;
 
         // Y Velocity
-        if (this.movement.space && this.rotorSpeed > 15) {
+        if (this.movement.space && this.rotorSpeed > 15 && this.canAccelerate()) {
             this.velY += 0.01;
-        } else if (this.isFlying()) {
+        } else {
             // Not pressing space and the vehicle is flying
             this.velY -= 0.01;
         }
 
-        if (this.velY > 0.5)  this.velY =  0.5;
+        if (this.velY >  0.5) this.velY =  0.5;
         if (this.velY < -0.5) this.velY = -0.5;
 
         this.calculateGravity();
@@ -128,26 +116,16 @@ public abstract class HelicopterVehicle extends Vehicle {
             this.velX *= 0.85;
             this.velZ *= 0.85;
         }
+        if (Math.abs(this.velX) < 0.0001) this.velX = 0;
+        if (Math.abs(this.velY) < 0.0001) this.velY = 0;
+        if (Math.abs(this.velZ) < 0.0001) this.velZ = 0;
         this.speed *= 0.95;
     }
 
     @Override
     public void calculateGravity() {
-        if (this.velY == 0 && this.onGround) return;
-
-        this.onGround = false;
-        if (this.velY < 0) {
-            for (RelativePos gravityPoint : this.getType().getGravityPoints()) {
-                Location location = gravityPoint.relativeTo(this.location, this.getRoll());
-                location.subtract(0.0D, 0.001D, 0.0D);
-                Block block = location.getBlock();
-                if (!block.isPassable()) {
-                    this.onGround = true;
-                    this.velY = 0;
-                    break;
-                }
-            }
-        }
+        // no gravity :)
+        // this.velY -= 0.0001;
     }
 
     @Override

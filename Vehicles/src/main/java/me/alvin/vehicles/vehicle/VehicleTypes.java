@@ -2,6 +2,7 @@ package me.alvin.vehicles.vehicle;
 
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.RelativePos;
+import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicles.GolfCartVehicle;
 import me.alvin.vehicles.vehicles.MotorcycleVehicle;
@@ -28,20 +29,13 @@ public class VehicleTypes {
                 TestVehicle.class,
                 TestVehicle::new,
                 TestVehicle::new,
+                // Collision
+                new AABBCollision(2, 2),
                 // Seats
                 new Seat(new RelativePos(0.75, 1, -0.4)),
                 Collections.singletonList(
                         new Seat(new RelativePos(0.1, 1, -0.4))
-                ),
-                // Wheels
-                Arrays.asList(
-                        new Wheel(new RelativePos(1.125, 0.4375, 1.5), 0.4375F),
-                        new Wheel(new RelativePos(-0.35, 0.4375, 1.5), 0.4375F),
-                        new Wheel(new RelativePos(1.125, 0.4375, -1.14), 0.4375F),
-                        new Wheel(new RelativePos(-0.3, 0.4375, -1.14), 0.4375F)
-                ),
-                // Extra gravity points
-                null
+                )
         );
 
         // Golf Cart
@@ -50,20 +44,13 @@ public class VehicleTypes {
             GolfCartVehicle.class,
             GolfCartVehicle::new,
             GolfCartVehicle::new,
+            // Collision
+            new AABBCollision(2, 2),
             // Seats
             new Seat(new RelativePos(0.75, 1, -0.4)),
             Collections.singletonList(
                 new Seat(new RelativePos(0.1, 1, -0.4))
-            ),
-            // Wheels
-            Arrays.asList(
-                new Wheel(new RelativePos(1.125, 0.4375, 1.5), 0.4375F),
-                new Wheel(new RelativePos(-0.35, 0.4375, 1.5), 0.4375F),
-                new Wheel(new RelativePos(1.125, 0.4375, -1.14), 0.4375F),
-                new Wheel(new RelativePos(-0.3, 0.4375, -1.14), 0.4375F)
-            ),
-            // Extra gravity points
-            null
+            )
         );
 
         // Simple Boat
@@ -72,17 +59,12 @@ public class VehicleTypes {
                 SimpleBoatVehicle.class,
                 SimpleBoatVehicle::new,
                 SimpleBoatVehicle::new,
+                // Collision
+                new AABBCollision(2, 2),
                 // Seats
                 new Seat(new RelativePos(0, 0, 0.1)),
                 Collections.singletonList(
                         new Seat(new RelativePos(0, 0, -1))
-                ),
-                // Wheels
-                null,
-                // Extra gravity points
-                Arrays.asList(
-                        new RelativePos(0, 0, 1),
-                        new RelativePos(0, 0, -1)
                 )
         );
 
@@ -92,21 +74,14 @@ public class VehicleTypes {
                 SimpleHelicopterVehicle.class,
                 SimpleHelicopterVehicle::new,
                 SimpleHelicopterVehicle::new,
+                // Collision
+                new AABBCollision(4, 2.5),
                 // Seats
                 new Seat(new RelativePos(0.2, 0.5, 0.1)),
                 Arrays.asList(
                         new Seat(new RelativePos(-0.5, 0.5, 0.1)),
                         new Seat(new RelativePos(0, 0.5, -1)),
                         new Seat(new RelativePos(-0.5, 0.5, -1))
-                ),
-                // Wheels
-                null,
-                // Extra gravity points
-                Arrays.asList(
-                        new RelativePos(0.6, 0, 0),
-                        new RelativePos(-0.8, 0, 0),
-                        new RelativePos(0.6, 0, -2),
-                        new RelativePos(-0.8, 0, -2)
                 )
         );
 
@@ -116,23 +91,15 @@ public class VehicleTypes {
             SimpleCarVehicle.class,
             SimpleCarVehicle::new,
             SimpleCarVehicle::new,
+            // Collision
+            new AABBCollision(2.5, 2),
             // Seats
             new Seat(new RelativePos(0.35, 0.3, 0.1)),
             Arrays.asList(
                 new Seat(new RelativePos(-0.35, 0.3, 0.1)),
                 new Seat(new RelativePos(0.35, 0.3, -1.0)),
                 new Seat(new RelativePos(-0.35, 0.3, -1.0))
-            ),
-            // TODO: wheels (they are taken from golfcart)
-            // Wheels
-            Arrays.asList(
-                new Wheel(new RelativePos(1.125, 0.4375, 1.5), 0.4375F),
-                new Wheel(new RelativePos(-0.35, 0.4375, 1.5), 0.4375F),
-                new Wheel(new RelativePos(1.125, 0.4375, -1.14), 0.4375F),
-                new Wheel(new RelativePos(-0.3, 0.4375, -1.14), 0.4375F)
-            ),
-            // Extra gravity points
-            null
+            )
         );
 
         // Motorcycle
@@ -141,16 +108,10 @@ public class VehicleTypes {
             MotorcycleVehicle.class,
             MotorcycleVehicle::new,
             MotorcycleVehicle::new,
+            // Collision
+            new AABBCollision(2, 1.5),
             // Seat
-            new Seat(new RelativePos(0, 1.3, 0.1)),
-            null,
-            // TODO: wheels and gravity points
-            // Wheels
-            Arrays.asList(
-                new Wheel(new RelativePos(1.125, 0.4375, 1.5), 0.4375F),
-                new Wheel(new RelativePos(-0.35, 0.4375, 1.5), 0.4375F)
-            ),
-            // Extra gravity points
+            new Seat(new RelativePos(-0.1, 1.3, -0.8)),
             null
         );
     }

@@ -11,13 +11,15 @@ import me.alvin.vehicles.util.ni.NIArmorStand;
 import me.alvin.vehicles.vehicle.action.VehicleAction;
 import me.alvin.vehicles.vehicle.action.VehicleClickAction;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
+import me.alvin.vehicles.vehicle.collision.AABBCollision;
+import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -33,6 +35,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -78,14 +81,15 @@ public abstract class Vehicle {
     protected double velY = 0.0;
     protected double velZ = 0.0;
     public final VehicleSteeringMovement movement = new VehicleSteeringMovement();
-    // Collision
-    /** @see #collidesRough(Location) */
-    protected BoundingBox roughBoundingBox = new BoundingBox(-2, 0, -2, 2, 2, 2);
     /**
-     * The block the vehicle is colliding with, this is set inside
-     * {@link #collidesRough(Location)} TODO set in collidesPrecise
+     * Whether the vehicle is on the ground or not. Is updated in
+     * {@link #applyVelocity()}.
      */
-    protected Block collisionBlock;
+    protected boolean onGround = true;
+    /**
+     * The highest block the vehicle is colliding with.
+     */
+    protected Block highestCollisionBlock;
     // Fuel
     private int currentFuel = 0;
     private int fuelUsage = 0;
@@ -496,6 +500,26 @@ public abstract class Vehicle {
     public abstract void calculateVelocity();
 
     /**
+     * Do a block collision check, checking if there is a block at the
+     * specified location and whether that block is passable.
+     *
+     * @param x X coordinate to check.
+     * @param y Y coordinate to check.
+     * @param z Z coordinate to check.
+     * @param axis The axis the check is being made in
+     * @return true if collision was found, otherwise false
+     */
+    protected boolean doCollisionBlockCheck(double x, double y, double z, Axis axis) {
+        // DebugUtil.debugLocation(new Location(this.location.getWorld(), x, y, z));
+        Block block = this.location.getWorld().getBlockAt(Location.locToBlock(x), Location.locToBlock(y), Location.locToBlock(z));
+        if (!block.isPassable()) {
+            if (this.highestCollisionBlock == null || block.getY() > this.highestCollisionBlock.getY()) this.highestCollisionBlock = block;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Apply the vehicle's current velocity to the {@link #location} field
      * to what extent is possible taking collision into account.
      *
@@ -505,56 +529,74 @@ public abstract class Vehicle {
      * @see #tick()
      */
     public void applyVelocity() {
-        String text;
-        double oldX = this.location.getX();
-        double oldY = this.location.getY();
-        double oldZ = this.location.getZ();
-        this.location.add(this.velX, this.velY, this.velZ);
-        if (this.collides(this.location)) {
-            boolean collisionResolved = false;
-            if (this.collisionBlock.getY() == this.location.getBlockY()) {
-                Location upLocation = this.collisionBlock.getLocation().add(0, 1, 0);
-                if (!this.collides(upLocation)) {
-                    this.location.add(0, 1, 0);
-                    collisionResolved = true;
+        VehicleCollisionType collisionType = this.getType().getCollisionType();
+        if (collisionType instanceof AABBCollision) {
+            double x = this.location.getX();
+            double y = this.location.getY();
+            double z = this.location.getZ();
+            double newX = x + this.velX;
+            double newY = y + this.velY;
+            double newZ = z + this.velZ;
+            double oldVelX = this.velX;
+            double oldVelZ = this.velZ;
+            BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();
+            this.onGround = false;
+            this.highestCollisionBlock = null;
+            // x-collision
+            if (this.velX != 0) {
+                for (double offsetY = boundingBox.getMaxY(); offsetY >= boundingBox.getMinY(); offsetY--) {
+                    for (double offsetZ = boundingBox.getMinZ(); offsetZ <= boundingBox.getMaxZ(); offsetZ++) {
+                        if (this.doCollisionBlockCheck(newX + (this.velX > 0 ? boundingBox.getMaxX() : boundingBox.getMinX()), y + offsetY, z + offsetZ, Axis.X)) {
+                            this.velX = 0;
+                            break;
+                        }
+                    }
                 }
             }
-            if (!collisionResolved) {
-                this.location.setX(oldX);
-                this.location.setY(oldY);
-                this.location.setZ(oldZ);
+            // y-collision
+            if (this.velY != 0) {
+                for (double offsetX = boundingBox.getMinX(); offsetX <= boundingBox.getMaxX(); offsetX++) {
+                    for (double offsetZ = boundingBox.getMinZ(); offsetZ <= boundingBox.getMaxZ(); offsetZ++) {
+                        if (this.doCollisionBlockCheck(x + offsetX, newY + (this.velY > 0 ? boundingBox.getMaxY() : boundingBox.getMinY()), z + offsetZ, Axis.Y)) {
+                            if (this.velY < 0) this.onGround = true;
+                            this.velY = 0;
+                            break;
+                        }
+                    }
+                }
             }
-            text = "We had collision" + (collisionResolved ? " but it was resolved" : " that wasn't resolved, collision block: "+ this.collisionBlock.getX() + " " + this.collisionBlock.getY() + " " + this.collisionBlock.getZ() + ", this.y: "+ this.location.getY());
-        } else {
-            text = "No collision :)";
+            // z-collision
+            if (this.velZ != 0) {
+                for (double offsetX = boundingBox.getMinX(); offsetX <= boundingBox.getMaxX(); offsetX++) {
+                    for (double offsetY = boundingBox.getMaxY(); offsetY >= boundingBox.getMinY(); offsetY--) {
+                        if (this.doCollisionBlockCheck(x + offsetX, y + offsetY, newZ + (this.velZ > 0 ? boundingBox.getMaxZ() : boundingBox.getMinZ()), Axis.Z)) {
+                            this.velZ = 0;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (this.highestCollisionBlock != null && this.highestCollisionBlock.getY() == this.location.getBlockY()/* && !this.collides(this.location.clone().add(this.velX, this.velY, this.velZ).add(0, 1.01, 0))*/) {
+                this.location.setY(this.location.getBlockY() + 1);
+                this.velX = oldVelX;
+                this.velZ = oldVelZ;
+            }
         }
-        if (this.getDriver() instanceof Player) {
-            ((Player) this.getDriver()).spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(text));
-        }
+
+        // Apply velocity
+        this.location.add(this.velX, this.velY, this.velZ);
     }
 
     /**
-     * Calculate if the vehicle should fall due to gravity.
-     * Called inside {@link #calculateVelocity()}
+     * Add the gravity to the vehicle's velocity. Subclasses can override
+     * this method to for example not apply gravity at certain times.
+     *
+     * <p>Called inside {@link #calculateVelocity()}</p>
+     *
+     * @see #tick()
      */
     public void calculateGravity() {
-        boolean fall = true;
-        for (RelativePos gravityPoint : this.getType().getGravityPoints()) {
-            Location location = gravityPoint.relativeTo(this.location, this.getRoll());
-            location.subtract(0.0D, 0.001D, 0.0D);
-            Block block = location.getBlock();
-            if (!block.isPassable()) {
-                fall = false;
-                break;
-            }
-        }
-        if (fall) {
-            this.velY -= GRAVITY;
-            this.location.add(0, this.velY, 0);
-        } else if (this.velY != 0) {
-            this.velY = 0;
-            this.location.setY(this.location.getBlockY() + 1);
-        }
+        this.velY -= GRAVITY;
     }
 
     /**
@@ -628,66 +670,45 @@ public abstract class Vehicle {
     }
     // </editor-fold>
 
-    // Collision
-    //<editor-fold desc="Collision related methods" defaultstate="collapsed">
-
     /**
-     * Set the size of the vehicle to a specified width
-     * and height. This updates the {@link #roughBoundingBox}
-     * field with the specified values.
-     *
-     * <p>This sets the rough width and height of the vehicle,
-     * this should focus on including every part of the vehicle
-     * for every angle rather than fitting as good as possible.</p>
-     *
-     * @param width The width of the vehicle
-     * @param height The height of the vehicle
+     * @return Whether the vehicle is on the ground or not.
      */
-    public void setSize(double width, double height) {
-        this.roughBoundingBox.resize(-width, 0, -width, width, height, width);
+    public boolean isOnGround() {
+        return this.onGround;
     }
 
     /**
      * Check if the vehicle collides with blocks at the specified
-     * location, first calculating roughly, and if no collision is
-     * found false is returned. Otherwise it is calculated precisely.
+     * location.
+     *
+     * <p>Also sets the {@link #highestCollisionBlock} field to the highest
+     * block that the vehicle collided with.</p>
      *
      * @param location The location of the vehicle to check collision for.
+     *                 This does not have to be the actual location of the vehicle
      * @return Whether the vehicle is colliding with blocks.
      */
     public boolean collides(Location location) {
-        return this.collidesRough(location);
-    }
-
-    /**
-     * Whether the vehicle collides with blocks at the specified
-     * location, calculated roughly. If this method returns true
-     * it isn't guaranteed that the vehicle is colliding, but if
-     * this method returns false, the vehicle definitely isn't
-     * colliding.
-     *
-     * <p>Also sets the {@link #collisionBlock} field to the block
-     * that the vehicle collided with.</p>
-     *
-     * @param location The location of the vehicle to check collision for.
-     * @return Whether the vehicle is colliding with blocks, roughly calculated.
-     */
-    public boolean collidesRough(Location location) {
-        for (double offsetX = this.roughBoundingBox.getMinX(); offsetX <= this.roughBoundingBox.getMaxX(); offsetX++) {
-            for (double offsetY = this.roughBoundingBox.getMinY(); offsetY <= this.roughBoundingBox.getMaxY(); offsetY++) {
-                for (double offsetZ = this.roughBoundingBox.getMinZ(); offsetZ <= this.roughBoundingBox.getMaxZ(); offsetZ++) {
-                    Location blockLocation = location.clone().add(offsetX, offsetY + 0.001D, offsetZ);
-                    Block block = blockLocation.getBlock();
-                    if (!block.isPassable()) {
-                        this.collisionBlock = block;
-                        return true;
+        VehicleCollisionType collisionType = this.getType().getCollisionType();
+        if (collisionType instanceof AABBCollision) {
+            BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();
+            for (double offsetX = boundingBox.getMinX(); offsetX <= boundingBox.getMaxX(); offsetX++) {
+                for (double offsetY = boundingBox.getMinY(); offsetY <= boundingBox.getMaxY(); offsetY++) {
+                    for (double offsetZ = boundingBox.getMinZ(); offsetZ <= boundingBox.getMaxZ(); offsetZ++) {
+                        Location blockLocation = location.clone().add(offsetX, offsetY + 0.001D, offsetZ);
+                        Block block = blockLocation.getBlock();
+                        if (!block.isPassable()) {
+                            if (this.highestCollisionBlock == null || block.getY() > this.highestCollisionBlock.getY()) this.highestCollisionBlock = block;
+                            return true;
+                        }
                     }
                 }
             }
+            return false;
+        } else {
+            throw new IllegalStateException("Unknown collision type: "+ collisionType.getClass().getName());
         }
-        return false;
     }
-    //</editor-fold>
 
     // Fuel
     //<editor-fold desc="Fuel related methods" defaultstate="collapsed">
