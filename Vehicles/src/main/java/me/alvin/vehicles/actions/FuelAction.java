@@ -3,11 +3,16 @@ package me.alvin.vehicles.actions;
 import me.alvin.vehicles.CustomItems;
 import me.alvin.vehicles.FuelItem;
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import me.svcraft.minigames.item.CustomItem;
 import me.svcraft.minigames.resourcepack.modelmanagerdata.RPCModelManagerData;
 import me.svcraft.minigames.util.CustomInventory;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -18,6 +23,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -34,7 +40,7 @@ public class FuelAction implements VehicleMenuAction {
         Inventory inventory = Bukkit.createInventory(new CustomInventory() {
             @Override
             public void onClick(InventoryClickEvent event) {
-                System.out.println("Event called");
+                DebugUtil.debug("Event called");
                 if (event.getSlot() == 19 && event.getAction() == InventoryAction.PLACE_ALL) {
                     CustomItem item = CustomItem.getItem(event.getCursor());
                     if (item == CustomItems.FUEL) {
@@ -43,15 +49,15 @@ public class FuelAction implements VehicleMenuAction {
                         vehicle.setCurrentFuel(vehicle.getCurrentFuel() + FuelItem.FUEL_AMOUNT);
                         Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
                             renderInventory(event.getInventory(), vehicle);
-                            System.out.println("hey");
+                            DebugUtil.debug("re-rendering");
                         }, 1);
-                        System.out.println("hi");
+                        DebugUtil.debug("added fuel");
                         return;
                     }
                 }
                 event.setCancelled(true);
             }
-        }, 27, SVCraftVehicles.getInstance().msg("action.fuel.title"));
+        }, 27, Component.text("Fuel"));
 
         renderInventory(inventory, vehicle);
 
@@ -64,10 +70,12 @@ public class FuelAction implements VehicleMenuAction {
         RPCModelManagerData resourcepackData = SVCraftVehicles.getInstance().getResourcepackData();
         double decimalCurrentFuel = vehicle.getMaxFuel() != 0 ? (double) vehicle.getCurrentFuel() / (double) vehicle.getMaxFuel() : 0;
         int percentage = (int) Math.round(decimalCurrentFuel * 100.0D);
+        TextComponent percentageComponent = Component.text(percentage + "%").color(percentage < 0.1 ? NamedTextColor.RED : NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false);
 
         ItemStack percentageItem = resourcepackData.generateItem("svcraftvehicles:item/transparent");
         ItemMeta percentageMeta = percentageItem.getItemMeta();
-        percentageMeta.setDisplayName((percentage < 0.1 ? ChatColor.RED : ChatColor.WHITE) + "" + percentage + "%");
+        percentageMeta.displayName(percentageComponent);
+        percentageMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
         percentageItem.setItemMeta(percentageMeta);
 
         inventory.setItem(0, percentageItem.clone());
@@ -92,6 +100,10 @@ public class FuelAction implements VehicleMenuAction {
                 texture = "svcraftvehicles:item/transparent";
             }
             ItemStack item = resourcepackData.generateItem(texture);
+            ItemMeta meta = item.getItemMeta();
+            meta.displayName(percentageComponent);
+            meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
+            item.setItemMeta(meta);
             inventory.setItem(i, item);
         }
 

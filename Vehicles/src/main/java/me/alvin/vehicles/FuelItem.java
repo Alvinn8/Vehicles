@@ -1,6 +1,8 @@
 package me.alvin.vehicles;
 
 import me.svcraft.minigames.item.CustomItem;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +24,7 @@ public class FuelItem extends CustomItem {
     public ItemStack makeItemStack() {
         ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/fuel");
         ItemMeta meta = item.getItemMeta();
-        meta.setDisplayName("§f" + this.name);
+        meta.displayName(Component.text(this.name).decoration(TextDecoration.ITALIC, false));
         PersistentDataContainer data = meta.getPersistentDataContainer();
         data.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, this.id.toString());
         item.setItemMeta(meta);
