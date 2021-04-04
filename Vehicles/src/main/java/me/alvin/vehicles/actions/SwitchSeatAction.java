@@ -6,12 +6,15 @@ import me.alvin.vehicles.vehicle.seat.Seat;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SwitchSeatAction implements VehicleMenuAction {
     public static final SwitchSeatAction INSTANCE = new SwitchSeatAction();
+
+    private SwitchSeatAction() {}
 
     @Override
     public ItemStack getEntryItem(Vehicle vehicle, Player player) {

@@ -103,6 +103,7 @@ public class EventListener implements PerWorldListener {
         if (event.getEntity() instanceof ArmorStand) {
             ArmorStand entity = (ArmorStand) event.getEntity();
             if (SVCraftVehicles.getInstance().getLoadedVehicles().containsKey(entity)) {
+                // If the main entity of a vehicle is killed, we destroy the vehicle
                 Vehicle vehicle = SVCraftVehicles.getInstance().getLoadedVehicles().get(entity);
                 vehicle.remove();
             }
@@ -192,6 +193,7 @@ public class EventListener implements PerWorldListener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         Vehicle vehicle = SVCraftVehicles.getInstance().getVehiclePartMap().get(event.getEntity());
         if (vehicle != null) {
+            event.setCancelled(true);
             if (event.getDamager() instanceof Player && ((Player) event.getDamager()).getGameMode() == GameMode.CREATIVE) {
                 vehicle.remove();
             } else {

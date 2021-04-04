@@ -1,6 +1,7 @@
 package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.actions.StorageAction;
 import me.alvin.vehicles.vehicle.GroundVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
@@ -24,6 +25,8 @@ public class SimpleCarVehicle extends GroundVehicle {
     @Override
     protected void postInit() {
         super.postInit();
+
+        this.addAction(new StorageAction(9));
 
         this.setMaxFuel(20000);
         this.setFuelUsage(2);

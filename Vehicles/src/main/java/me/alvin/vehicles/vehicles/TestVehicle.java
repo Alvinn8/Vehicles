@@ -1,6 +1,7 @@
 package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.actions.StorageAction;
 import me.alvin.vehicles.actions.TestArrowAction;
 import me.alvin.vehicles.vehicle.GroundVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
@@ -31,6 +32,7 @@ public class TestVehicle extends GroundVehicle {
 
         // Actions
         this.addAction(new TestArrowAction());
+        this.addAction(new StorageAction(18));
     }
 
     @NotNull

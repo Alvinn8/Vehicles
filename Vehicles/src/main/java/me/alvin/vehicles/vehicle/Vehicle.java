@@ -113,6 +113,7 @@ public abstract class Vehicle {
     // Actions
     private final List<VehicleMenuAction> menuActions = new ArrayList<>();
     private final List<VehicleClickAction> clickActions = new ArrayList<>();
+    private final List<VehicleAction> allActions = new ArrayList<>();
 
 
     // Saving and loading
@@ -141,6 +142,9 @@ public abstract class Vehicle {
                 if (rgbColor != null) {
                     this.setColor(Color.fromRGB(rgbColor));
                 }
+            }
+            for (VehicleAction action : this.allActions) {
+                action.onLoad(this, data);
             }
         }, 1L);
 
@@ -198,7 +202,6 @@ public abstract class Vehicle {
         if (collisionType instanceof AABBCollision) {
             BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();
             size = (int) Math.floor(Math.max(boundingBox.getMaxX(), boundingBox.getMaxY()) * 2); // slime size = (slime size in blocks) * 2
-            System.out.println(size);
         }
         int finalSize = size;
         this.slime = this.location.getWorld().spawn(this.location, Slime.class, slime -> {
@@ -254,6 +257,10 @@ public abstract class Vehicle {
         data.set(LOCATION,     ExtraPersistentDataTypes.LOCATION, this.location);
         if (this.canBeColored()) data.set(COLOR, PersistentDataType.INTEGER, this.getColor().asRGB());
 
+        for (VehicleAction action : this.allActions) {
+            action.onSave(this, data);
+        }
+
         DebugUtil.debug("Saving vehicle");
     }
 
@@ -279,6 +286,10 @@ public abstract class Vehicle {
      */
     public void remove() {
         DebugUtil.debug("Removing vehicle");
+
+        for (VehicleAction action : this.allActions) {
+            action.onRemove(this);
+        }
 
         if (this.niEntity != null) this.niEntity.remove();
         this.entity.remove();
@@ -458,7 +469,7 @@ public abstract class Vehicle {
             Location location = this.debugRelativePos.relativeTo(this.location, this.getRoll());
             location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
         }
-        if (false) {
+        if (true) {
             VehicleCollisionType collisionType = this.getType().getCollisionType();
             if (collisionType instanceof AABBCollision) {
                 BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();
@@ -1061,9 +1072,14 @@ public abstract class Vehicle {
         return this.clickActions;
     }
 
+    public List<VehicleAction> getAllActions() {
+        return this.allActions;
+    }
+
     public void addAction(VehicleAction action) {
         if (action instanceof VehicleMenuAction) this.menuActions.add((VehicleMenuAction) action);
         if (action instanceof VehicleClickAction) this.clickActions.add((VehicleClickAction) action);
+        this.allActions.add(action);
     }
 
     public VehicleMenuAction getMenuAction(int index) {
@@ -1092,7 +1108,6 @@ public abstract class Vehicle {
 
         for (int i = 0; i < this.menuActions.size(); i++) {
             VehicleMenuAction menuAction = this.menuActions.get(i);
-            System.out.println(menuAction.getClass().getSimpleName());
             inventory.setItem(i + 2, menuAction.getEntryItem(this, player));
         }
     }

@@ -15,9 +15,11 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
@@ -26,9 +28,23 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 
 public class FuelAction implements VehicleMenuAction {
     public final static FuelAction INSTANCE = new FuelAction();
+
+    private FuelAction() {}
+
+    @Override
+    public void onRemove(Vehicle vehicle) {
+        Location location = vehicle.getLocation();
+        World world = location.getWorld();
+        int fuel = vehicle.getCurrentFuel();
+        while (fuel > FuelItem.FUEL_AMOUNT) {
+            world.dropItemNaturally(location, CustomItems.FUEL.makeItemStack());
+            fuel -= FuelItem.FUEL_AMOUNT;
+        }
+    }
 
     @Override
     public ItemStack getEntryItem(Vehicle vehicle, Player player) {

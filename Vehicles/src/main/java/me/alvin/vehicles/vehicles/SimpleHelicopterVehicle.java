@@ -15,6 +15,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+// TODO: Make the helicopter offset the main entity instead of the
+//       model being offset backwards.
+
 public class SimpleHelicopterVehicle extends HelicopterVehicle {
     public static final RelativePos TAIL_OFFSET = new RelativePos(-0.13, 0.6, -4);
     public static final RelativePos ROTOR_OFFSET = new RelativePos(-0.15, 2.275, -1.65);
@@ -40,8 +43,10 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     private void spawnExtraEntities() {
         this.tailEntity = spawnArmorStand(TAIL_OFFSET.relativeTo(this.location, this.getRoll()));
         this.tailEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_tail"));
+        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.tailEntity, this);
         this.rotorEntity = spawnArmorStand(ROTOR_OFFSET.relativeTo(this.location, this.getRoll()));
         this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor"));
+        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.rotorEntity, this);
     }
 
     @Override

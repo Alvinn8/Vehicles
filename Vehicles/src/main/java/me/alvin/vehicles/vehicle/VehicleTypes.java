@@ -17,7 +17,7 @@ import java.util.Collections;
 public class VehicleTypes {
     public static final VehicleType TEST;
     public static final VehicleType GOLF_CART;
-    public static final VehicleType SIMPLE;
+    public static final VehicleType SIMPLE_BOAT;
     public static final VehicleType SIMPLE_HELICOPTER;
     public static final VehicleType SIMPLE_CAR;
     public static final VehicleType MOTORCYCLE;
@@ -45,7 +45,7 @@ public class VehicleTypes {
             GolfCartVehicle::new,
             GolfCartVehicle::new,
             // Collision
-            new AABBCollision(2, 2),
+            new AABBCollision(1.5, 2.5),
             // Seats
             new Seat(new RelativePos(0.75, 1, -0.4)),
             Collections.singletonList(
@@ -54,7 +54,7 @@ public class VehicleTypes {
         );
 
         // Simple Boat
-        SIMPLE = new VehicleType(
+        SIMPLE_BOAT = new VehicleType(
                 "simple_boat",
                 SimpleBoatVehicle.class,
                 SimpleBoatVehicle::new,
@@ -75,7 +75,7 @@ public class VehicleTypes {
                 SimpleHelicopterVehicle::new,
                 SimpleHelicopterVehicle::new,
                 // Collision
-                new AABBCollision(4, 2.5),
+                new AABBCollision(2, 3),
                 // Seats
                 new Seat(new RelativePos(0.2, 0.5, 0.1)),
                 Arrays.asList(
@@ -92,7 +92,7 @@ public class VehicleTypes {
             SimpleCarVehicle::new,
             SimpleCarVehicle::new,
             // Collision
-            new AABBCollision(2.5, 2),
+            new AABBCollision(2, 2),
             // Seats
             new Seat(new RelativePos(0.35, 0.3, 0.1)),
             Arrays.asList(
@@ -109,7 +109,7 @@ public class VehicleTypes {
             MotorcycleVehicle::new,
             MotorcycleVehicle::new,
             // Collision
-            new AABBCollision(2, 1.5),
+            new AABBCollision(1.5, 1.5),
             // Seat
             new Seat(new RelativePos(-0.1, 1.3, -0.8)),
             null
@@ -119,7 +119,7 @@ public class VehicleTypes {
     public static void register(VehicleRegistry registry) {
         registry.registerVehicle(TEST);
         registry.registerVehicle(GOLF_CART);
-        registry.registerVehicle(SIMPLE);
+        registry.registerVehicle(SIMPLE_BOAT);
         registry.registerVehicle(SIMPLE_HELICOPTER);
         registry.registerVehicle(SIMPLE_CAR);
         registry.registerVehicle(MOTORCYCLE);

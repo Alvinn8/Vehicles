@@ -315,6 +315,18 @@ public class VehiclesCommand {
             .then(
                 Cmd.literal("hijack")
                 .executes(context -> {
+                    CommandSource source = Cmd.getSource(context);
+                    Player player = source.getPlayerRequired();
+                    Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
+                    if (vehicle == null) {
+                        player.sendMessage("§cYou are not in a vehicle.");
+                        return 1;
+                    }
+
+                    BoundingBox boundingBox = ((AABBCollision) vehicle.getType().getCollisionType()).getBoundingBox();
+                    final double width = 1.5;
+                    final double height = 1.5;
+                    boundingBox.resize(-width, 0, -width, width, height, width);
                     return 1;
                 })
             )
