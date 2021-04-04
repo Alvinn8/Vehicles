@@ -75,7 +75,6 @@ public class VehiclesCommand {
                                         vehicle.setCurrentFuel(vehicle.getMaxFuel());
                                     }
                                 }, 1L);
-                                SVCraftVehicles.getInstance().getLoadedVehicles().put(vehicle.getEntity(), vehicle);
                                 return 1;
                             })
                         )
@@ -110,6 +109,9 @@ public class VehiclesCommand {
                                 }
                                 message.append('\n');
                             }
+                            message.append('\n');
+                            message.append("vehiclePartMap size: ");
+                            message.append(SVCraftVehicles.getInstance().getVehiclePartMap().size());
 
                             Cmd.getSource(context).getCommandSender().sendMessage(message.toString());
                             return 1;

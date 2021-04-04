@@ -19,6 +19,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +37,7 @@ public final class SVCraftVehicles extends SVCraftPlugin {
     private VehicleRegistry registry;
     private final Map<ArmorStand, Vehicle> loadedVehicles = new HashMap<>();
     private final Map<LivingEntity, Vehicle> currentVehicleMap = new HashMap<>();
+    private final Map<Entity, Vehicle> vehiclePartMap = new HashMap<>();
 
     private RPCModelManagerData resourcepackData;
 
@@ -148,12 +150,27 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         return this.registry;
     }
 
+    /**
+     * Get a map of all main entities to the vehicle they represent.
+     *
+     * @return The map
+     */
     public Map<ArmorStand, Vehicle> getLoadedVehicles() {
         return this.loadedVehicles;
     }
 
     public Map<LivingEntity, Vehicle> getCurrentVehicleMap() {
         return this.currentVehicleMap;
+    }
+
+    /**
+     * Get a map of all entities that are a port of a vehicle to
+     * the vehicle they are a part of.
+     *
+     * @return The map
+     */
+    public Map<Entity, Vehicle> getVehiclePartMap() {
+        return this.vehiclePartMap;
     }
 
     /**

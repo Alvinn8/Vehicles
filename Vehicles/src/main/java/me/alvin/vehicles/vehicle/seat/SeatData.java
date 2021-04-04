@@ -43,6 +43,9 @@ public class SeatData {
 
         this.riderEntity = new NIE<>(spawnedMule);
         this.passenger = passenger;
+
+        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.riderEntity.getEntity(), vehicle);
+        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.riderEntity.getAreaEffectCloud(), vehicle);
     }
 
     @NotNull
@@ -65,6 +68,8 @@ public class SeatData {
             DebugUtil.debug("Removing "+ this.passenger.getName() + " from current vehicles");
             this.passenger.leaveVehicle();
         }
+        SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.riderEntity.getEntity());
+        SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.riderEntity.getAreaEffectCloud());
         this.riderEntity.remove();
     }
 

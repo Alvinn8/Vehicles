@@ -3,6 +3,7 @@ package me.alvin.vehicles.vehicles;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.util.ni.NIArmorStand;
+import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.HelicopterVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
@@ -70,6 +71,7 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     @Override
     public void updateRenderedLocation() {
         NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
+        NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
 
         Location tailLocation = TAIL_OFFSET.relativeTo(this.location, this.getRoll());
         NIArmorStand.setLocation(this.tailNiEntity, this.tailEntity, tailLocation.getX(), tailLocation.getY(), tailLocation.getZ(), tailLocation.getYaw(), 0);
@@ -91,10 +93,19 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     }
 
     private void removeExtraEntities() {
-        if (this.tailNiEntity != null) this.tailNiEntity.remove();
+        SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.tailEntity);
+        SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.rotorEntity);
+
+        if (this.tailNiEntity != null) {
+            SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.tailNiEntity.getAreaEffectCloud());
+            this.tailNiEntity.remove();
+        }
         else this.tailEntity.remove();
 
-        if (this.rotorNiEntity != null) this.rotorNiEntity.remove();
+        if (this.rotorNiEntity != null) {
+            SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.rotorNiEntity.getAreaEffectCloud());
+            this.rotorNiEntity.remove();
+        }
         else this.rotorEntity.remove();
     }
 

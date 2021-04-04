@@ -24,7 +24,7 @@ public final class DebugUtil {
         } else if (location.getWorld() == null) {
             DebugUtil.debug("location: "+ location);
         } else {
-            location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 1, 0, 0, 0, 0.0D);
+            location.getWorld().spawnParticle(Particle.VILLAGER_HAPPY, location, 1, 0, 0, 0, 0.0D);
         }
     }
 }

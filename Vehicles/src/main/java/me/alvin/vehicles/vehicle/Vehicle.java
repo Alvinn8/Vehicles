@@ -8,6 +8,7 @@ import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.util.ExtraPersistentDataTypes;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.util.ni.NIArmorStand;
+import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.action.VehicleAction;
 import me.alvin.vehicles.vehicle.action.VehicleClickAction;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
@@ -27,13 +28,17 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
@@ -73,6 +78,12 @@ public abstract class Vehicle {
      * be present if the vehicle is in motion.
      */
     protected @Nullable NIArmorStand niEntity;
+    /**
+     * The invisible slime around the vehicle that ensures client send
+     * right click packets.
+     */
+    protected Slime slime;
+    protected NIE<Slime> niSlime;
     public RelativePos debugRelativePos; // TEMP
     // Movement
     protected @NotNull Location location;
@@ -147,6 +158,7 @@ public abstract class Vehicle {
         this.location = location;
         this.location.setPitch(0);
         this.entity = spawnArmorStand(this.location);
+        this.entity.setPersistent(true);
 
         DebugUtil.debug(creator.getName() + " spawned a vehicle of class " + this.getClass().getName());
 
@@ -177,6 +189,29 @@ public abstract class Vehicle {
     protected void postInit() {
         if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
         if (this.getType().getSeats().size() > 1) this.addAction(SwitchSeatAction.INSTANCE);
+        this.spawnSlime();
+    }
+
+    private void spawnSlime() {
+        int size = 3;
+        VehicleCollisionType collisionType = this.getType().getCollisionType();
+        if (collisionType instanceof AABBCollision) {
+            BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();
+            size = (int) Math.floor(Math.max(boundingBox.getMaxX(), boundingBox.getMaxY()) * 2); // slime size = (slime size in blocks) * 2
+            System.out.println(size);
+        }
+        int finalSize = size;
+        this.slime = this.location.getWorld().spawn(this.location, Slime.class, slime -> {
+            slime.setSize(finalSize);
+            slime.setAI(false);
+            slime.setInvulnerable(true);
+            slime.setSilent(true);
+            slime.setPersistent(false);
+            slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
+        });
+        SVCraftVehicles.getInstance().getLoadedVehicles().put(this.getEntity(), this);
+        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.getEntity(), this);
+        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.slime, this);
     }
 
     /**
@@ -194,8 +229,19 @@ public abstract class Vehicle {
         return armorStand;
     }
 
+    /**
+     * Utility method used when spawning armor stands to set them up.
+     *
+     * <p>Note that this method will set the entity's persistent to
+     * false meaning they wont be saved when chunks unload. The main
+     * vehicle entity needs to re-set this back to true.</p>
+     *
+     * @param armorStand The armor stand to set up
+     */
     public static void setupArmorStand(ArmorStand armorStand) {
         armorStand.setGravity(false);
+        armorStand.addDisabledSlots(EquipmentSlot.HEAD);
+        armorStand.setPersistent(false);
     }
 
     /**
@@ -220,6 +266,9 @@ public abstract class Vehicle {
     public void unload() {
         DebugUtil.debug("Unloading vehicle");
         this.save();
+        this.slime.remove();
+        SVCraftVehicles.getInstance().getLoadedVehicles().remove(this.getEntity());
+        SVCraftVehicles.getInstance().getVehiclePartMap().entrySet().removeIf(entry -> entry.getValue() == this);
     }
 
     /**
@@ -238,7 +287,10 @@ public abstract class Vehicle {
             seatData.exitSeat();
         }
 
+        this.slime.remove();
+
         SVCraftVehicles.getInstance().getLoadedVehicles().remove(this.entity, this);
+        SVCraftVehicles.getInstance().getVehiclePartMap().entrySet().removeIf(entry -> entry.getValue() == this);
     }
 
 
@@ -405,6 +457,23 @@ public abstract class Vehicle {
         if (this.debugRelativePos != null) {
             Location location = this.debugRelativePos.relativeTo(this.location, this.getRoll());
             location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
+        }
+        if (false) {
+            VehicleCollisionType collisionType = this.getType().getCollisionType();
+            if (collisionType instanceof AABBCollision) {
+                BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();
+                for (double x = boundingBox.getMinX(); x <= boundingBox.getMaxX(); x += 0.5) {
+                    for (double y = boundingBox.getMinY(); y <= boundingBox.getMaxY(); y += 0.5) {
+                        for (double z = boundingBox.getMinZ(); z <= boundingBox.getMaxZ(); z += 0.5) {
+                            if (x == boundingBox.getMinX() || (Math.abs(x - boundingBox.getMaxX()) < 0.1D)
+                            ||  y == boundingBox.getMinY() || (Math.abs(y - boundingBox.getMaxY()) < 0.1D)
+                            ||  z == boundingBox.getMinZ() || (Math.abs(z - boundingBox.getMaxZ()) < 0.1D)) {
+                                DebugUtil.debugLocation(this.location.clone().add(x, y, z));
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         this.updateSpeed();
@@ -607,6 +676,7 @@ public abstract class Vehicle {
      */
     public void updateRenderedLocation() {
         NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
+        NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
     }
 
     /**
@@ -662,10 +732,13 @@ public abstract class Vehicle {
         if (nonInterpolating) {
             DebugUtil.debug("Creating niEntity");
             this.niEntity = new NIArmorStand(this.entity);
+            this.niSlime = new NIE<>(this.slime);
         } else {
             DebugUtil.debug("Removing niEntity");
             this.niEntity.toArmorStand();
             this.niEntity = null;
+            this.niSlime.toNormalEntity();
+            this.niSlime = null;
         }
     }
     // </editor-fold>
@@ -691,14 +764,14 @@ public abstract class Vehicle {
     public boolean collides(Location location) {
         VehicleCollisionType collisionType = this.getType().getCollisionType();
         if (collisionType instanceof AABBCollision) {
+            double x = this.location.getX();
+            double y = this.location.getY();
+            double z = this.location.getZ();
             BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();
             for (double offsetX = boundingBox.getMinX(); offsetX <= boundingBox.getMaxX(); offsetX++) {
                 for (double offsetY = boundingBox.getMinY(); offsetY <= boundingBox.getMaxY(); offsetY++) {
                     for (double offsetZ = boundingBox.getMinZ(); offsetZ <= boundingBox.getMaxZ(); offsetZ++) {
-                        Location blockLocation = location.clone().add(offsetX, offsetY + 0.001D, offsetZ);
-                        Block block = blockLocation.getBlock();
-                        if (!block.isPassable()) {
-                            if (this.highestCollisionBlock == null || block.getY() > this.highestCollisionBlock.getY()) this.highestCollisionBlock = block;
+                        if (this.doCollisionBlockCheck(x + offsetX, y + offsetY, z + offsetZ + 0.001D, null)) {
                             return true;
                         }
                     }
@@ -875,12 +948,9 @@ public abstract class Vehicle {
         }
 
         if (passenger != null) {
-            DebugUtil.debug("Adding new seat data in seat");
             this.seatData.put(seat, new SeatData(this, seat, passenger));
             SVCraftVehicles.getInstance().getCurrentVehicleMap().put(passenger, this);
-            DebugUtil.debug("Adding "+ passenger.getName() + " to current vehicles");
         }
-        DebugUtil.debug("setPassenger was called. The size of seatData is now "+ this.seatData.size());
     }
 
     /**
@@ -890,9 +960,7 @@ public abstract class Vehicle {
      * @return {@code true} if the passenger entered the vehicle, {@code false} if not
      */
     public boolean addPassenger(@NotNull LivingEntity passenger) {
-        DebugUtil.debug("Entering passenger "+ passenger.getName());
         Seat seat = this.getNearestAvailableSeat(passenger.getLocation());
-        DebugUtil.debugVariable("seat", seat);
         if (seat == null) return false;
         this.setPassenger(seat, passenger);
         return true;

@@ -2,6 +2,7 @@ package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.ni.NIArmorStand;
+import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.GroundVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
@@ -62,6 +63,7 @@ public class MotorcycleVehicle extends GroundVehicle {
     @Override
     public void updateRenderedLocation() {
         NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY() - 1.5D, this.location.getZ(), this.location.getYaw(), this.location.getPitch());
+        NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
 
         if (this.roll != 0) {
             if (Math.abs(this.roll) < 1) this.roll = 0;

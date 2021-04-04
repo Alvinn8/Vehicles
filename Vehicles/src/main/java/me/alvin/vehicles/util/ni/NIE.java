@@ -42,7 +42,8 @@ public class NIE<T extends Entity> {
     }
 
     /**
-     * Utility method to spawn an Area Effect Cloud
+     * Utility method to spawn an Area Effect Cloud.
+     *
      * @param location The location to spawn the entity at
      * @return The newly created Area Effect Cloud set up and ready for working as a NIE base
      */
@@ -51,6 +52,7 @@ public class NIE<T extends Entity> {
             aec.setRadius(0);
             aec.setDuration(-1);
             aec.setWaitTime(Integer.MIN_VALUE);
+            aec.setPersistent(false);
         });
     }
 
@@ -79,10 +81,10 @@ public class NIE<T extends Entity> {
     }
 
     /**
-     * Convert this non interpolating armor stand into a regular armor stand.
+     * Convert this non interpolating entity into a regular entity.
      * This will invalidate this entity making {@link #isValid()} return false.
      *
-     * @return The regular armor stand. This is the same one as {@link #getEntity()}
+     * @return The regular entity. This is the same one as {@link #getEntity()}
      */
     public T toNormalEntity() {
         this.entity.leaveVehicle();

@@ -29,6 +29,6 @@ public class AABBCollision implements VehicleCollisionType {
      * @return The bounding box.
      */
     public BoundingBox getBoundingBox() {
-        return boundingBox.clone();
+        return this.boundingBox;
     }
 }
