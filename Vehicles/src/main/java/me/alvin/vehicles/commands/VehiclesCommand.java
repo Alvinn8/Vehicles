@@ -9,9 +9,11 @@ import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.ColorUtil;
 import me.alvin.vehicles.util.RelativePos;
+import me.alvin.vehicles.vehicle.AttachmentData;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
+import me.alvin.vehicles.vehicle.VehicleTypes;
 import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.svcraft.minigames.SVCraft;
@@ -249,12 +251,12 @@ public class VehiclesCommand {
                             modifiersField.setAccessible(true);
                             modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
-                            field.set(driverSeat1, new RelativePos(-0.1, 1.3, -0.8));
+                            field.set(driverSeat1, new RelativePos(-0.5, 2, 0.5));
                         } catch (NoSuchFieldException | IllegalAccessException e) {
                             e.printStackTrace();
                         }
 
-                        source.getCommandSender().sendMessage("Seats updated (for car!!!)");
+                        source.getCommandSender().sendMessage("Seats updated (for truck!!!)");
                         return 1;
                     })
             )
@@ -318,15 +320,14 @@ public class VehiclesCommand {
                     CommandSource source = Cmd.getSource(context);
                     Player player = source.getPlayerRequired();
                     Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
-                    if (vehicle == null) {
-                        player.sendMessage("§cYou are not in a vehicle.");
-                        return 1;
+                    Vehicle truck = null;
+                    for (Vehicle value : SVCraftVehicles.getInstance().getLoadedVehicles().values()) {
+                        if (value.getType() == VehicleTypes.TRUCK) {
+                            truck = value;
+                        }
                     }
-
-                    BoundingBox boundingBox = ((AABBCollision) vehicle.getType().getCollisionType()).getBoundingBox();
-                    final double width = 1.5;
-                    final double height = 1.5;
-                    boundingBox.resize(-width, 0, -width, width, height, width);
+                    // vehicle.attachVehicle(truck, new AttachmentData(new RelativePos(0, -10, 0)));
+                    truck.detach();
                     return 1;
                 })
             )

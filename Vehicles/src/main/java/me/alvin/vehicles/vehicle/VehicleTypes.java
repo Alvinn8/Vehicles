@@ -10,6 +10,7 @@ import me.alvin.vehicles.vehicles.SimpleBoatVehicle;
 import me.alvin.vehicles.vehicles.SimpleCarVehicle;
 import me.alvin.vehicles.vehicles.SimpleHelicopterVehicle;
 import me.alvin.vehicles.vehicles.TestVehicle;
+import me.alvin.vehicles.vehicles.TruckVehicle;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +22,7 @@ public class VehicleTypes {
     public static final VehicleType SIMPLE_HELICOPTER;
     public static final VehicleType SIMPLE_CAR;
     public static final VehicleType MOTORCYCLE;
+    public static final VehicleType TRUCK;
 
     static {
         // Test Vehicle
@@ -114,6 +116,21 @@ public class VehicleTypes {
             new Seat(new RelativePos(-0.1, 1.3, -0.8)),
             null
         );
+
+        // Truck
+        TRUCK = new VehicleType(
+            "truck",
+            TruckVehicle.class,
+            TruckVehicle::new,
+            TruckVehicle::new,
+            // Collision
+            new AABBCollision(2.5, 3.5),
+            // Seat
+            new Seat(new RelativePos(0.6, 2, 0.5)),
+            Collections.singletonList(
+                new Seat(new RelativePos(-0.5, 2, 0.5))
+            )
+        );
     }
 
     public static void register(VehicleRegistry registry) {
@@ -123,5 +140,6 @@ public class VehicleTypes {
         registry.registerVehicle(SIMPLE_HELICOPTER);
         registry.registerVehicle(SIMPLE_CAR);
         registry.registerVehicle(MOTORCYCLE);
+        registry.registerVehicle(TRUCK);
     }
 }

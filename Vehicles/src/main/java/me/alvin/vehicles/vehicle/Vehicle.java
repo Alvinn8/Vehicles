@@ -16,6 +16,7 @@ import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -44,6 +45,7 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -469,7 +471,7 @@ public abstract class Vehicle {
             Location location = this.debugRelativePos.relativeTo(this.location, this.getRoll());
             location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
         }
-        if (true) {
+        if (false) {
             VehicleCollisionType collisionType = this.getType().getCollisionType();
             if (collisionType instanceof AABBCollision) {
                 BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();
@@ -485,6 +487,11 @@ public abstract class Vehicle {
                     }
                 }
             }
+        }
+
+        if (this.getDriver() instanceof Player) {
+            DecimalFormat decimalFormat = new DecimalFormat("#.##");
+            this.getDriver().sendActionBar(Component.text(decimalFormat.format(this.speed) + "/" + this.getMaxSpeed()));
         }
 
         this.updateSpeed();
@@ -1019,6 +1026,7 @@ public abstract class Vehicle {
 
         this.attachedVehicles.put(vehicle, attachmentData);
         vehicle.attachedTo = this;
+        this.updateAttachedVehicles();
         // TODO: Play sound maybe?
     }
 
