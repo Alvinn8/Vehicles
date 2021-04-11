@@ -1,10 +1,13 @@
 package me.alvin.vehicles;
 
-import me.alvin.vehicles.crafting.VehicleCraftingTableItem;
+import me.alvin.vehicles.item.FuelItem;
+import me.alvin.vehicles.item.VehicleSpawnerItem;
+import me.svcraft.minigames.item.BlockItem;
 
 public final class CustomItems {
-    public static final VehicleCraftingTableItem VEHICLE_CRAFTING_TABLE = new VehicleCraftingTableItem(CustomBlocks.VEHICLE_CRAFTING_TABLE, "Vehicle Crafting Table");
+    public static final BlockItem VEHICLE_CRAFTING_TABLE = new BlockItem(CustomBlocks.VEHICLE_CRAFTING_TABLE, "Vehicle Crafting Table");
     public static final FuelItem FUEL = new FuelItem();
+    public static final VehicleSpawnerItem VEHICLE_SPAWNER = new VehicleSpawnerItem();
 
     private CustomItems() {}
 }

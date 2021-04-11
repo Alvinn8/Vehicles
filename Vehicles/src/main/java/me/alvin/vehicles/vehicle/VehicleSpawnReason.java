@@ -11,7 +11,6 @@ public enum VehicleSpawnReason {
     /**
      * The vehicle was spawned using the creative vehicle
      * spawning tool.
-     * TODO
      */
     CREATIVE,
     /**

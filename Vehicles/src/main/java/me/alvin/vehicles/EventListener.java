@@ -11,8 +11,11 @@ import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
 import me.svcraft.minigames.SVCraft;
+import me.svcraft.minigames.item.CustomItem;
 import me.svcraft.minigames.tileentity.CustomTileEntity;
 import me.svcraft.minigames.world.event.PerWorldListener;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -32,10 +35,12 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.BoundingBox;
@@ -149,7 +154,7 @@ public class EventListener implements PerWorldListener {
         }
     }
 
-    public void onInteract(Cancellable event, Player player) {
+    public void onInteract(Cancellable event, Player player, boolean isRightClick) {
         Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
         if (vehicle != null) {
             int index = player.getInventory().getHeldItemSlot();
@@ -159,12 +164,19 @@ public class EventListener implements PerWorldListener {
                 event.setCancelled(true);
             }
         }
+
+        if (isRightClick) {
+            VehicleSpawnerTask vehicleSpawnerTask = SVCraftVehicles.getInstance().getVehicleSpawnerTaskMap().get(player);
+            if (vehicleSpawnerTask != null) {
+                vehicleSpawnerTask.spawn();
+            }
+        }
     }
 
     @EventHandler
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
         Player player = event.getPlayer();
-        this.onInteract(event, player);
+        this.onInteract(event, player, true);
 
         Vehicle vehicle = SVCraftVehicles.getInstance().getVehiclePartMap().get(event.getRightClicked());
         if (vehicle != null && !vehicle.isPassenger(player)) {
@@ -175,7 +187,7 @@ public class EventListener implements PerWorldListener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
-        this.onInteract(event, event.getPlayer());
+        this.onInteract(event, event.getPlayer(), event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK);
 
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Block clickedBlock = event.getClickedBlock();
@@ -184,6 +196,16 @@ public class EventListener implements PerWorldListener {
                 if (tileEntity instanceof VehicleCraftingTable) {
                     ((VehicleCraftingTable) tileEntity).openInventory(event.getPlayer());
                     event.setCancelled(true);
+                }
+            }
+        } else if (event.getAction() == Action.LEFT_CLICK_AIR || event.getAction() == Action.LEFT_CLICK_BLOCK) {
+            ItemStack selectedItem = event.getPlayer().getInventory().getItemInMainHand();
+            CustomItem item = CustomItem.getItem(selectedItem);
+            if (item == CustomItems.VEHICLE_SPAWNER) {
+                if (event.getPlayer().getGameMode() == GameMode.CREATIVE) {
+                    CustomItems.VEHICLE_SPAWNER.openVehicleTypeSelector(event.getPlayer(), selectedItem);
+                } else {
+                    event.getPlayer().sendActionBar(Component.text("You need to be in creative mode to use the vehicle spawner", NamedTextColor.RED));
                 }
             }
         }
@@ -198,6 +220,22 @@ public class EventListener implements PerWorldListener {
                 vehicle.remove();
             } else {
                 // TODO: Damage vehicle by event.getDamage()
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerItemHeld(PlayerItemHeldEvent event) {
+        Player player = event.getPlayer();
+        ItemStack itemStack = player.getInventory().getItem(event.getNewSlot());
+        CustomItem item = CustomItem.getItem(itemStack);
+
+        if (item == CustomItems.VEHICLE_SPAWNER) {
+            // The player switched to the vehicle spawner
+            if (player.getGameMode() == GameMode.CREATIVE) {
+                CustomItems.VEHICLE_SPAWNER.onSelect(player, itemStack);
+            } else {
+                player.sendActionBar(Component.text("You need to be in creative mode to use the vehicle spawner", NamedTextColor.RED));
             }
         }
     }

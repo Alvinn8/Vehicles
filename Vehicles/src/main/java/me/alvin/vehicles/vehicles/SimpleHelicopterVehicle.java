@@ -57,6 +57,13 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
         this.setFuelUsage(5);
     }
 
+    @Override
+    public void becomeHologramImpl() {
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_front_hologram"));
+        this.tailEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_tail_hologram"));
+        this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor_hologram"));
+    }
+
     @NotNull
     @Override
     public VehicleType getType() {

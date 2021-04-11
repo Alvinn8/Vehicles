@@ -22,6 +22,11 @@ public class GolfCartVehicle extends GroundVehicle {
     }
 
     @Override
+    public void becomeHologramImpl() {
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/golf_cart_hologram"));
+    }
+
+    @Override
     public @NotNull VehicleType getType() {
         return VehicleTypes.GOLF_CART;
     }

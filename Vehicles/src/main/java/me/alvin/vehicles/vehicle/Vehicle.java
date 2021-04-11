@@ -21,7 +21,6 @@ import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
@@ -41,7 +40,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,6 +101,7 @@ public abstract class Vehicle {
      * The highest block the vehicle is colliding with.
      */
     protected Block highestCollisionBlock;
+    private boolean isHologram = false;
     // Fuel
     private int currentFuel = 0;
     private int fuelUsage = 0;
@@ -195,10 +194,14 @@ public abstract class Vehicle {
     protected void postInit() {
         if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
         if (this.getType().getSeats().size() > 1) this.addAction(SwitchSeatAction.INSTANCE);
+        SVCraftVehicles.getInstance().getLoadedVehicles().put(this.entity, this);
+        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.entity, this);
         this.spawnSlime();
     }
 
     private void spawnSlime() {
+        if (this.slime != null) return;
+
         int size = 3;
         VehicleCollisionType collisionType = this.getType().getCollisionType();
         if (collisionType instanceof AABBCollision) {
@@ -214,8 +217,6 @@ public abstract class Vehicle {
             slime.setPersistent(false);
             slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
         });
-        SVCraftVehicles.getInstance().getLoadedVehicles().put(this.getEntity(), this);
-        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.getEntity(), this);
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.slime, this);
     }
 
@@ -276,7 +277,7 @@ public abstract class Vehicle {
         DebugUtil.debug("Unloading vehicle");
         this.save();
         this.slime.remove();
-        SVCraftVehicles.getInstance().getLoadedVehicles().remove(this.getEntity());
+        SVCraftVehicles.getInstance().getLoadedVehicles().remove(this.entity);
         SVCraftVehicles.getInstance().getVehiclePartMap().entrySet().removeIf(entry -> entry.getValue() == this);
     }
 
@@ -300,12 +301,39 @@ public abstract class Vehicle {
             seatData.exitSeat();
         }
 
+        if (this.niSlime != null) this.niSlime.remove();
         this.slime.remove();
 
         SVCraftVehicles.getInstance().getLoadedVehicles().remove(this.entity, this);
         SVCraftVehicles.getInstance().getVehiclePartMap().entrySet().removeIf(entry -> entry.getValue() == this);
     }
 
+    /**
+     * The method that actually turns the entity into into a hologram.
+     *
+     * This method should change the render item of all render entities a
+     * part of this vehicle to hologram variants.
+     */
+    protected abstract void becomeHologramImpl();
+
+    /**
+     * Turn the vehicle into a hologram. This method should not be used
+     * for normal vehicles and should only be used for the creative mode
+     * vehicle spawner or other occasions where a hologram would be desired.
+     */
+    public final void becomeHologram() {
+        this.isHologram = true;
+        this.becomeHologramImpl();
+    }
+
+    /**
+     * Get whether the vehicle is a hologram or not.
+     *
+     * @return {@code true} if the vehicle is a hologram
+     */
+    public boolean isHologram() {
+        return this.isHologram;
+    }
 
     @NotNull
     public abstract VehicleType getType();
@@ -318,6 +346,14 @@ public abstract class Vehicle {
     @Nullable
     public NIArmorStand getNIEntity() {
         return this.niEntity;
+    }
+
+    public Slime getSlime() {
+        return this.slime;
+    }
+
+    public NIE<Slime> getNiSlime() {
+        return this.niSlime;
     }
 
     // Coloring
@@ -517,7 +553,7 @@ public abstract class Vehicle {
                 }
             }
         } else {
-            if (this.isNonInterpolating() && this.seatData.size() <= 0) {
+            if (!this.isHologram && this.isNonInterpolating() && this.seatData.size() <= 0) {
                 this.setNonInterpolating(false);
             }
         }
@@ -759,7 +795,6 @@ public abstract class Vehicle {
             this.niSlime = null;
         }
     }
-    // </editor-fold>
 
     /**
      * @return Whether the vehicle is on the ground or not.
@@ -782,9 +817,9 @@ public abstract class Vehicle {
     public boolean collides(Location location) {
         VehicleCollisionType collisionType = this.getType().getCollisionType();
         if (collisionType instanceof AABBCollision) {
-            double x = this.location.getX();
-            double y = this.location.getY();
-            double z = this.location.getZ();
+            double x = location.getX();
+            double y = location.getY();
+            double z = location.getZ();
             BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();
             for (double offsetX = boundingBox.getMinX(); offsetX <= boundingBox.getMaxX(); offsetX++) {
                 for (double offsetY = boundingBox.getMinY(); offsetY <= boundingBox.getMaxY(); offsetY++) {
@@ -800,6 +835,7 @@ public abstract class Vehicle {
             throw new IllegalStateException("Unknown collision type: "+ collisionType.getClass().getName());
         }
     }
+    // </editor-fold>
 
     // Fuel
     //<editor-fold desc="Fuel related methods" defaultstate="collapsed">
@@ -958,6 +994,7 @@ public abstract class Vehicle {
      * @param passenger The new passenger, or null to empty the specified seat.
      */
     public void setPassenger(@NotNull Seat seat, @Nullable LivingEntity passenger) {
+        if (this.isHologram) return;
         if (this.seatData.containsKey(seat)) {
             SeatData oldSeatData = this.seatData.get(seat);
             this.seatData.remove(seat);
@@ -978,6 +1015,7 @@ public abstract class Vehicle {
      * @return {@code true} if the passenger entered the vehicle, {@code false} if not
      */
     public boolean addPassenger(@NotNull LivingEntity passenger) {
+        if (this.isHologram) return false;
         Seat seat = this.getNearestAvailableSeat(passenger.getLocation());
         if (seat == null) return false;
         this.setPassenger(seat, passenger);

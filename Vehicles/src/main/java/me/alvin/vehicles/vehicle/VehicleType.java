@@ -1,16 +1,14 @@
 package me.alvin.vehicles.vehicle;
 
-import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +22,7 @@ import java.util.function.Function;
  */
 public class VehicleType {
     private final String id;
+    private final Component name;
     private final Class<? extends Vehicle> vehicleClass;
     private final Set<Seat> seats;
     private final Seat driverSeat;
@@ -32,6 +31,7 @@ public class VehicleType {
     private final VehicleCollisionType collisionType;
 
     public VehicleType(@NotNull String id,
+                       @NotNull Component name,
                        @NotNull Class<? extends Vehicle> vehicleClass,
                        @NotNull Function<ArmorStand, Vehicle> loadConstructor,
                        @NotNull VehicleSpawnConstructorFunction spawnConstructor,
@@ -39,6 +39,7 @@ public class VehicleType {
                        @NotNull Seat driverSeat,
                        @Nullable List<Seat> seats) {
         this.id = id;
+        this.name = name;
         this.vehicleClass = vehicleClass;
         this.loadConstructor = loadConstructor;
         this.spawnConstructor = spawnConstructor;
@@ -59,6 +60,16 @@ public class VehicleType {
     @NotNull
     public String getId() {
         return this.id;
+    }
+
+    /**
+     * Get the name of the vehicle. This will be displayed to
+     * players.
+     *
+     * @return The name component
+     */
+    public Component getName() {
+        return this.name;
     }
 
     /**

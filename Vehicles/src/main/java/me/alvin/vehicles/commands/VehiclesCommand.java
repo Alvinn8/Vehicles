@@ -5,11 +5,11 @@ import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import me.alvin.vehicles.VehicleSpawnerTask;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.ColorUtil;
 import me.alvin.vehicles.util.RelativePos;
-import me.alvin.vehicles.vehicle.AttachmentData;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
@@ -315,7 +315,7 @@ public class VehiclesCommand {
                 })
             )
             .then(
-                Cmd.literal("hijack")
+                Cmd.literal("attachtest")
                 .executes(context -> {
                     CommandSource source = Cmd.getSource(context);
                     Player player = source.getPlayerRequired();
@@ -330,6 +330,22 @@ public class VehiclesCommand {
                     truck.detach();
                     return 1;
                 })
+            )
+            .then(
+                Cmd.literal("creativetest")
+                .executes(context -> {
+                    CommandSource source = Cmd.getSource(context);
+                    Player player = source.getPlayerRequired();
+                    VehicleSpawnerTask vehicleSpawnerTask = new VehicleSpawnerTask(player);
+                    vehicleSpawnerTask.start();
+                    return 1;
+                })
+            )
+            .then(
+                Cmd.literal("hijack")
+                    .executes(context -> {
+                        return 1;
+                    })
             )
         );
     }

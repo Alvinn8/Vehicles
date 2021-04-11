@@ -36,6 +36,11 @@ public class MotorcycleVehicle extends GroundVehicle {
     }
 
     @Override
+    public void becomeHologramImpl() {
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/motorcycle_hologram"));
+    }
+
+    @Override
     public @NotNull VehicleType getType() {
         return VehicleTypes.MOTORCYCLE;
     }
@@ -63,7 +68,7 @@ public class MotorcycleVehicle extends GroundVehicle {
     @Override
     public void updateRenderedLocation() {
         NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY() - 1.5D, this.location.getZ(), this.location.getYaw(), this.location.getPitch());
-        NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
+        if (this.slime != null) NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
 
         if (this.roll != 0) {
             if (Math.abs(this.roll) < 1) this.roll = 0;

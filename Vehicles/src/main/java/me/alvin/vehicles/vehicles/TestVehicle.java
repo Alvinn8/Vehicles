@@ -35,6 +35,11 @@ public class TestVehicle extends GroundVehicle {
         this.addAction(new StorageAction(18));
     }
 
+    @Override
+    public void becomeHologramImpl() {
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/golf_cart_hologram"));
+    }
+
     @NotNull
     @Override
     public VehicleType getType() {

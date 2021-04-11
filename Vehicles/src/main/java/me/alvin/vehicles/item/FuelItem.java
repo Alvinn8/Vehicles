@@ -1,5 +1,6 @@
-package me.alvin.vehicles;
+package me.alvin.vehicles.item;
 
+import me.alvin.vehicles.SVCraftVehicles;
 import me.svcraft.minigames.item.CustomItem;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;

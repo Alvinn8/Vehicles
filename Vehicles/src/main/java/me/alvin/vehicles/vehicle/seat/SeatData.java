@@ -35,6 +35,7 @@ public class SeatData {
             mule.setCarryingChest(true);
             mule.setInvulnerable(true);
             mule.setSilent(true);
+            mule.customName(vehicle.getType().getName());
         });
         spawnedMule.addPassenger(passenger);
         if (passenger instanceof Player) {

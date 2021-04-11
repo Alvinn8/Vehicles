@@ -11,6 +11,9 @@ import me.alvin.vehicles.vehicles.SimpleCarVehicle;
 import me.alvin.vehicles.vehicles.SimpleHelicopterVehicle;
 import me.alvin.vehicles.vehicles.TestVehicle;
 import me.alvin.vehicles.vehicles.TruckVehicle;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,6 +31,7 @@ public class VehicleTypes {
         // Test Vehicle
         TEST = new VehicleType(
                 "test",
+                Component.text("Test Vehicle").decoration(TextDecoration.ITALIC, true).color(NamedTextColor.GRAY),
                 TestVehicle.class,
                 TestVehicle::new,
                 TestVehicle::new,
@@ -43,6 +47,7 @@ public class VehicleTypes {
         // Golf Cart
         GOLF_CART = new VehicleType(
             "golf_cart",
+            Component.text("Golf Cart"),
             GolfCartVehicle.class,
             GolfCartVehicle::new,
             GolfCartVehicle::new,
@@ -58,6 +63,7 @@ public class VehicleTypes {
         // Simple Boat
         SIMPLE_BOAT = new VehicleType(
                 "simple_boat",
+                Component.text("Simple Boat"),
                 SimpleBoatVehicle.class,
                 SimpleBoatVehicle::new,
                 SimpleBoatVehicle::new,
@@ -73,6 +79,7 @@ public class VehicleTypes {
         // Simple Helicopter
         SIMPLE_HELICOPTER = new VehicleType(
                 "simple_helicopter",
+                Component.text("Simple Helicopter"),
                 SimpleHelicopterVehicle.class,
                 SimpleHelicopterVehicle::new,
                 SimpleHelicopterVehicle::new,
@@ -90,6 +97,7 @@ public class VehicleTypes {
         // Simple Car
         SIMPLE_CAR = new VehicleType(
             "simple_car",
+            Component.text("Simple Car"),
             SimpleCarVehicle.class,
             SimpleCarVehicle::new,
             SimpleCarVehicle::new,
@@ -107,6 +115,7 @@ public class VehicleTypes {
         // Motorcycle
         MOTORCYCLE = new VehicleType(
             "motorcycle",
+            Component.text("Motorcycle"),
             MotorcycleVehicle.class,
             MotorcycleVehicle::new,
             MotorcycleVehicle::new,
@@ -120,6 +129,7 @@ public class VehicleTypes {
         // Truck
         TRUCK = new VehicleType(
             "truck",
+            Component.text("Truck"),
             TruckVehicle.class,
             TruckVehicle::new,
             TruckVehicle::new,

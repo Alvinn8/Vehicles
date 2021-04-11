@@ -2,7 +2,6 @@ package me.alvin.vehicles;
 
 import com.comphenix.protocol.ProtocolLibrary;
 import me.alvin.vehicles.commands.VehiclesCommand;
-import me.alvin.vehicles.crafting.VehicleCraftingTableBlock;
 import me.alvin.vehicles.nms.NMS;
 import me.alvin.vehicles.nms.NMS_v1_16_R2;
 import me.alvin.vehicles.nms.NMS_v1_16_R3;
@@ -21,6 +20,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -38,6 +38,7 @@ public final class SVCraftVehicles extends SVCraftPlugin {
     private final Map<ArmorStand, Vehicle> loadedVehicles = new HashMap<>();
     private final Map<LivingEntity, Vehicle> currentVehicleMap = new HashMap<>();
     private final Map<Entity, Vehicle> vehiclePartMap = new HashMap<>();
+    private final Map<Player, VehicleSpawnerTask> vehicleSpawnerTaskMap = new HashMap<>();
 
     private RPCModelManagerData resourcepackData;
 
@@ -70,6 +71,7 @@ public final class SVCraftVehicles extends SVCraftPlugin {
 
         this.registerItem(CustomItems.VEHICLE_CRAFTING_TABLE);
         this.registerItem(CustomItems.FUEL);
+        this.registerItem(CustomItems.VEHICLE_SPAWNER);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
 
@@ -171,6 +173,15 @@ public final class SVCraftVehicles extends SVCraftPlugin {
      */
     public Map<Entity, Vehicle> getVehiclePartMap() {
         return this.vehiclePartMap;
+    }
+
+    /**
+     * Get a map of players that are currently using the vehicle spawner
+     *
+     * @return The map
+     */
+    public Map<Player, VehicleSpawnerTask> getVehicleSpawnerTaskMap() {
+        return this.vehicleSpawnerTaskMap;
     }
 
     /**

@@ -33,6 +33,11 @@ public class SimpleCarVehicle extends GroundVehicle {
     }
 
     @Override
+    public void becomeHologramImpl() {
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/car_hologram"));
+    }
+
+    @Override
     public @NotNull VehicleType getType() {
         return VehicleTypes.SIMPLE_CAR;
     }

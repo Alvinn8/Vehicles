@@ -1,7 +1,7 @@
 package me.alvin.vehicles.actions;
 
 import me.alvin.vehicles.CustomItems;
-import me.alvin.vehicles.FuelItem;
+import me.alvin.vehicles.item.FuelItem;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
@@ -14,9 +14,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
@@ -28,7 +26,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataContainer;
 
 public class FuelAction implements VehicleMenuAction {
     public final static FuelAction INSTANCE = new FuelAction();

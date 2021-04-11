@@ -33,6 +33,11 @@ public class SimpleBoatVehicle extends BoatVehicle {
         this.setFuelUsage(1);
     }
 
+    @Override
+    public void becomeHologramImpl() {
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/boat_hologram"));
+    }
+
     @NotNull
     @Override
     public VehicleType getType() {

@@ -64,6 +64,12 @@ public class TruckVehicle extends GroundVehicle {
     }
 
     @Override
+    public void becomeHologramImpl() {
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/truck/truck_hologram"));
+        this.backEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/truck/truck_back_hologram"));
+    }
+
+    @Override
     public @NotNull VehicleType getType() {
         return VehicleTypes.TRUCK;
     }
