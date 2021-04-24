@@ -1,12 +1,8 @@
 package me.alvin.vehicles.vehicle;
 
-import me.alvin.vehicles.util.RelativePos;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -53,7 +49,7 @@ public abstract class HelicopterVehicle extends Vehicle {
             this.speed = 0;
         }
 
-        if (this.getDriver() != null && this.rotorSpeed < 20) {
+        if (this.getDriver() != null && this.rotorSpeed < 20 && this.canAccelerate()) {
             this.rotorSpeed += 0.25;
         } else if (this.rotorSpeed > 0) {
             this.rotorSpeed -= 0.25;

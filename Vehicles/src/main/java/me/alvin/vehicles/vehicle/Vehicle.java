@@ -16,7 +16,6 @@ import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -43,7 +42,6 @@ import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -523,11 +521,6 @@ public abstract class Vehicle {
                     }
                 }
             }
-        }
-
-        if (this.getDriver() instanceof Player) {
-            DecimalFormat decimalFormat = new DecimalFormat("#.##");
-            this.getDriver().sendActionBar(Component.text(decimalFormat.format(this.speed) + "/" + this.getMaxSpeed()));
         }
 
         this.updateSpeed();

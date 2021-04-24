@@ -11,6 +11,7 @@ import me.alvin.vehicles.vehicles.SimpleCarVehicle;
 import me.alvin.vehicles.vehicles.SimpleHelicopterVehicle;
 import me.alvin.vehicles.vehicles.TestVehicle;
 import me.alvin.vehicles.vehicles.TruckVehicle;
+import me.alvin.vehicles.vehicles.WoodenPlaneVehicle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -26,6 +27,7 @@ public class VehicleTypes {
     public static final VehicleType SIMPLE_CAR;
     public static final VehicleType MOTORCYCLE;
     public static final VehicleType TRUCK;
+    public static final VehicleType WOODEN_PLANE;
 
     static {
         // Test Vehicle
@@ -135,10 +137,27 @@ public class VehicleTypes {
             TruckVehicle::new,
             // Collision
             new AABBCollision(2.5, 3.5),
-            // Seat
+            // Seats
             new Seat(new RelativePos(0.6, 2, 0.5)),
             Collections.singletonList(
                 new Seat(new RelativePos(-0.5, 2, 0.5))
+            )
+        );
+
+        // Wooden Plane
+
+        WOODEN_PLANE = new VehicleType(
+            "wooden_plane",
+            Component.text("Wooden Plane"),
+            WoodenPlaneVehicle.class,
+            WoodenPlaneVehicle::new,
+            WoodenPlaneVehicle::new,
+            // Collision
+            new AABBCollision(3, 2),
+            // Seats
+            new Seat(new RelativePos(0, 0.8, -0.3)),
+            Collections.singletonList(
+                new Seat(new RelativePos(0, 0.8, -1.4))
             )
         );
     }
@@ -151,5 +170,6 @@ public class VehicleTypes {
         registry.registerVehicle(SIMPLE_CAR);
         registry.registerVehicle(MOTORCYCLE);
         registry.registerVehicle(TRUCK);
+        registry.registerVehicle(WOODEN_PLANE);
     }
 }

@@ -200,7 +200,7 @@ public class VehiclesCommand {
                         Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
                         if (vehicle != null) {
                             if (vehicle.usesFuel()) {
-                                vehicle.setCurrentFuel(vehicle.getMaxFuel());
+                                vehicle.setCurrentFuel(vehicle.getMaxFuel() / 100 * 2);
                                 player.sendMessage(ChatColor.GREEN + "The vehicle has been refueled.");
                             } else {
                                 player.sendMessage(ChatColor.RED + "The vehicle you are in does not use fuel");
@@ -251,12 +251,12 @@ public class VehiclesCommand {
                             modifiersField.setAccessible(true);
                             modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
-                            field.set(driverSeat1, new RelativePos(-0.5, 2, 0.5));
+                            field.set(driverSeat1, new RelativePos(-0.2, 0.75, 2));
                         } catch (NoSuchFieldException | IllegalAccessException e) {
                             e.printStackTrace();
                         }
 
-                        source.getCommandSender().sendMessage("Seats updated (for truck!!!)");
+                        source.getCommandSender().sendMessage("Seats updated (for wooden plane!!!)");
                         return 1;
                     })
             )
