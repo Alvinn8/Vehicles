@@ -1,6 +1,8 @@
 package me.alvin.vehicles.vehicle;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
@@ -15,6 +17,8 @@ import java.text.DecimalFormat;
  * A plane that needs a runway to take off and can fly in the air.
  */
 public abstract class PlaneVehicle extends Vehicle {
+    public static final DecimalFormat SPEED_FORMAT = new DecimalFormat("0.00");
+
     protected double gravityVelY = 0.0;
     protected float roll = 0.0F;
 
@@ -44,6 +48,21 @@ public abstract class PlaneVehicle extends Vehicle {
     @Override
     public float getRoll() {
         return this.roll;
+    }
+
+    @Override
+    public void createText() {
+        super.createText();
+
+        this.text.addEntry((vehicle, player) -> {
+            float speed = this.getSpeed();
+            TextComponent.Builder component = Component.text();
+            component.content("Speed: " + SPEED_FORMAT.format(speed));
+            if (speed > this.getMinTakeoffSpeed() && this.onGround) {
+                component.color(NamedTextColor.GREEN);
+            }
+            return component.build();
+        });
     }
 
     @Override
@@ -85,12 +104,6 @@ public abstract class PlaneVehicle extends Vehicle {
     @Override
     public void calculateVelocity() {
         boolean canFly = this.speed >= this.getMinTakeoffSpeed();
-
-        if (this.getDriver() instanceof Player) {
-            // temp
-            DecimalFormat decimalFormat = new DecimalFormat("0.00");
-            this.getDriver().sendActionBar(Component.text(decimalFormat.format(this.speed) + "/" + this.getMaxSpeed() + " - canFly: " + canFly + " - onGround: " + this.onGround));
-        }
 
         // Rotation
         LivingEntity driver = this.getDriver();

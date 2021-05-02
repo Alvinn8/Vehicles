@@ -19,6 +19,8 @@ import me.alvin.vehicles.vehicle.seat.Seat;
 import me.svcraft.minigames.SVCraft;
 import me.svcraft.minigames.command.brigadier.Cmd;
 import me.svcraft.minigames.nms.CommandSource;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -344,6 +346,9 @@ public class VehiclesCommand {
             .then(
                 Cmd.literal("hijack")
                     .executes(context -> {
+                        CommandSource source = Cmd.getSource(context);
+                        Player player = source.getPlayerRequired();
+                        player.playerListName(Component.text("*Testing!", NamedTextColor.YELLOW));
                         return 1;
                     })
             )

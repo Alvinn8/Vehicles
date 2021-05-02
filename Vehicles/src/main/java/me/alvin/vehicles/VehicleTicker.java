@@ -1,6 +1,7 @@
 package me.alvin.vehicles;
 
 import me.alvin.vehicles.vehicle.Vehicle;
+import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class VehicleTicker extends BukkitRunnable {

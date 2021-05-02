@@ -53,7 +53,7 @@ public class FuelAction implements VehicleMenuAction {
     }
 
     @Override
-    public void onClick(Vehicle vehicle, Player player) {
+    public void onMenuClick(Vehicle vehicle, Player player) {
         Inventory inventory = Bukkit.createInventory(new CustomInventory() {
             @Override
             public void onClick(InventoryClickEvent event) {

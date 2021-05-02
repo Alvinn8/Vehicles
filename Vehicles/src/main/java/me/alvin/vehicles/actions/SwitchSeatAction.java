@@ -22,7 +22,7 @@ public class SwitchSeatAction implements VehicleMenuAction {
     }
 
     @Override
-    public void onClick(Vehicle vehicle, Player player) {
+    public void onMenuClick(Vehicle vehicle, Player player) {
         List<Seat> seats = new ArrayList<>(vehicle.getType().getSeats());
         if (vehicle.getSeatData().size() >= seats.size()) {
             player.sendMessage("The vehicle is full!");

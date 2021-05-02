@@ -11,7 +11,7 @@ import org.bukkit.inventory.ItemStack;
 public interface VehicleMenuAction extends VehicleAction {
     /**
      * Get the item to render in the vehicle menu. When this item is clicked the
-     * {@link #onClick(Vehicle, Player)} method will be called.
+     * {@link #onMenuClick(Vehicle, Player)} method will be called.
      *
      * @param vehicle The vehicle the player is in
      * @param player The player that has opened the menu
@@ -27,5 +27,5 @@ public interface VehicleMenuAction extends VehicleAction {
      * @param vehicle The vehicle the player is in
      * @param player The player that has opened the menu
      */
-    void onClick(Vehicle vehicle, Player player);
+    void onMenuClick(Vehicle vehicle, Player player);
 }

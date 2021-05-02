@@ -23,8 +23,8 @@ public class SimpleCarVehicle extends GroundVehicle {
     }
 
     @Override
-    protected void postInit() {
-        super.postInit();
+    protected void init() {
+        super.init();
 
         this.addAction(new StorageAction(9));
 

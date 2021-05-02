@@ -16,6 +16,11 @@ import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
+import me.alvin.vehicles.vehicle.text.VehicleText;
+import me.alvin.vehicles.vehicle.text.TemporaryMessage;
+import me.alvin.vehicles.vehicle.text.VehicleTextEntry;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Axis;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -28,6 +33,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Listener;
 import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -48,7 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class Vehicle {
+public abstract class Vehicle implements Listener {
 
     // Persistent Data Keys
 
@@ -83,6 +90,7 @@ public abstract class Vehicle {
     protected Slime slime;
     protected NIE<Slime> niSlime;
     public RelativePos debugRelativePos; // TEMP
+    protected VehicleText text = null;
     // Movement
     protected @NotNull Location location;
     protected float speed = 0;
@@ -134,20 +142,23 @@ public abstract class Vehicle {
         this.currentFuel = Objects.requireNonNull(data.get(CURRENT_FUEL, PersistentDataType.INTEGER));
         this.location    = Objects.requireNonNull(data.get(LOCATION, ExtraPersistentDataTypes.LOCATION));
 
+        this.init();
+        for (VehicleAction action : this.allActions) {
+            action.onLoad(this, data);
+        }
+
+        DebugUtil.debug("Loaded vehicle of class " + this.getClass().getName());
+
         Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
-            this.postInit();
+            // Wait until all entities are spawned by subclasses (wait 1 tick)
+            // Then load the color
             if (this.canBeColored()) {
                 Integer rgbColor = data.get(COLOR, PersistentDataType.INTEGER);
                 if (rgbColor != null) {
                     this.setColor(Color.fromRGB(rgbColor));
                 }
             }
-            for (VehicleAction action : this.allActions) {
-                action.onLoad(this, data);
-            }
         }, 1L);
-
-        DebugUtil.debug("Loaded vehicle of class " + this.getClass().getName());
     }
 
     /**
@@ -165,9 +176,12 @@ public abstract class Vehicle {
 
         DebugUtil.debug(creator.getName() + " spawned a vehicle of class " + this.getClass().getName());
 
+        this.init();
         Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
-            this.postInit();
+            // Wait until all entities are spawned by subclasses (wait 1 tick)
+            // Then update the location
             this.updateRenderedLocation();
+            // And set the default color
             if (this.canBeColored()) {
                 this.setColor(this.getDefaultColor());
             }
@@ -175,7 +189,7 @@ public abstract class Vehicle {
     }
 
     /**
-     * Called when the vehicle has been fully constructed.
+     * Called while the vehicle is being constructed.
      *
      * <p>This is the method that registers all {@link VehicleAction}s for the vehicle.</p>
      *
@@ -184,16 +198,16 @@ public abstract class Vehicle {
      * as it will register important actions like a fuel action if the vehicle uses
      * fuel and the switch seat action.</p>
      *
-     * <p>This method is called right after a vehicle has been spawned or loaded.
-     * More specifically, 1 tick after the vehicle has been loaded (as this can
-     * not be called in the Vehicle constructor as when that is called, methods
-     * overridden by subclasses will not yet have been overridden).</p>
+     * <p>Note that this method is called inside the Vehicle constructors, so subclass
+     * constructors have not been called yet.</p>
      */
-    protected void postInit() {
+    protected void init() {
         if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
         if (this.getType().getSeats().size() > 1) this.addAction(SwitchSeatAction.INSTANCE);
+
         SVCraftVehicles.getInstance().getLoadedVehicles().put(this.entity, this);
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.entity, this);
+
         this.spawnSlime();
     }
 
@@ -309,8 +323,8 @@ public abstract class Vehicle {
     /**
      * The method that actually turns the entity into into a hologram.
      *
-     * This method should change the render item of all render entities a
-     * part of this vehicle to hologram variants.
+     * <p>This method should change the render item of all render entities a
+     * part of this vehicle to hologram variants.</p>
      */
     protected abstract void becomeHologramImpl();
 
@@ -322,6 +336,18 @@ public abstract class Vehicle {
     public final void becomeHologram() {
         this.isHologram = true;
         this.becomeHologramImpl();
+    }
+
+    /**
+     * Create a VehicleText object and assign it to the text field.
+     *
+     * <p>Will set up all text entries to display.</p>
+     *
+     * <p>Subclasses can override this method to customize the text.</p>
+     */
+    public void createText() {
+        this.text = new VehicleText(this);
+        this.text.addEntry(VehicleTextEntry.ACTION);
     }
 
     /**
@@ -464,6 +490,15 @@ public abstract class Vehicle {
     }
 
     /**
+     * Get the current speed of the vehicle. What this means depends on the vehicle type.
+     *
+     * @return The current speed
+     */
+    public float getSpeed() {
+        return this.speed;
+    }
+
+    /**
      * Get the current roll rotation of the vehicle. Subclasses can override this
      * method and return a value other than 0 when that fits, but by default this
      * method will simply return 0.
@@ -485,13 +520,13 @@ public abstract class Vehicle {
      * 1: updateSpeed
      * if (isMoving()) {
      *     2: calculateVelocity
-     *         3: calculateGravity
+     *         3: (calculateGravity)
      *     4: applyVelocity
      *     5: updateRenderedLocation
      *     6: updateRenderedPassengerPositions
      *     7: spawnParticles
      *     if attached {
-     *         7: updateAttachedVehicles
+     *         8: updateAttachedVehicles
      *     }
      * }
      * </pre>
@@ -520,6 +555,28 @@ public abstract class Vehicle {
                         }
                     }
                 }
+            }
+        }
+
+        if (this.seatData.size() > 0) {
+            // Has passengers
+            if (this.text == null) this.createText();
+
+            if (this.usesFuel() && this.currentFuel <= 0) {
+                this.text.addEntry(new TemporaryMessage(Component.text("Out of fuel!", NamedTextColor.RED), 1));
+            }
+
+            for (SeatData seatData : this.seatData.values()) {
+                if (seatData.getPassenger() instanceof Player) {
+                    Player player = (Player) seatData.getPassenger();
+                    player.sendActionBar(this.text.getComponent(player));
+                }
+            }
+            this.text.tickMessages();
+        } else {
+            if (this.text != null) {
+                // No passengers, gc text
+                this.text = null;
             }
         }
 
@@ -1012,6 +1069,8 @@ public abstract class Vehicle {
         Seat seat = this.getNearestAvailableSeat(passenger.getLocation());
         if (seat == null) return false;
         this.setPassenger(seat, passenger);
+        if (this.text == null) this.createText();
+        this.text.addEntry(new TemporaryMessage(Component.text("Welcome "+ passenger.getName() +" to the vehicle!"), 200));
         return true;
     }
 
@@ -1115,12 +1174,26 @@ public abstract class Vehicle {
         return this.allActions;
     }
 
+    /**
+     * Add an action to the vehicles list of actions.
+     *
+     * @param action The action to add
+     * @see VehicleAction
+     */
     public void addAction(VehicleAction action) {
         if (action instanceof VehicleMenuAction) this.menuActions.add((VehicleMenuAction) action);
         if (action instanceof VehicleClickAction) this.clickActions.add((VehicleClickAction) action);
         this.allActions.add(action);
     }
 
+    /**
+     * Get a menu action at the specified index or null if there
+     * is none there.
+     *
+     * @param index The index of the menu action to get.
+     * @return The menu action, or null
+     */
+    @Nullable
     public VehicleMenuAction getMenuAction(int index) {
         if (index >= 0 && index < this.menuActions.size()) {
             return this.menuActions.get(index);
@@ -1128,11 +1201,44 @@ public abstract class Vehicle {
         return null;
     }
 
+    /**
+     * Get a click action at the specified index or null if there
+     * is none there.
+     *
+     * @param index The index of the click action to get.
+     * @return The click action, or null
+     */
+    @Nullable
     public VehicleClickAction getClickAction(int index) {
         if (index >= 0 && index < this.clickActions.size()) {
             return this.clickActions.get(index);
         }
         return null;
+    }
+
+    /**
+     * Called when a player in the vehicle interacts. Is used to
+     * activate click actions.
+     *
+     * @param event The interact event
+     * @param player The player that interacted
+     */
+    public void onInteract(Cancellable event, Player player) {
+        Seat seat = this.getPassengerSeat(player);
+        if (seat == null) return;
+
+        SeatData seatData = this.seatData.get(seat);
+        if (seatData == null) return;
+
+        // Make sure the player has been in a seat for at least one second
+        if (System.currentTimeMillis() > seatData.getTimeEntered() + 1000) {
+            int index = player.getInventory().getHeldItemSlot();
+            VehicleClickAction action = this.getClickAction(index);
+            if (action != null) {
+                action.onHotbarClick(this, player);
+                event.setCancelled(true);
+            }
+        }
     }
 
     /**

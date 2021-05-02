@@ -75,7 +75,7 @@ public class StorageAction implements VehicleMenuAction {
     }
 
     @Override
-    public void onClick(Vehicle vehicle, Player player) {
+    public void onMenuClick(Vehicle vehicle, Player player) {
         player.openInventory(this.inventory);
     }
 

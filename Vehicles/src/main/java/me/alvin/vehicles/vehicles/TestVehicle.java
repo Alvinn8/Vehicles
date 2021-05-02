@@ -24,8 +24,8 @@ public class TestVehicle extends GroundVehicle {
     }
 
     @Override
-    protected void postInit() {
-        super.postInit();
+    protected void init() {
+        super.init();
 
         this.setMaxFuel(10000);
         this.setFuelUsage(1);

@@ -1,6 +1,8 @@
 package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.actions.MissileAction;
+import me.alvin.vehicles.actions.TestArrowAction;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.util.ni.NIArmorStand;
 import me.alvin.vehicles.util.ni.NIE;
@@ -15,10 +17,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-// TODO: Make the helicopter offset the main entity instead of the
-//       model being offset backwards.
-
-public class SimpleHelicopterVehicle extends HelicopterVehicle {
+public class AttackHelicopterVehicle extends HelicopterVehicle {
     public static final RelativePos TAIL_OFFSET = new RelativePos(-0.13, 0.6, -4);
     public static final RelativePos ROTOR_OFFSET = new RelativePos(-0.15, 2.275, -1.65);
 
@@ -27,13 +26,13 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     protected @NotNull ArmorStand rotorEntity;
     protected @Nullable NIArmorStand rotorNiEntity;
 
-    public SimpleHelicopterVehicle(@NotNull ArmorStand entity) {
+    public AttackHelicopterVehicle(@NotNull ArmorStand entity) {
         super(entity);
 
         this.spawnExtraEntities();
     }
 
-    public SimpleHelicopterVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
+    public AttackHelicopterVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
 
         this.spawnExtraEntities();
@@ -55,6 +54,9 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
 
         this.setMaxFuel(20000);
         this.setFuelUsage(5);
+
+        this.addAction(new TestArrowAction());
+        this.addAction(new MissileAction());
     }
 
     @Override
@@ -64,10 +66,9 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
         this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor_hologram"));
     }
 
-    @NotNull
     @Override
-    public VehicleType getType() {
-        return VehicleTypes.SIMPLE_HELICOPTER;
+    public @NotNull VehicleType getType() {
+        return VehicleTypes.ATTACK_HELICOPTER;
     }
 
     @Override
@@ -81,6 +82,24 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     }
 
     @Override
+    public boolean canBeColored() {
+        return true;
+    }
+
+    @Override
+    public Color getDefaultColor() {
+        return Color.fromRGB(0x5c5b5a);
+    }
+
+
+    @Override
+    public boolean setColor(Color color) {
+        if (!super.setColor(color)) return false;
+        if (!this.colorArmorStand(this.tailEntity, color)) return false;
+        return this.colorArmorStand(this.rotorEntity, color);
+    }
+
+    @Override
     public void updateRenderedLocation() {
         NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
         NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
@@ -90,18 +109,6 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
 
         Location rotorLocation = ROTOR_OFFSET.relativeTo(this.location, this.getRoll());
         NIArmorStand.setLocation(this.rotorNiEntity, this.rotorEntity, rotorLocation.getX(), rotorLocation.getY(), rotorLocation.getZ(), this.rotorRotation, 0);
-    }
-
-    @Override
-    public boolean canBeColored() {
-        return true;
-    }
-
-    @Override
-    public boolean setColor(Color color) {
-        if (!super.setColor(color)) return false;
-        if (!this.colorArmorStand(this.tailEntity, color)) return false;
-        return this.colorArmorStand(this.rotorEntity, color);
     }
 
     private void removeExtraEntities() {

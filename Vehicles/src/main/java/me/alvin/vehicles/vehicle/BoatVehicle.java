@@ -63,8 +63,9 @@ public abstract class BoatVehicle extends Vehicle {
         Block block = this.location.getWorld().getBlockAt(Location.locToBlock(x), Location.locToBlock(y), Location.locToBlock(z));
         BlockData blockData = block.getBlockData();
         boolean check;
-        if (axis == Axis.Y) {
+        if (axis == Axis.Y || axis == null) {
             // On only the Y axis can water be collided with
+            // Or if the axis is null its being spawned using the vehicle spawner
             boolean inWater = block.getType() == Material.WATER
                 || (blockData instanceof Waterlogged && ((Waterlogged) blockData).isWaterlogged());
 

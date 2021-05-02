@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public class SeatData {
     private final LivingEntity passenger;
     private final NIE<Mule> riderEntity;
+    private final long enteredAt;
 
     public static final double RIDER_ENTITY_Y_OFFSET = 1.0D;
 
@@ -44,6 +45,7 @@ public class SeatData {
 
         this.riderEntity = new NIE<>(spawnedMule);
         this.passenger = passenger;
+        this.enteredAt = System.currentTimeMillis(); // They entered now
 
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.riderEntity.getEntity(), vehicle);
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.riderEntity.getAreaEffectCloud(), vehicle);
@@ -57,6 +59,15 @@ public class SeatData {
     @NotNull
     public NIE<Mule> getRiderEntity() {
         return this.riderEntity;
+    }
+
+    /**
+     * Get the time in milliseconds when the player sat in this seatdata.
+     *
+     * @return The time in milliseconds
+     */
+    public long getTimeEntered() {
+        return this.enteredAt;
     }
 
     /**

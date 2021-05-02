@@ -1,13 +1,10 @@
 package me.alvin.vehicles;
 
 import me.alvin.vehicles.crafting.VehicleCraftingTable;
-import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.action.VehicleClickAction;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
-import me.alvin.vehicles.vehicle.collision.AABBCollision;
-import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
 import me.svcraft.minigames.SVCraft;
@@ -18,12 +15,10 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -43,12 +38,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.BoundingBox;
-import org.bukkit.util.RayTraceResult;
-import org.bukkit.util.Vector;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
-import java.util.Collection;
 import java.util.Map;
 
 public class EventListener implements PerWorldListener {
@@ -148,7 +139,7 @@ public class EventListener implements PerWorldListener {
                 int index = event.getSlot() - 2;
                 VehicleMenuAction action = vehicle.getMenuAction(index);
                 if (action != null) {
-                    action.onClick(vehicle, (Player) event.getWhoClicked());
+                    action.onMenuClick(vehicle, (Player) event.getWhoClicked());
                 }
             }
         }
@@ -157,12 +148,7 @@ public class EventListener implements PerWorldListener {
     public void onInteract(Cancellable event, Player player, boolean isRightClick) {
         Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
         if (vehicle != null) {
-            int index = player.getInventory().getHeldItemSlot();
-            VehicleClickAction action = vehicle.getClickAction(index);
-            if (action != null) {
-                action.onClick(vehicle, player);
-                event.setCancelled(true);
-            }
+            vehicle.onInteract(event, player);
         }
 
         if (isRightClick) {

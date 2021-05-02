@@ -26,8 +26,8 @@ public class SimpleBoatVehicle extends BoatVehicle {
     }
 
     @Override
-    protected void postInit() {
-        super.postInit();
+    protected void init() {
+        super.init();
 
         this.setMaxFuel(10000);
         this.setFuelUsage(1);

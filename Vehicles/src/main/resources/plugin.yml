@@ -1,7 +1,7 @@
 name: SVCraftVehicles
 version: ${project.version}
 main: me.alvin.vehicles.SVCraftVehicles
-api-version: "1.13"
+api-version: "1.16"
 depend:
 - SVCraftMinigames
 - ProtocolLib

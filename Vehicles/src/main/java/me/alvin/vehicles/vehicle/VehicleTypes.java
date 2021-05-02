@@ -4,6 +4,7 @@ import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.seat.Seat;
+import me.alvin.vehicles.vehicles.AttackHelicopterVehicle;
 import me.alvin.vehicles.vehicles.GolfCartVehicle;
 import me.alvin.vehicles.vehicles.MotorcycleVehicle;
 import me.alvin.vehicles.vehicles.SimpleBoatVehicle;
@@ -28,6 +29,7 @@ public class VehicleTypes {
     public static final VehicleType MOTORCYCLE;
     public static final VehicleType TRUCK;
     public static final VehicleType WOODEN_PLANE;
+    public static final VehicleType ATTACK_HELICOPTER;
 
     static {
         // Test Vehicle
@@ -145,7 +147,6 @@ public class VehicleTypes {
         );
 
         // Wooden Plane
-
         WOODEN_PLANE = new VehicleType(
             "wooden_plane",
             Component.text("Wooden Plane"),
@@ -160,6 +161,22 @@ public class VehicleTypes {
                 new Seat(new RelativePos(0, 0.8, -1.4))
             )
         );
+
+        // Attack Helicopter
+        ATTACK_HELICOPTER = new VehicleType(
+            "attack_helicopter",
+            Component.text("Attack Helicopter"),
+            AttackHelicopterVehicle.class,
+            AttackHelicopterVehicle::new,
+            AttackHelicopterVehicle::new,
+            // Collision
+            new AABBCollision(2, 3),
+            // Seats
+            new Seat(new RelativePos(0.2, 0.5, 0.1)),
+            Collections.singletonList(
+                new Seat(new RelativePos(-0.5, 0.5, 0.1))
+            )
+        );
     }
 
     public static void register(VehicleRegistry registry) {
@@ -171,5 +188,6 @@ public class VehicleTypes {
         registry.registerVehicle(MOTORCYCLE);
         registry.registerVehicle(TRUCK);
         registry.registerVehicle(WOODEN_PLANE);
+        registry.registerVehicle(ATTACK_HELICOPTER);
     }
 }

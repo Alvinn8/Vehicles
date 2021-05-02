@@ -28,8 +28,8 @@ public class MotorcycleVehicle extends GroundVehicle {
     }
 
     @Override
-    protected void postInit() {
-        super.postInit();
+    protected void init() {
+        super.init();
 
         this.setMaxFuel(20000);
         this.setFuelUsage(4);

@@ -22,8 +22,8 @@ public class WoodenPlaneVehicle extends PlaneVehicle {
     }
 
     @Override
-    protected void postInit() {
-        super.postInit();
+    protected void init() {
+        super.init();
 
         this.setMaxFuel(10000);
         this.setFuelUsage(2);
@@ -51,6 +51,6 @@ public class WoodenPlaneVehicle extends PlaneVehicle {
 
     @Override
     public float getMaxSpeed() {
-        return 40;
+        return 20;
     }
 }
