@@ -3,10 +3,10 @@ version: ${project.version}
 main: me.alvin.vehicles.SVCraftVehicles
 api-version: "1.16"
 depend:
-- SVCraftMinigames
+- SVCraft
 - ProtocolLib
 authors: [Alvin]
-description: A vehicles plugin for SVCraft(Minigames)
+description: A vehicles plugin for SVCraft
 commands:
   #vehicles:
   #  description: Main command for SVCraftVehicles

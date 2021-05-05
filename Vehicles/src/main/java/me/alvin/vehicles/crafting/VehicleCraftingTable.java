@@ -1,9 +1,9 @@
 package me.alvin.vehicles.crafting;
 
 import me.alvin.vehicles.SVCraftVehicles;
-import me.svcraft.minigames.tileentity.CustomTileEntity;
-import me.svcraft.minigames.util.BlockLocation;
-import me.svcraft.minigames.util.CustomInventory;
+import svcraft.core.tileentity.CustomTileEntity;
+import svcraft.core.util.BlockLocation;
+import svcraft.core.util.CustomInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;

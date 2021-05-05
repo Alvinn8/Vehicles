@@ -4,7 +4,7 @@ import me.alvin.vehicles.item.VehicleSpawnerItem;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
-import me.svcraft.minigames.item.CustomItem;
+import svcraft.core.item.CustomItem;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

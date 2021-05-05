@@ -3,7 +3,7 @@ package me.alvin.vehicles.actions;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
-import me.svcraft.minigames.SVCraft;
+import svcraft.core.SVCraft;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;

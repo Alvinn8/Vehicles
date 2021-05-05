@@ -1,10 +1,10 @@
 package me.alvin.vehicles.crafting;
 
 import me.alvin.vehicles.util.DebugUtil;
-import me.svcraft.minigames.block.CustomBlock;
-import me.svcraft.minigames.tileentity.CustomTileEntity;
-import me.svcraft.minigames.tileentity.TileEntityBlock;
-import me.svcraft.minigames.util.BlockLocation;
+import svcraft.core.block.CustomBlock;
+import svcraft.core.tileentity.CustomTileEntity;
+import svcraft.core.tileentity.TileEntityBlock;
+import svcraft.core.util.BlockLocation;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

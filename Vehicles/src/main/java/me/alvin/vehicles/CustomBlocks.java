@@ -1,7 +1,7 @@
 package me.alvin.vehicles;
 
 import me.alvin.vehicles.crafting.VehicleCraftingTableBlock;
-import me.svcraft.minigames.block.CustomBlock;
+import svcraft.core.block.CustomBlock;
 
 public final class CustomBlocks {
     public static final VehicleCraftingTableBlock VEHICLE_CRAFTING_TABLE = new VehicleCraftingTableBlock(
