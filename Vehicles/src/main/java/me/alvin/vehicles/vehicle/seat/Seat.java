@@ -8,7 +8,7 @@ import me.alvin.vehicles.vehicle.VehicleType;
  * on where to put the player entering the vehicle.
  */
 public class Seat {
-    private final RelativePos relativePos;
+    private /*final*/ RelativePos relativePos;
     private final int offsetYaw;
 
     public Seat(RelativePos relativePos) {

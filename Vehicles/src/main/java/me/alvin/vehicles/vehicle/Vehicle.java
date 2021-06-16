@@ -257,9 +257,30 @@ public abstract class Vehicle implements Listener {
      * @param armorStand The armor stand to set up
      */
     public static void setupArmorStand(ArmorStand armorStand) {
+        armorStand.setVisible(false);
         armorStand.setGravity(false);
         armorStand.addDisabledSlots(EquipmentSlot.HEAD);
         armorStand.setPersistent(false);
+    }
+
+    /**
+     * Utility method to interpolate rotations smoothly.
+     *
+     * @param vehicleRotation The vehicle's current rotation.
+     * @param driverRotation The desired rotation.
+     * @return The interpolated rotation to use.
+     */
+    public static float interpolatedRotation(float vehicleRotation, float driverRotation) {
+        vehicleRotation = vehicleRotation % 360.0F;
+        driverRotation = driverRotation % 360.0F;
+        float difference = driverRotation - vehicleRotation;
+        if (difference < -180.0F) {
+            difference += 360.0F;
+        }
+        if (difference >= 180.0F) {
+            difference -= 360.0F;
+        }
+        return vehicleRotation + difference * 0.15F;
     }
 
     /**
@@ -540,7 +561,7 @@ public abstract class Vehicle implements Listener {
             Location location = this.debugRelativePos.relativeTo(this.location, this.getRoll());
             location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
         }
-        if (false) {
+        if (true) {
             VehicleCollisionType collisionType = this.getType().getCollisionType();
             if (collisionType instanceof AABBCollision) {
                 BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();

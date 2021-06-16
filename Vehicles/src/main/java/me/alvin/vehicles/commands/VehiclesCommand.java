@@ -5,8 +5,8 @@ import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import me.alvin.vehicles.VehicleSpawnerTask;
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.VehicleSpawnerTask;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.ColorUtil;
 import me.alvin.vehicles.util.RelativePos;
@@ -16,11 +16,6 @@ import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.seat.Seat;
-import svcraft.core.SVCraft;
-import svcraft.core.command.brigadier.Cmd;
-import svcraft.core.nms.CommandSource;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
@@ -36,10 +31,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.StringUtil;
+import svcraft.core.SVCraft;
+import svcraft.core.command.brigadier.Cmd;
+import svcraft.core.nms.CommandSource;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.UUID;
@@ -221,6 +218,19 @@ public class VehiclesCommand {
                         Player player = source.getPlayerRequired();
                         Vehicle vehicle = SVCraftVehicles.getInstance().getVehicle(player);
 
+                        // Seat to modify
+                        Seat seat = vehicle.getType().getDriverSeat();
+                        // New relativepos for the seat
+                        RelativePos newDriverSeatRelPos = new RelativePos(0, 1.2, -1.25);
+
+                        try {
+                            Field field = Seat.class.getDeclaredField("relativePos");
+                            field.setAccessible(true);
+                            field.set(seat, newDriverSeatRelPos);
+                        } catch (NoSuchFieldException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+
                         /*
                         Set<Seat> seats = vehicle.getType().getSeats();
                         seats.clear();
@@ -244,6 +254,9 @@ public class VehiclesCommand {
                         }
                         */
 
+                        /*
+                        // java 8 version
+
                         Seat driverSeat1 = vehicle.getType().getDriverSeat();
                         try {
                             Field field = Seat.class.getDeclaredField("relativePos");
@@ -253,12 +266,36 @@ public class VehiclesCommand {
                             modifiersField.setAccessible(true);
                             modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
 
-                            field.set(driverSeat1, new RelativePos(-0.2, 0.75, 2));
+                            field.set(driverSeat1, new RelativePos(0.2, 1.5, 0.1));
                         } catch (NoSuchFieldException | IllegalAccessException e) {
                             e.printStackTrace();
                         }
+                        */
 
-                        source.getCommandSender().sendMessage("Seats updated (for wooden plane!!!)");
+                        /*
+                        // java 12+ version (doesn't work)
+                        try {
+                            // java really doesn't want us to do this...
+                            // thanks https://stackoverflow.com/a/61150853
+                            Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
+                            final Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+                            unsafeField.setAccessible(true);
+                            final Object unsafe = unsafeField.get(null);
+                            System.out.println("unsafe = " + unsafe);
+
+                            final Field ourField = Seat.class.getDeclaredField("relativePos");
+                            System.out.println("ourField = " + ourField);
+                            final Object staticFieldBase = unsafeClass.getMethod("staticFieldBase", Field.class).invoke(unsafe, ourField);
+                            System.out.println("staticFieldBase = " + staticFieldBase);
+                            final long staticFieldOffset = (long) unsafeClass.getMethod("staticFieldOffset", Field.class).invoke(unsafe, ourField);
+                            System.out.println("staticFieldOffset = " + staticFieldOffset);
+                            unsafeClass.getMethod("putObject", Object.class, long.class, Object.class).invoke(unsafe, staticFieldBase, staticFieldOffset, newDriverSeatRelPos);
+                        } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                        */
+
+                        source.getCommandSender().sendMessage("Driver seat updated");
                         return 1;
                     })
             )
@@ -346,11 +383,48 @@ public class VehiclesCommand {
             .then(
                 Cmd.literal("hijack")
                     .executes(context -> {
-                        CommandSource source = Cmd.getSource(context);
-                        Player player = source.getPlayerRequired();
-                        player.playerListName(Component.text("*Testing!", NamedTextColor.YELLOW));
                         return 1;
                     })
+            )
+            .then(
+                Cmd.literal("tmpvars")
+                    .then(
+                        Cmd.literal("double")
+                            .then(
+                                Cmd.argument("name", StringArgumentType.string())
+                                    .executes(context -> {
+                                        CommandSource source = Cmd.getSource(context);
+                                        String name = StringArgumentType.getString(context, "name");
+                                        try {
+                                            Field field = Class.forName("me.alvin.vehicles.util.TmpVars").getField(name);
+                                            Object value = field.get(null);
+                                            source.getCommandSender().sendMessage(String.valueOf(value));
+                                        } catch (IllegalAccessException | NoSuchFieldException | ClassNotFoundException e) {
+                                            source.getCommandSender().sendMessage(e.getMessage());
+                                            e.printStackTrace();
+                                            return 0;
+                                        }
+                                        return 1;
+                                    })
+                                    .then(
+                                        Cmd.argument("value", DoubleArgumentType.doubleArg())
+                                            .executes(context -> {
+                                                CommandSource source = Cmd.getSource(context);
+                                                String name = StringArgumentType.getString(context, "name");
+                                                double value = DoubleArgumentType.getDouble(context, "value");
+                                                try {
+                                                    Field field = Class.forName("me.alvin.vehicles.util.TmpVars").getField(name);
+                                                    field.set(null, value);
+                                                } catch (IllegalAccessException | NoSuchFieldException | ClassNotFoundException e) {
+                                                    source.getCommandSender().sendMessage(e.getMessage());
+                                                    e.printStackTrace();
+                                                    return 0;
+                                                }
+                                                return 1;
+                                            })
+                                    )
+                            )
+                    )
             )
         );
     }

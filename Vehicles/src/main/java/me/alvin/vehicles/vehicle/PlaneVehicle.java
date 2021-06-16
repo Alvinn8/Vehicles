@@ -88,19 +88,6 @@ public abstract class PlaneVehicle extends Vehicle {
         }
     }
 
-    private float interpolatedRotation(float vehicleRotation, float driverRotation) {
-        vehicleRotation = vehicleRotation % 360.0F;
-        driverRotation = driverRotation % 360.0F;
-        float difference = driverRotation - vehicleRotation;
-        if (difference < -180.0F) {
-            difference += 360.0F;
-        }
-        if (difference >= 180.0F) {
-            difference -= 360.0F;
-        }
-        return vehicleRotation + difference * 0.15F;
-    }
-
     @Override
     public void calculateVelocity() {
         boolean canFly = this.speed >= this.getMinTakeoffSpeed();
@@ -109,7 +96,7 @@ public abstract class PlaneVehicle extends Vehicle {
         LivingEntity driver = this.getDriver();
         if (driver != null) {
             Location driverLocation = driver.getLocation();
-            this.location.setYaw(this.interpolatedRotation(this.location.getYaw(), driverLocation.getYaw()));
+            this.location.setYaw(interpolatedRotation(this.location.getYaw(), driverLocation.getYaw()));
             if (canFly) {
                 float driverPitch = driverLocation.getPitch();
                 if (!this.canAccelerate()) {
@@ -119,11 +106,11 @@ public abstract class PlaneVehicle extends Vehicle {
                     // Tried to face into the ground
                     driverPitch = 0;
                 }
-                this.location.setPitch(this.interpolatedRotation(this.location.getPitch(), driverPitch));
+                this.location.setPitch(interpolatedRotation(this.location.getPitch(), driverPitch));
             } else {
-                this.location.setPitch(this.interpolatedRotation(this.location.getPitch(), 0));
+                this.location.setPitch(interpolatedRotation(this.location.getPitch(), 0));
             }
-            this.roll = this.interpolatedRotation(this.roll, this.onGround ? 0 : this.location.getYaw() - driverLocation.getYaw());
+            this.roll = interpolatedRotation(this.roll, this.onGround ? 0 : this.location.getYaw() - driverLocation.getYaw());
         }
 
         // Velocity

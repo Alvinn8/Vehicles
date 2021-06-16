@@ -172,9 +172,9 @@ public class VehicleTypes {
             // Collision
             new AABBCollision(2, 3),
             // Seats
-            new Seat(new RelativePos(0.2, 0.5, 0.1)),
+            new Seat(new RelativePos(0, 1.2, -1.25)),
             Collections.singletonList(
-                new Seat(new RelativePos(-0.5, 0.5, 0.1))
+                new Seat(new RelativePos(0, 1.0, -0.3))
             )
         );
     }
