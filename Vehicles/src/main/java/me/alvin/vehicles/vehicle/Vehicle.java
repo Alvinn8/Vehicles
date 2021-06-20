@@ -561,7 +561,7 @@ public abstract class Vehicle implements Listener {
             Location location = this.debugRelativePos.relativeTo(this.location, this.getRoll());
             location.getWorld().spawnParticle(Particle.FLAME, location, 1, 0, 0, 0, 0);
         }
-        if (true) {
+        if (false) {
             VehicleCollisionType collisionType = this.getType().getCollisionType();
             if (collisionType instanceof AABBCollision) {
                 BoundingBox boundingBox = ((AABBCollision) collisionType).getBoundingBox();

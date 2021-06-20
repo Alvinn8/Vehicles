@@ -1,6 +1,12 @@
 package me.alvin.vehicles.crafting;
 
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.vehicle.VehicleType;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import svcraft.core.tileentity.CustomTileEntity;
 import svcraft.core.util.BlockLocation;
 import svcraft.core.util.CustomInventory;
@@ -61,6 +67,18 @@ public class VehicleCraftingTable extends CustomTileEntity {
             case SELECTING: {
                 // Background
                 this.inventory.setItem(53, SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:gui/vehicle_crafting_table/selecting"));
+
+                // Fill with vehicle types
+                int slot = 10;
+                for (VehicleType vehicleType : SVCraftVehicles.getInstance().getRegistry().getRegisteredVehicles().values()) {
+                    ItemStack item = new ItemStack(Material.DIAMOND);
+                    ItemMeta meta = item.getItemMeta();
+                    meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(vehicleType.getName()));
+                    item.setItemMeta(meta);
+                    this.inventory.setItem(slot, item);
+                    slot++;
+                    if (slot % 9 == 8) slot += 2;
+                }
                 break;
             }
             case VIEWING: {
