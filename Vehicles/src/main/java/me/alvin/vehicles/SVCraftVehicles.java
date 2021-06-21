@@ -5,6 +5,7 @@ import me.alvin.vehicles.commands.VehiclesCommand;
 import me.alvin.vehicles.nms.NMS;
 import me.alvin.vehicles.nms.NMS_v1_16_R2;
 import me.alvin.vehicles.nms.NMS_v1_16_R3;
+import me.alvin.vehicles.nms.NMS_v1_17_R1;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
@@ -102,6 +103,7 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         switch (nmsVersion) {
             case "v1_16_R2": this.nms = new NMS_v1_16_R2(); break;
             case "v1_16_R3": this.nms = new NMS_v1_16_R3(); break;
+            case "v1_17_R1": this.nms = new NMS_v1_17_R1(); break;
         }
 
         if (this.nms != null) {
