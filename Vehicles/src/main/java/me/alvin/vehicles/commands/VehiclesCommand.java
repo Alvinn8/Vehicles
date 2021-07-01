@@ -5,8 +5,10 @@ import com.mojang.brigadier.LiteralMessage;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.VehicleSpawnerTask;
+import me.alvin.vehicles.explosion.CoolExplosion;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.ColorUtil;
 import me.alvin.vehicles.util.RelativePos;
@@ -22,6 +24,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
@@ -43,6 +46,7 @@ import java.util.UUID;
 
 public class VehiclesCommand {
     private final static DynamicCommandExceptionType UNKNOWN_VEHICLE_TYPE = new DynamicCommandExceptionType(type -> new LiteralMessage("Unknown vehicle type '"+ type +"'"));
+    private final static SimpleCommandExceptionType NO_BLOCK_IN_SIGHT = new SimpleCommandExceptionType(new LiteralMessage("Please look at the location you want to blow up."));
 
     public static void register(CommandDispatcher<Object> dispatcher) {
         dispatcher.register(
@@ -425,6 +429,18 @@ public class VehiclesCommand {
                                     )
                             )
                     )
+            )
+            .then(
+                Cmd.literal("explode")
+                    .requires(obj -> Cmd.getSource(obj).hasPermission("vehicles.command.explode"))
+                    .executes(context -> {
+                        CommandSource source = Cmd.getSource(context);
+                        Player player = source.getPlayerRequired();
+                        Block targetBlock = player.getTargetBlock(50);
+                        if (targetBlock == null) throw NO_BLOCK_IN_SIGHT.create();
+                        CoolExplosion.explode(targetBlock.getLocation().add(0, 2, 0), 3, player);
+                        return 1;
+                    })
             )
         );
     }

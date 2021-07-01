@@ -1,5 +1,6 @@
-package me.alvin.vehicles;
+package me.alvin.vehicles.explosion;
 
+import me.alvin.vehicles.SVCraftVehicles;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -43,7 +44,7 @@ public class Missile extends BukkitRunnable {
             return;
         }
         // Particles
-        this.world.spawnParticle(Particle.CLOUD, this.location, 5, 0, 0, 0, 0);
+        this.world.spawnParticle(Particle.CLOUD, this.location, 5, 0, 0, 0, 0, null, true);
         // Move
         this.location.add(this.direction);
         // Check for collision
@@ -52,15 +53,21 @@ public class Missile extends BukkitRunnable {
             this.explode(false);
             return;
         }
-        Collection<Entity> entities = this.world.getNearbyEntities(this.location, 1, 1, 1, entity -> entity != this.source && entity instanceof LivingEntity);
+        Collection<Entity> entities = this.world.getNearbyEntities(this.location, 3, 3, 3, entity -> entity != this.source && entity instanceof LivingEntity);
         if (entities.size() > 1) {
+            Location entityLocation = entities.iterator().next().getLocation();
+            this.location.setX(entityLocation.getX());
+            this.location.setY(entityLocation.getY());
+            this.location.setZ(entityLocation.getZ());
+            System.out.println("Exploding on entity");
             this.explode(true);
         }
     }
 
-    public void explode(boolean onPlayer) {
-        if (!onPlayer) this.location.subtract(this.direction);
-        this.world.createExplosion(this.location, this.explosionPower, false, false, this.source);
+    public void explode(boolean onEntity) {
+        if (!onEntity) this.location.subtract(this.direction);
+        // this.world.createExplosion(this.location, this.explosionPower, false, SVCraftVehicles.EXPLOSIONS_BREAK_BLOCKS, this.source);
+        CoolExplosion.explode(this.location, this.explosionPower, this.source);
         this.cancel();
     }
 }
