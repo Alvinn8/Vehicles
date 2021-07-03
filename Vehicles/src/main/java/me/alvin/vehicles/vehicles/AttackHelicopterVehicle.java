@@ -19,8 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AttackHelicopterVehicle extends HelicopterVehicle {
-    public static final RelativePos TAIL_OFFSET = new RelativePos(-0.13, 0.6, -4);
-    public static final RelativePos ROTOR_OFFSET = new RelativePos(-0.15, 2.275, -1.65);
+    public static final RelativePos TAIL_SMOKE_OFFSET = new RelativePos(0.4, 3.2, -9.5);
+    public static final RelativePos TAIL_OFFSET = new RelativePos(0, 0.475, -7);
+    public static final RelativePos ROTOR_OFFSET = new RelativePos(0, 2.75, -2.65);
 
     protected @NotNull ArmorStand tailEntity;
     protected @Nullable NIArmorStand tailNiEntity;
@@ -103,10 +104,12 @@ public class AttackHelicopterVehicle extends HelicopterVehicle {
     public void calculateVelocity() {
         super.calculateVelocity();
 
-        float desiredPitch = this.speed * 3;
-        if (this.onGround) desiredPitch = -3; // Slight tilt backwards so the back wheel hits the ground
+        if (this.health > 0) {
+            float desiredPitch = this.speed * 3;
+            if (this.onGround) desiredPitch = -3; // Slight tilt backwards so the back wheel hits the ground
 
-        this.location.setPitch(interpolatedRotation(this.location.getPitch(), desiredPitch));
+            this.location.setPitch(interpolatedRotation(this.location.getPitch(), desiredPitch));
+        }
     }
 
     @Override
@@ -115,11 +118,11 @@ public class AttackHelicopterVehicle extends HelicopterVehicle {
         this.entity.setHeadPose(new EulerAngle(Math.toRadians(this.location.getPitch()), 0, /*roll*/0));
         NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY() + 0.75, this.location.getZ(), 0, 0);
 
-        Location tailLocation = new RelativePos(0, 0.475, -7).relativeTo(this.location, this.getRoll());
+        Location tailLocation = TAIL_OFFSET.relativeTo(this.location, this.getRoll());
         NIArmorStand.setLocation(this.tailNiEntity, this.tailEntity, tailLocation.getX(), tailLocation.getY(), tailLocation.getZ(), tailLocation.getYaw(), 0);
         this.tailEntity.setHeadPose(new EulerAngle(Math.toRadians(this.location.getPitch()), 0, /*roll*/0));
 
-        Location rotorLocation = new RelativePos(0, 2.75, -2.65).relativeTo(this.location, this.getRoll());
+        Location rotorLocation = ROTOR_OFFSET.relativeTo(this.location, this.getRoll());
         NIArmorStand.setLocation(this.rotorNiEntity, this.rotorEntity, rotorLocation.getX(), rotorLocation.getY(), rotorLocation.getZ(), this.rotorRotation, 0);
     }
 
@@ -166,6 +169,14 @@ public class AttackHelicopterVehicle extends HelicopterVehicle {
             this.tailNiEntity = null;
             this.rotorNiEntity.toArmorStand();
             this.rotorNiEntity = null;
+        }
+    }
+
+    @Override
+    public void spawnParticles() {
+        if (this.health < 100) {
+            this.smokeAt(TAIL_SMOKE_OFFSET);
+            this.smokeAt(ROTOR_OFFSET);
         }
     }
 }

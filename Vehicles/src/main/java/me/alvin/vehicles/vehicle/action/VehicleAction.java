@@ -29,5 +29,5 @@ public interface VehicleAction {
      *
      * @param vehicle The vehicle that is being removed.
      */
-    default void onRemove(Vehicle vehicle) {};
+    default void onRemove(Vehicle vehicle) {}
 }

@@ -2,8 +2,10 @@ package me.alvin.vehicles.vehicle;
 
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A helicopter vehicle that can take off vertically. Helicopter vehicles do
@@ -75,13 +77,23 @@ public abstract class HelicopterVehicle extends Vehicle {
             this.velY -= 0.01;
         }
 
+        if (this.health <= 0) {
+            this.velY -= 0.05;
+            if (this.rotorSpeed < 10) this.rotorSpeed = 10; // Ensure it keeps ticking
+            this.location.setYaw(this.location.getYaw() + 5);
+            float pitch = this.location.getPitch() + 5;
+            if (pitch > 30) pitch = 30;
+            this.location.setPitch(pitch);
+            if (this.isOnGround()) this.explode(null);
+        }
+
         if (this.velY >  0.5) this.velY =  0.5;
         if (this.velY < -0.5) this.velY = -0.5;
 
         this.calculateGravity();
 
         // Rotation
-        if (this.getDriver() != null && this.isFlying()) {
+        if (this.getDriver() != null && this.isFlying() && this.health > 0) {
             float driverYaw = this.getDriver().getLocation().getYaw() % 360.0F;
             float helicopterYaw = this.location.getYaw() % 360.0F;
             float difference = driverYaw - helicopterYaw;
@@ -127,5 +139,17 @@ public abstract class HelicopterVehicle extends Vehicle {
     @Override
     public boolean isMoving() {
         return this.rotorSpeed != 0;
+    }
+
+    @Override
+    public void onZeroHealth(@Nullable Entity source) {
+        // Only explode instantly if the conditions which would cause
+        // calculateVelocity to not fire (not moving), which would mean
+        // that the the crashing logic in calculateVelocity would never
+        // get called.
+        // Otherwise don't explode now and let the calculateVelocity
+        // method handle the crash.
+
+        if (!this.isMoving()) this.explode(source);
     }
 }

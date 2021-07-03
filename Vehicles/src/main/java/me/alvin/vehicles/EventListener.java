@@ -202,10 +202,14 @@ public class EventListener implements PerWorldListener {
         Vehicle vehicle = SVCraftVehicles.getInstance().getVehiclePartMap().get(event.getEntity());
         if (vehicle != null) {
             event.setCancelled(true);
-            if (event.getDamager() instanceof Player && ((Player) event.getDamager()).getGameMode() == GameMode.CREATIVE) {
-                vehicle.remove();
-            } else {
-                // TODO: Damage vehicle by event.getDamage()
+            // Prevent damaging the vehicle you are inside
+            Vehicle damagerVehicle = event.getDamager() instanceof LivingEntity ? SVCraftVehicles.getInstance().getVehicle((LivingEntity) event.getDamager()) : null;
+            if (damagerVehicle != vehicle) {
+                if (event.getDamager() instanceof Player && ((Player) event.getDamager()).getGameMode() == GameMode.CREATIVE) {
+                    vehicle.remove();
+                } else {
+                    vehicle.damage(event.getDamage(), event.getDamager());
+                }
             }
         }
     }

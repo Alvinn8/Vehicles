@@ -5,7 +5,7 @@ import org.bukkit.Particle;
 import org.bukkit.util.Vector;
 
 public class ExplosionDebris {
-    public static final double GRAVITY = 0.01;
+    public static final double GRAVITY = 0.04;
 
     private final Location location;
     private final Vector direction;
@@ -17,7 +17,7 @@ public class ExplosionDebris {
 
     public void tick() {
         // Gravity
-        this.direction.setY(this.direction.getY() - 0.04);
+        this.direction.setY(this.direction.getY() - GRAVITY);
 
         // Add direction
         this.location.add(this.direction);

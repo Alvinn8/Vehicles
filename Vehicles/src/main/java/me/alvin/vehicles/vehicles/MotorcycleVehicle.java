@@ -1,6 +1,7 @@
 package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.util.ni.NIArmorStand;
 import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.GroundVehicle;
@@ -8,12 +9,15 @@ import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 
 public class MotorcycleVehicle extends GroundVehicle {
+    private static final RelativePos SMOKE_OFFSET = new RelativePos(-0.2, 1, -0.1);
+
     private float roll;
     private float rollChange;
 
@@ -96,7 +100,9 @@ public class MotorcycleVehicle extends GroundVehicle {
     }
 
     @Override
-    public void updateRenderedPassengerPositions() {
-        super.updateRenderedPassengerPositions();
+    public void spawnParticles() {
+        if (this.health < 25) {
+            this.smokeAt(SMOKE_OFFSET);
+        }
     }
 }

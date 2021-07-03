@@ -10,6 +10,7 @@ import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -19,8 +20,9 @@ import org.jetbrains.annotations.Nullable;
 //       model being offset backwards.
 
 public class SimpleHelicopterVehicle extends HelicopterVehicle {
-    public static final RelativePos TAIL_OFFSET = new RelativePos(-0.13, 0.6, -4);
-    public static final RelativePos ROTOR_OFFSET = new RelativePos(-0.15, 2.275, -1.65);
+    private static final RelativePos TAIL_SMOKE_OFFSET = new RelativePos(-0.8, 1.7, -6.5);
+    private static final RelativePos TAIL_OFFSET = new RelativePos(-0.13, 0.6, -4);
+    private static final RelativePos ROTOR_OFFSET = new RelativePos(-0.15, 2.275, -1.65);
 
     protected @NotNull ArmorStand tailEntity;
     protected @Nullable NIArmorStand tailNiEntity;
@@ -147,6 +149,14 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
             this.tailNiEntity = null;
             this.rotorNiEntity.toArmorStand();
             this.rotorNiEntity = null;
+        }
+    }
+
+    @Override
+    public void spawnParticles() {
+        if (this.health < 75) {
+            this.smokeAt(TAIL_SMOKE_OFFSET);
+            this.smokeAt(ROTOR_OFFSET);
         }
     }
 }

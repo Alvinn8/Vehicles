@@ -8,16 +8,17 @@ import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class CoolExplosion {
-    public static void explode(Location location, int power, Entity source) {
+    public static void explode(@NotNull Location location, int power, @Nullable Entity source) {
         // Actual explosion
-        // location.getWorld().createExplosion(location, power, false, SVCraftVehicles.EXPLOSIONS_BREAK_BLOCKS, source);
-        location.getWorld().createExplosion(location, power, false, true, source);
+        location.getWorld().createExplosion(location, power, false, SVCraftVehicles.EXPLOSIONS_BREAK_BLOCKS, source);
 
         // Muffled sound for players far away
         for (Player player : location.getNearbyPlayers(128)) {

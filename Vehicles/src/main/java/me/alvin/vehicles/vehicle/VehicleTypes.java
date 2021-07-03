@@ -45,7 +45,8 @@ public class VehicleTypes {
                 new Seat(new RelativePos(0.75, 1, -0.4)),
                 Collections.singletonList(
                         new Seat(new RelativePos(0.1, 1, -0.4))
-                )
+                ),
+                40
         );
 
         // Golf Cart
@@ -61,7 +62,8 @@ public class VehicleTypes {
             new Seat(new RelativePos(0.75, 1, -0.4)),
             Collections.singletonList(
                 new Seat(new RelativePos(0.1, 1, -0.4))
-            )
+            ),
+            100
         );
 
         // Simple Boat
@@ -77,7 +79,8 @@ public class VehicleTypes {
                 new Seat(new RelativePos(0, 0, 0.1)),
                 Collections.singletonList(
                         new Seat(new RelativePos(0, 0, -1))
-                )
+                ),
+                100
         );
 
         // Simple Helicopter
@@ -95,7 +98,8 @@ public class VehicleTypes {
                         new Seat(new RelativePos(-0.5, 0.5, 0.1)),
                         new Seat(new RelativePos(0, 0.5, -1)),
                         new Seat(new RelativePos(-0.5, 0.5, -1))
-                )
+                ),
+                150
         );
 
         // Simple Car
@@ -113,7 +117,8 @@ public class VehicleTypes {
                 new Seat(new RelativePos(-0.35, 0.3, 0.1)),
                 new Seat(new RelativePos(0.35, 0.3, -1.0)),
                 new Seat(new RelativePos(-0.35, 0.3, -1.0))
-            )
+            ),
+            150
         );
 
         // Motorcycle
@@ -127,7 +132,8 @@ public class VehicleTypes {
             new AABBCollision(1.5, 1.5),
             // Seat
             new Seat(new RelativePos(-0.1, 1.3, -0.8)),
-            null
+            null,
+            50
         );
 
         // Truck
@@ -143,7 +149,8 @@ public class VehicleTypes {
             new Seat(new RelativePos(0.6, 2, 0.5)),
             Collections.singletonList(
                 new Seat(new RelativePos(-0.5, 2, 0.5))
-            )
+            ),
+            200
         );
 
         // Wooden Plane
@@ -159,7 +166,8 @@ public class VehicleTypes {
             new Seat(new RelativePos(0, 0.8, -0.3)),
             Collections.singletonList(
                 new Seat(new RelativePos(0, 0.8, -1.4))
-            )
+            ),
+            80
         );
 
         // Attack Helicopter
@@ -175,7 +183,8 @@ public class VehicleTypes {
             new Seat(new RelativePos(0, 1.2, -1.25)),
             Collections.singletonList(
                 new Seat(new RelativePos(0, 1.0, -0.3))
-            )
+            ),
+            200
         );
     }
 

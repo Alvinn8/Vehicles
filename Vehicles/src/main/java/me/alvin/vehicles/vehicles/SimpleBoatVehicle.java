@@ -13,7 +13,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleBoatVehicle extends BoatVehicle {
-    public static final RelativePos PARTICLE_OFFSET = new RelativePos(0, 0, -2);
+    private static final RelativePos SMOKE_OFFSET = new RelativePos(0, 1, 1.5);
+    private static final RelativePos PARTICLE_OFFSET = new RelativePos(0, 0, -2);
 
     public SimpleBoatVehicle(@NotNull ArmorStand entity) {
         super(entity);
@@ -58,6 +59,9 @@ public class SimpleBoatVehicle extends BoatVehicle {
     public void spawnParticles() {
         if (this.inWater) {
             this.location.getWorld().spawnParticle(Particle.CLOUD, PARTICLE_OFFSET.relativeTo(this.location, this.getRoll()), 5, 0.5, 0.5, 0.5, 0);
+        }
+        if (this.health < 50) {
+            this.smokeAt(SMOKE_OFFSET);
         }
     }
 

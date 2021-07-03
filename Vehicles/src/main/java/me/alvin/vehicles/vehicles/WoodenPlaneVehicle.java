@@ -1,6 +1,7 @@
 package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.PlaneVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
@@ -11,6 +12,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class WoodenPlaneVehicle extends PlaneVehicle {
+    private static final RelativePos SMOKE_OFFSET = new RelativePos(0, 1.35, 0.75);
+
     public WoodenPlaneVehicle(@NotNull ArmorStand entity) {
         super(entity);
     }
@@ -52,5 +55,12 @@ public class WoodenPlaneVehicle extends PlaneVehicle {
     @Override
     public float getMaxSpeed() {
         return 20;
+    }
+
+    @Override
+    public void spawnParticles() {
+        if (this.health < 40) {
+            this.smokeAt(SMOKE_OFFSET);
+        }
     }
 }

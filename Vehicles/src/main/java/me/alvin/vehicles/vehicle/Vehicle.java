@@ -2,7 +2,9 @@ package me.alvin.vehicles.vehicle;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.actions.FuelAction;
+import me.alvin.vehicles.actions.HealthAction;
 import me.alvin.vehicles.actions.SwitchSeatAction;
+import me.alvin.vehicles.explosion.CoolExplosion;
 import me.alvin.vehicles.nms.VehicleSteeringMovement;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.util.ExtraPersistentDataTypes;
@@ -27,8 +29,11 @@ import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -63,6 +68,7 @@ public abstract class Vehicle implements Listener {
     public static final NamespacedKey LOCATION = new NamespacedKey(SVCraftVehicles.getInstance(), "location");
     public static final NamespacedKey CURRENT_FUEL = new NamespacedKey(SVCraftVehicles.getInstance(), "current_fuel");
     public static final NamespacedKey COLOR = new NamespacedKey(SVCraftVehicles.getInstance(), "color");
+    public static final NamespacedKey HEALTH = new NamespacedKey(SVCraftVehicles.getInstance(), "health");
 
     // Constants
 
@@ -91,6 +97,7 @@ public abstract class Vehicle implements Listener {
     protected NIE<Slime> niSlime;
     public RelativePos debugRelativePos; // TEMP
     protected VehicleText text = null;
+    protected double health;
     // Movement
     protected @NotNull Location location;
     protected float speed = 0;
@@ -139,8 +146,9 @@ public abstract class Vehicle implements Listener {
         // inside the method loading the vehicle. In case of an NPE
         // the loaded vehicle is invalid.
 
-        this.currentFuel = Objects.requireNonNull(data.get(CURRENT_FUEL, PersistentDataType.INTEGER));
         this.location    = Objects.requireNonNull(data.get(LOCATION, ExtraPersistentDataTypes.LOCATION));
+        this.currentFuel = data.getOrDefault(CURRENT_FUEL, PersistentDataType.INTEGER, this.getMaxFuel());
+        this.health      = data.getOrDefault(HEALTH, PersistentDataType.DOUBLE, this.getType().getMaxHealth());
 
         this.init();
         for (VehicleAction action : this.allActions) {
@@ -173,6 +181,7 @@ public abstract class Vehicle implements Listener {
         this.location.setPitch(0);
         this.entity = spawnArmorStand(this.location);
         this.entity.setPersistent(true);
+        this.health = this.getType().getMaxHealth();
 
         DebugUtil.debug(creator.getName() + " spawned a vehicle of class " + this.getClass().getName());
 
@@ -202,6 +211,7 @@ public abstract class Vehicle implements Listener {
      * constructors have not been called yet.</p>
      */
     protected void init() {
+        this.addAction(HealthAction.INSTANCE);
         if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
         if (this.getType().getSeats().size() > 1) this.addAction(SwitchSeatAction.INSTANCE);
 
@@ -224,7 +234,7 @@ public abstract class Vehicle implements Listener {
         this.slime = this.location.getWorld().spawn(this.location, Slime.class, slime -> {
             slime.setSize(finalSize);
             slime.setAI(false);
-            slime.setInvulnerable(true);
+            slime.setInvulnerable(false);
             slime.setSilent(true);
             slime.setPersistent(false);
             slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
@@ -281,6 +291,10 @@ public abstract class Vehicle implements Listener {
             difference -= 360.0F;
         }
         return vehicleRotation + difference * 0.15F;
+    }
+
+    protected void smokeAt(RelativePos relativePos) {
+        this.location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, relativePos.relativeTo(this.location, this.getRoll()), 2, 0.1, 0.1, 0.1, 0.02);;
     }
 
     /**
@@ -654,12 +668,14 @@ public abstract class Vehicle implements Listener {
      * method determines whether the vehicle should be able to accelerate
      * forward in the {@link #updateSpeed()} method.
      *
-     * <p>The default implementation is, for vehicles that use fuel, to check
-     * whether it has fuel</p>
+     * <p>The default implementation is, to check if the vehicle's health is
+     * above zero, and for vehicles that use fuel, to check whether it has
+     * fuel</p>
      *
      * @return Whether the vehicle can accelerate forward.
      */
     public boolean canAccelerate() {
+        if (this.health <= 0) return false;
         if (!this.usesFuel()) return true;
 
         return this.currentFuel > 0;
@@ -823,7 +839,7 @@ public abstract class Vehicle implements Listener {
 
     /**
      * Override in subclasses to display particles when the vehicle is moving. Will only
-     * be called if {@link Vehicle#speed} != 0.
+     * be called if {@link Vehicle#isMoving()}.
      */
     public void spawnParticles() {}
 
@@ -1278,4 +1294,80 @@ public abstract class Vehicle implements Listener {
         }
     }
     // </editor-fold>
+
+    // Health
+    //<editor-fold desc="Health related methods" defaultstate="collapsed">
+
+    /**
+     * Get the vehicle's current health. If this reaches zero
+     * the vehicle will explode.
+     *
+     * @return The current health.
+     */
+    public double getHealth() {
+        return this.health;
+    }
+
+    /**
+     * Blow the vehicle up and remove it. This happens when the vehicle's
+     * health reaches zero.
+     *
+     * @param source The entity that caused this vehicle to explode. Or null
+     *               if it didn't explode due to an entity.
+     */
+    public void explode(@Nullable Entity source) {
+        this.remove();
+
+        CoolExplosion.explode(this.location, this.getExplosionPower(), source);
+    }
+
+    /**
+     * Damage the vehicle by the specified amount.
+     * <p>
+     * This method is preferred over modifying the {@link #health} field
+     * directly as it will check if the vehicle should explode and will
+     * play a sound.
+     *
+     * @param amount The amount of health points to damage the vehicle by.
+     * @param source The entity that damaged the vehicle, or null if it
+     *               wasn't damaged by an entity
+     */
+    public void damage(double amount, @Nullable Entity source) {
+        this.health -= amount;
+
+        float pitch = (float) Math.random() + 1.0F;
+        this.location.getWorld().playSound(this.location, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 1, pitch);
+
+        if (this.health <= 0) {
+            this.onZeroHealth(source);
+        }
+    }
+
+    /**
+     * Called when the vehicle reaches zero health.
+     * <p>
+     * Default implementation is to blow the vehicle up
+     * using {@link #explode(Entity)}.
+     *
+     * @param source The entity that caused the vehicle to die, or null
+     *               if it wasn't caused by an entity
+     */
+    public void onZeroHealth(@Nullable Entity source) {
+        this.explode(source);
+    }
+
+    /**
+     * Get the explosion power which this vehicle will explode with when
+     * destroyed.
+     * <p>
+     * This value does not have to be static and can change depending on
+     * for example how many explosives the vehicle has.
+     *
+     * @return The explosion power
+     */
+    public int getExplosionPower() {
+        return 3;
+    }
+
+    //</editor-fold>
 }

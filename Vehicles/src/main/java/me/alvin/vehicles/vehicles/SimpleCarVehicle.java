@@ -2,16 +2,20 @@ package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.actions.StorageAction;
+import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.GroundVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class SimpleCarVehicle extends GroundVehicle {
+    private static final RelativePos SMOKE_OFFSET = new RelativePos(0, 1.4, 2);
+
     public SimpleCarVehicle(@NotNull ArmorStand entity) {
         super(entity);
     }
@@ -55,5 +59,12 @@ public class SimpleCarVehicle extends GroundVehicle {
     @Override
     public boolean canBeColored() {
         return true;
+    }
+
+    @Override
+    public void spawnParticles() {
+        if (this.health < 75) {
+            this.smokeAt(SMOKE_OFFSET);
+        }
     }
 }

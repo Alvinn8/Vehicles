@@ -49,7 +49,9 @@ public class FuelAction implements VehicleMenuAction {
 
     @Override
     public ItemStack getEntryItem(Vehicle vehicle, Player player) {
-        return SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:gui/vehicle_menu_icon/fuel");
+        ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:gui/vehicle_menu_icon/fuel");
+        item.editMeta(meta -> meta.displayName(Component.text("Fuel").decoration(TextDecoration.ITALIC, false)));
+        return item;
     }
 
     @Override

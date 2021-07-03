@@ -30,6 +30,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.EulerAngle;
@@ -103,14 +104,22 @@ public class VehiclesCommand {
                             message.append(loadedVehicles.size()).append(" loaded vehicles");
                             message.append('\n');
                             for (Map.Entry<ArmorStand, Vehicle> entry : loadedVehicles.entrySet()) {
+                                Vehicle vehicle = entry.getValue();
                                 message.append(entry.getKey().getUniqueId().toString());
                                 message.append(": ");
-                                message.append(entry.getValue().getType().getId());
+                                message.append(vehicle.getType().getId());
                                 message.append(' ');
-                                message.append(entry.getValue().getNIEntity() == null ? "regular armor stand" : "ni armor stand");
+                                message.append(vehicle.getNIEntity() == null ? "regular armor stand" : "ni armor stand");
                                 message.append(' ');
-                                if (!entry.getValue().getEntity().isValid()) {
+                                if (!vehicle.getEntity().isValid()) {
                                     message.append(" §c[INVALID ENTITY]§r");
+                                }
+                                Slime slime = vehicle.getSlime();
+                                if (slime != null) {
+                                    message.append(vehicle.getNiSlime() == null ? " no ni-slime" : " ni-slime");
+                                    if (!slime.isValid()) message.append(" §cinvalid slime!§r");
+                                } else {
+                                    message.append(" §cno slime§r");
                                 }
                                 message.append('\n');
                             }

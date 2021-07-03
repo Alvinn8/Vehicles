@@ -29,6 +29,7 @@ public class VehicleType {
     private final Function<ArmorStand, Vehicle> loadConstructor;
     private final VehicleSpawnConstructorFunction spawnConstructor;
     private final VehicleCollisionType collisionType;
+    private final double maxHealth;
 
     public VehicleType(@NotNull String id,
                        @NotNull Component name,
@@ -37,7 +38,8 @@ public class VehicleType {
                        @NotNull VehicleSpawnConstructorFunction spawnConstructor,
                        @NotNull VehicleCollisionType collisionType,
                        @NotNull Seat driverSeat,
-                       @Nullable List<Seat> seats) {
+                       @Nullable List<Seat> seats,
+                       double maxHealth) {
         this.id = id;
         this.name = name;
         this.vehicleClass = vehicleClass;
@@ -49,6 +51,7 @@ public class VehicleType {
         this.seats = seatSet;
         this.driverSeat = driverSeat;
         this.collisionType = collisionType;
+        this.maxHealth = maxHealth;
     }
 
     /**
@@ -132,5 +135,15 @@ public class VehicleType {
      */
     public VehicleCollisionType getCollisionType() {
         return this.collisionType;
+    }
+
+    /**
+     * Get the max health the vehicle can have, is also the
+     * health the vehicle starts at.
+     *
+     * @return The max health
+     */
+    public double getMaxHealth() {
+        return this.maxHealth;
     }
 }

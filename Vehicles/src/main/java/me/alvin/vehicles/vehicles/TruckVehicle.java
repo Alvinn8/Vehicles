@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class TruckVehicle extends GroundVehicle {
+    private static final RelativePos SMOKE_OFFSET = new RelativePos(0, 2.75, 2.5);
+
     public static final RelativePos MAIN_PART_OFFSET = new RelativePos(0, 1.6, 1);
     public static final RelativePos BACK_PART_OFFSET = new RelativePos(-0.15, 0.1, -6.2);
 
@@ -130,5 +132,12 @@ public class TruckVehicle extends GroundVehicle {
 
         Location backLocation = BACK_PART_OFFSET.relativeTo(this.location, this.getRoll());
         NIArmorStand.setLocation(this.backNiEntity, this.backEntity, backLocation.getX(), backLocation.getY(), backLocation.getZ(), backLocation.getYaw(), 0);
+    }
+
+    @Override
+    public void spawnParticles() {
+        if (this.health < 100) {
+            this.smokeAt(SMOKE_OFFSET);
+        }
     }
 }

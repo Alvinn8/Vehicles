@@ -5,11 +5,13 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 
@@ -69,8 +71,11 @@ public abstract class PlaneVehicle extends Vehicle {
     public void updateSpeed() {
         float oldSpeed = this.speed;
 
-        if (this.movement.forward != 0 && this.canAccelerate()) {
-            this.speed += this.getAccelerationSpeed() * this.movement.forward;
+        if (this.movement.forward != 0) {
+            // If we can't accelerate, still allow slowing down
+            if (this.movement.forward < 0 || this.canAccelerate()) {
+                this.speed += this.getAccelerationSpeed() * this.movement.forward;
+            }
         }
 
         if (this.speed > this.getMaxSpeed()) this.speed = this.getMaxSpeed();
@@ -100,7 +105,10 @@ public abstract class PlaneVehicle extends Vehicle {
             if (canFly) {
                 float driverPitch = driverLocation.getPitch();
                 if (!this.canAccelerate()) {
+                    // Make the plane accelerate towards the ground
+                    if (!this.onGround) this.speed += this.getAccelerationSpeed();
                     driverPitch = Math.min(Math.max(this.location.getPitch(), 0) + 5, 90);
+                    if (this.health <= 0 && this.onGround) this.explode(null);
                 }
                 if (this.onGround && driverPitch > 0) {
                     // Tried to face into the ground
@@ -128,7 +136,7 @@ public abstract class PlaneVehicle extends Vehicle {
         if (this.onGround) this.gravityVelY = 0;
 
         // Drag
-        if (this.onGround || !canFly || !this.canAccelerate()) {
+        if (this.onGround || !canFly || (!this.canAccelerate() && this.health > 0)) {
             // Not flying
             if (this.speed < 5 && this.movement.forward <= 0) {
                 this.speed *= 0.95;
@@ -149,5 +157,15 @@ public abstract class PlaneVehicle extends Vehicle {
         super.updateRenderedLocation();
 
         this.entity.setHeadPose(new EulerAngle(Math.toRadians(this.location.getPitch()), 0, Math.toRadians(this.roll)));
+    }
+
+    @Override
+    public void onZeroHealth(@Nullable Entity source) {
+        // Only explode instantly if the conditions which would cause
+        // the crashing logic in calculateVelocity to not happen.
+        // Otherwise let the calculateVelocity method handle the crash.
+
+        boolean canFly = this.speed >= this.getMinTakeoffSpeed();
+        if (this.isOnGround() || !this.isMoving() || !canFly || this.getDriver() == null) this.explode(source);
     }
 }
