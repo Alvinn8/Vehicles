@@ -22,13 +22,13 @@ public class SimpleCarVehicle extends GroundVehicle {
 
     public SimpleCarVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
-
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/car"));
     }
 
     @Override
     protected void init() {
         super.init();
+
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/car"));
 
         this.addAction(new StorageAction(9));
 

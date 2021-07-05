@@ -21,6 +21,11 @@ public class GolfCartVehicle extends GroundVehicle {
 
     public GolfCartVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
 
         this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/golf_cart"));
     }

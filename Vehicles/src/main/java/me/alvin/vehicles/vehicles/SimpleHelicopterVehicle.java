@@ -31,29 +31,25 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
 
     public SimpleHelicopterVehicle(@NotNull ArmorStand entity) {
         super(entity);
-
-        this.spawnExtraEntities();
     }
 
     public SimpleHelicopterVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
-
-        this.spawnExtraEntities();
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_front"));
-    }
-
-    private void spawnExtraEntities() {
-        this.tailEntity = spawnArmorStand(TAIL_OFFSET.relativeTo(this.location, this.getRoll()));
-        this.tailEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_tail"));
-        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.tailEntity, this);
-        this.rotorEntity = spawnArmorStand(ROTOR_OFFSET.relativeTo(this.location, this.getRoll()));
-        this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor"));
-        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.rotorEntity, this);
     }
 
     @Override
     protected void init() {
         super.init();
+
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_front"));
+
+        this.tailEntity = spawnArmorStand(TAIL_OFFSET.relativeTo(this.location, this.getRoll()));
+        this.tailEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_tail"));
+        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.tailEntity, this);
+
+        this.rotorEntity = spawnArmorStand(ROTOR_OFFSET.relativeTo(this.location, this.getRoll()));
+        this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor"));
+        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.rotorEntity, this);
 
         this.setMaxFuel(20000);
         this.setFuelUsage(5);

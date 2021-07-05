@@ -27,13 +27,13 @@ public class MotorcycleVehicle extends GroundVehicle {
 
     public MotorcycleVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
-
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/motorcycle"));
     }
 
     @Override
     protected void init() {
         super.init();
+
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/motorcycle"));
 
         this.setMaxFuel(20000);
         this.setFuelUsage(4);

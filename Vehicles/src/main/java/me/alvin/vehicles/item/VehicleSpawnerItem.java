@@ -22,12 +22,11 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class VehicleSpawnerItem extends CustomItem {
     public VehicleType DEFAULT_VEHICLE_TYPE = VehicleTypes.SIMPLE_CAR;
-    public static final NamespacedKey SELECTED_VEHICLE_TYPE = new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle_type");
+    public static final NamespacedKey VEHICLE_TYPE_TAG = new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle_type");
 
     public VehicleSpawnerItem() {
         super(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle_spawner"), Material.DIAMOND_HOE, "Vehicle Spawner");
@@ -44,7 +43,7 @@ public class VehicleSpawnerItem extends CustomItem {
         ));
         PersistentDataContainer data = meta.getPersistentDataContainer();
         data.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, this.id.toString());
-        data.set(SELECTED_VEHICLE_TYPE, PersistentDataType.STRING, DEFAULT_VEHICLE_TYPE.getId());
+        data.set(VEHICLE_TYPE_TAG, PersistentDataType.STRING, DEFAULT_VEHICLE_TYPE.getId());
         item.setItemMeta(meta);
         return item;
     }
@@ -67,7 +66,7 @@ public class VehicleSpawnerItem extends CustomItem {
                     VehicleType vehicleType = vehicleTypes.get(slot);
                     ItemMeta meta = selectedItem.getItemMeta();
                     PersistentDataContainer container = meta.getPersistentDataContainer();
-                    container.set(SELECTED_VEHICLE_TYPE, PersistentDataType.STRING, vehicleType.getId());
+                    container.set(VEHICLE_TYPE_TAG, PersistentDataType.STRING, vehicleType.getId());
                     selectedItem.setItemMeta(meta);
                     event.getWhoClicked().closeInventory();
                     VehicleSpawnerTask task = SVCraftVehicles.getInstance().getVehicleSpawnerTaskMap().get(player);

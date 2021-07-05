@@ -1,5 +1,6 @@
 package me.alvin.vehicles.vehicle;
 
+import me.alvin.vehicles.crafting.recipe.VehicleCraftingRecipe;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import net.kyori.adventure.text.Component;
@@ -30,6 +31,7 @@ public class VehicleType {
     private final VehicleSpawnConstructorFunction spawnConstructor;
     private final VehicleCollisionType collisionType;
     private final double maxHealth;
+    private final VehicleCraftingRecipe recipe;
 
     public VehicleType(@NotNull String id,
                        @NotNull Component name,
@@ -39,7 +41,8 @@ public class VehicleType {
                        @NotNull VehicleCollisionType collisionType,
                        @NotNull Seat driverSeat,
                        @Nullable List<Seat> seats,
-                       double maxHealth) {
+                       double maxHealth,
+                       @Nullable VehicleCraftingRecipe.Builder recipe) {
         this.id = id;
         this.name = name;
         this.vehicleClass = vehicleClass;
@@ -52,6 +55,7 @@ public class VehicleType {
         this.driverSeat = driverSeat;
         this.collisionType = collisionType;
         this.maxHealth = maxHealth;
+        this.recipe = recipe == null ? null : recipe.build();
     }
 
     /**
@@ -133,6 +137,7 @@ public class VehicleType {
      *
      * @return The collision type
      */
+    @NotNull
     public VehicleCollisionType getCollisionType() {
         return this.collisionType;
     }
@@ -145,5 +150,17 @@ public class VehicleType {
      */
     public double getMaxHealth() {
         return this.maxHealth;
+    }
+
+    /**
+     * Get the crafting recipe that is used to craft this vehicle type
+     * in a Vehicle Crafting Table. May be null in case the vehicle can
+     * not be crafted.
+     *
+     * @return The recipe, or null if the vehicle type is not craftable.
+     */
+    @Nullable
+    public VehicleCraftingRecipe getRecipe() {
+        return this.recipe;
     }
 }

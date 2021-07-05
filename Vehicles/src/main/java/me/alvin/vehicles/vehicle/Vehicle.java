@@ -173,17 +173,19 @@ public abstract class Vehicle implements Listener {
      * Create a new vehicle at the specified location.
      *
      * @param location The location to spawn the vehicle at
-     * @param creator The player that created the vehicle
+     * @param creator The player that created the vehicle. Can in rare occasions be null if
+     *                a vehicle crafting table was unloaded while completing a step and the
+     *                player wasn't online when the crafting table was re-loaded.
      * @param reason The reason the vehicle was spawned
      */
-    public Vehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
+    public Vehicle(@NotNull Location location, @Nullable Player creator, @NotNull VehicleSpawnReason reason) {
         this.location = location;
         this.location.setPitch(0);
         this.entity = spawnArmorStand(this.location);
         this.entity.setPersistent(true);
         this.health = this.getType().getMaxHealth();
 
-        DebugUtil.debug(creator.getName() + " spawned a vehicle of class " + this.getClass().getName());
+        DebugUtil.debug(creator == null ? "null" : creator.getName() + " spawned a vehicle of class " + this.getClass().getName());
 
         this.init();
         Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
@@ -198,14 +200,11 @@ public abstract class Vehicle implements Listener {
     }
 
     /**
-     * Called while the vehicle is being constructed.
+     * Called while the vehicle is being constructed. This method works as code that should
+     * be ran in both constructors.
      *
-     * <p>This is the method that registers all {@link VehicleAction}s for the vehicle.</p>
-     *
-     * <p>Override this method if want to register other actions or call methods
-     * like {@link #setMaxFuel(int)}, etc. Calling the super method is recommended
-     * as it will register important actions like a fuel action if the vehicle uses
-     * fuel and the switch seat action.</p>
+     * <p>This is the method that sets the entity up and spawns extra entities, registers all
+     * {@link VehicleAction}s and sets fuel information.</p>
      *
      * <p>Note that this method is called inside the Vehicle constructors, so subclass
      * constructors have not been called yet.</p>
@@ -237,6 +236,7 @@ public abstract class Vehicle implements Listener {
             slime.setInvulnerable(false);
             slime.setSilent(true);
             slime.setPersistent(false);
+            slime.setRemoveWhenFarAway(false);
             slime.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
         });
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.slime, this);
@@ -301,6 +301,11 @@ public abstract class Vehicle implements Listener {
      * Save {@link PersistentDataContainer} data on the main entity.
      */
     public void save() {
+        if (this.isHologram) {
+            DebugUtil.debug("Removing hologram vehicle instead of saving it");
+            this.remove();
+            return;
+        }
         PersistentDataContainer data = this.entity.getPersistentDataContainer();
         data.set(VEHICLE_ID,   PersistentDataType.STRING,         this.getType().getId());
         data.set(CURRENT_FUEL, PersistentDataType.INTEGER,        this.currentFuel);
@@ -567,9 +572,12 @@ public abstract class Vehicle implements Listener {
      * </pre>
      *
      * <p>Note that vehicles that are attached do not tick at all.</p>
+     *
+     * <p>Note that holograms do not tick at all.</p>
      */
     public void tick() {
         if (this.isAttached()) return;
+        if (this.isHologram) return;
 
         if (this.debugRelativePos != null) {
             Location location = this.debugRelativePos.relativeTo(this.location, this.getRoll());
@@ -638,7 +646,7 @@ public abstract class Vehicle implements Listener {
                 }
             }
         } else {
-            if (!this.isHologram && this.isNonInterpolating() && this.seatData.size() <= 0) {
+            if (this.isNonInterpolating() && this.seatData.size() <= 0) {
                 this.setNonInterpolating(false);
             }
         }
@@ -1327,12 +1335,16 @@ public abstract class Vehicle implements Listener {
      * This method is preferred over modifying the {@link #health} field
      * directly as it will check if the vehicle should explode and will
      * play a sound.
+     * <p>
+     * Vehicles that are holograms will not be damaged. {@link #isHologram()}
      *
      * @param amount The amount of health points to damage the vehicle by.
      * @param source The entity that damaged the vehicle, or null if it
      *               wasn't damaged by an entity
      */
     public void damage(double amount, @Nullable Entity source) {
+        if (this.isHologram) return;
+
         this.health -= amount;
 
         float pitch = (float) Math.random() + 1.0F;

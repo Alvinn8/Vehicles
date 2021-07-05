@@ -16,7 +16,6 @@ public enum VehicleSpawnReason {
     /**
      * The vehicle was spawned as it was crafted using a
      * vehicle crafting table.
-     * TODO
      */
     CRAFTING
 }

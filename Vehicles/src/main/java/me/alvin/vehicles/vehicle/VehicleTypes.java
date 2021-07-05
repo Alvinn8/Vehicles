@@ -16,9 +16,14 @@ import me.alvin.vehicles.vehicles.WoodenPlaneVehicle;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Collections;
+
+import static me.alvin.vehicles.crafting.recipe.RecipeStep.step;
+import static me.alvin.vehicles.crafting.recipe.VehicleCraftingRecipe.recipe;
 
 public class VehicleTypes {
     public static final VehicleType TEST;
@@ -46,7 +51,26 @@ public class VehicleTypes {
                 Collections.singletonList(
                         new Seat(new RelativePos(0.1, 1, -0.4))
                 ),
-                40
+                40,
+                // Recipe,
+                recipe()
+                    .displayItem(new ItemStack(Material.STONE))
+                    .addStep(step()
+                        .name(Component.text("Test Step 1"))
+                        .addItem(new ItemStack(Material.DIAMOND, 10))
+                        .addItem(new ItemStack(Material.COPPER_INGOT, 10))
+                        .addItem(new ItemStack(Material.REDSTONE, 10))
+                        .addItem(new ItemStack(Material.IRON_INGOT, 10))
+                        .addItem(new ItemStack(Material.GOLD_BLOCK, 10))
+                        .addItem(new ItemStack(Material.GOLD_INGOT, 10))
+                        .addItem(new ItemStack(Material.WHITE_CONCRETE, 10))
+                        .completeTime(10000)
+                    )
+                    .addStep(step()
+                        .name(Component.text("Test Step 2"))
+                        .addItem(new ItemStack(Material.IRON_INGOT, 100))
+                        .completeTime(50000)
+                    )
         );
 
         // Golf Cart
@@ -63,7 +87,9 @@ public class VehicleTypes {
             Collections.singletonList(
                 new Seat(new RelativePos(0.1, 1, -0.4))
             ),
-            100
+            100,
+            // Recipe,
+            null
         );
 
         // Simple Boat
@@ -80,7 +106,9 @@ public class VehicleTypes {
                 Collections.singletonList(
                         new Seat(new RelativePos(0, 0, -1))
                 ),
-                100
+                100,
+            // Recipe,
+            null
         );
 
         // Simple Helicopter
@@ -99,7 +127,9 @@ public class VehicleTypes {
                         new Seat(new RelativePos(0, 0.5, -1)),
                         new Seat(new RelativePos(-0.5, 0.5, -1))
                 ),
-                150
+                150,
+            // Recipe,
+            null
         );
 
         // Simple Car
@@ -118,7 +148,9 @@ public class VehicleTypes {
                 new Seat(new RelativePos(0.35, 0.3, -1.0)),
                 new Seat(new RelativePos(-0.35, 0.3, -1.0))
             ),
-            150
+            150,
+            // Recipe,
+            null
         );
 
         // Motorcycle
@@ -133,7 +165,9 @@ public class VehicleTypes {
             // Seat
             new Seat(new RelativePos(-0.1, 1.3, -0.8)),
             null,
-            50
+            50,
+            // Recipe,
+            null
         );
 
         // Truck
@@ -150,7 +184,9 @@ public class VehicleTypes {
             Collections.singletonList(
                 new Seat(new RelativePos(-0.5, 2, 0.5))
             ),
-            200
+            200,
+            // Recipe,
+            null
         );
 
         // Wooden Plane
@@ -167,7 +203,9 @@ public class VehicleTypes {
             Collections.singletonList(
                 new Seat(new RelativePos(0, 0.8, -1.4))
             ),
-            80
+            80,
+            // Recipe,
+            null
         );
 
         // Attack Helicopter
@@ -184,7 +222,9 @@ public class VehicleTypes {
             Collections.singletonList(
                 new Seat(new RelativePos(0, 1.0, -0.3))
             ),
-            200
+            200,
+            // Recipe,
+            null
         );
     }
 

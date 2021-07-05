@@ -52,6 +52,8 @@ public class HealthAction implements VehicleMenuAction {
             .append(Component.text(" / " + maxHealth));
         item.editMeta(meta -> meta.displayName(component.build()));
 
+        inventory.setItem(0, item);
+
         player.openInventory(inventory);
     }
 }

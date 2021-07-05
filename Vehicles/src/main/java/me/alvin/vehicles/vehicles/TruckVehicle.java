@@ -27,21 +27,28 @@ public class TruckVehicle extends GroundVehicle {
 
     public TruckVehicle(@NotNull ArmorStand entity) {
         super(entity);
-
-        this.spawnExtraEntities();
     }
 
     public TruckVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
 
-        this.spawnExtraEntities();
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/truck/truck"));
     }
 
-    private void spawnExtraEntities() {
+    @Override
+    protected void init() {
+        super.init();
+
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/truck/truck"));
+
         this.backEntity = spawnArmorStand(BACK_PART_OFFSET.relativeTo(this.location, this.getRoll()));
         this.backEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/truck/truck_back"));
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.backEntity, this);
+
+        this.setMaxFuel(20000);
+        this.setFuelUsage(5);
+
+        // Actions
+        this.addAction(new StorageAction(54));
     }
 
     private void removeExtraEntities() {
@@ -52,17 +59,6 @@ public class TruckVehicle extends GroundVehicle {
             this.backNiEntity.remove();
         }
         else this.backEntity.remove();
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-
-        this.setMaxFuel(20000);
-        this.setFuelUsage(5);
-
-        // Actions
-        this.addAction(new StorageAction(54));
     }
 
     @Override

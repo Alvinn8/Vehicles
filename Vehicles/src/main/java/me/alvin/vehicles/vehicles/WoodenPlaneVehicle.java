@@ -20,13 +20,13 @@ public class WoodenPlaneVehicle extends PlaneVehicle {
 
     public WoodenPlaneVehicle(@NotNull Location location, @NotNull Player creator, @NotNull VehicleSpawnReason reason) {
         super(location, creator, reason);
-
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/wooden_plane"));
     }
 
     @Override
     protected void init() {
         super.init();
+
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/wooden_plane"));
 
         this.setMaxFuel(10000);
         this.setFuelUsage(2);

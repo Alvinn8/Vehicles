@@ -95,7 +95,7 @@ public class VehicleSpawnerTask extends BukkitRunnable {
         ItemMeta meta = selectedItem.getItemMeta();
         if (meta == null) return null;
         PersistentDataContainer container = meta.getPersistentDataContainer();
-        String vehicleTypeId = container.get(VehicleSpawnerItem.SELECTED_VEHICLE_TYPE, PersistentDataType.STRING);
+        String vehicleTypeId = container.get(VehicleSpawnerItem.VEHICLE_TYPE_TAG, PersistentDataType.STRING);
         if (vehicleTypeId == null) return null;
         return SVCraftVehicles.getInstance().getRegistry().getVehicle(vehicleTypeId);
     }
