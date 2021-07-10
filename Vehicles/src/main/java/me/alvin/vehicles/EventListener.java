@@ -103,6 +103,11 @@ public class EventListener implements PerWorldListener {
 
     @EventHandler
     public void onChunkUnload(ChunkUnloadEvent event) {
+        if (!event.getChunk().isLoaded()) {
+            SVCraftVehicles.getInstance().getLogger().warning("ChunkUnloadEvent was called with an already unloaded chunk! x: " + event.getChunk().getX() + " z: " + event.getChunk().getZ());
+            new Exception().printStackTrace();
+            return;
+        }
         for (Entity entity : event.getChunk().getEntities()) {
             if (!(entity instanceof ArmorStand)) continue;
             if (!SVCraftVehicles.getInstance().getVehiclePartMap().containsKey(entity)) continue;

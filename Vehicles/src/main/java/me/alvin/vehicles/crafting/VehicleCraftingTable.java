@@ -231,6 +231,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
                 });
 
                 this.inventory.setItem(2, materialListItem);
+                this.inventory.setItem(3, materialListItem.clone());
             }
             case CRAFTING -> {
                 if (this.progress == null) {

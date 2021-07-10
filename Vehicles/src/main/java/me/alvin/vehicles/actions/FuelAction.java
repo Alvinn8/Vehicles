@@ -60,14 +60,17 @@ public class FuelAction implements VehicleMenuAction {
             @Override
             public void onClick(InventoryClickEvent event) {
                 DebugUtil.debug("Event called");
-                if (event.getSlot() == 19 && event.getAction() == InventoryAction.PLACE_ALL) {
+                boolean isTop = event.getClickedInventory() == event.getView().getTopInventory();
+                if (isTop && event.getSlot() == 19 && event.getAction() == InventoryAction.PLACE_ALL) {
                     CustomItem item = CustomItem.getItem(event.getCursor());
                     if (item == CustomItems.FUEL) {
                         fuelVehicle(vehicle, event.getWhoClicked(), event.getInventory());
                         return;
                     }
                 }
-                event.setCancelled(true);
+                if (isTop || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY || event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
+                    event.setCancelled(true);
+                }
             }
         }, 27, Component.text("Fuel"));
 

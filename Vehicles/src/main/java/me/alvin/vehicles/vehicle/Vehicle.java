@@ -147,7 +147,7 @@ public abstract class Vehicle implements Listener {
         // the loaded vehicle is invalid.
 
         this.location    = Objects.requireNonNull(data.get(LOCATION, ExtraPersistentDataTypes.LOCATION));
-        this.currentFuel = data.getOrDefault(CURRENT_FUEL, PersistentDataType.INTEGER, this.getMaxFuel());
+        this.currentFuel = data.getOrDefault(CURRENT_FUEL, PersistentDataType.INTEGER, this.usesFuel() ? this.getMaxFuel() : 0);
         this.health      = data.getOrDefault(HEALTH, PersistentDataType.DOUBLE, this.getType().getMaxHealth());
 
         this.init();
@@ -355,6 +355,17 @@ public abstract class Vehicle implements Listener {
 
         if (this.niSlime != null) this.niSlime.remove();
         this.slime.remove();
+
+        if (this.isAttached()) {
+            this.detach();
+        }
+
+        if (this.attachedVehicles != null) {
+            Vehicle[] vehicles = this.attachedVehicles.keySet().toArray(new Vehicle[0]);
+            for (Vehicle vehicle : vehicles) {
+                this.detachVehicle(vehicle);
+            }
+        }
 
         SVCraftVehicles.getInstance().getLoadedVehicles().remove(this.entity, this);
         SVCraftVehicles.getInstance().getVehiclePartMap().entrySet().removeIf(entry -> entry.getValue() == this);
@@ -565,7 +576,7 @@ public abstract class Vehicle implements Listener {
      *     5: updateRenderedLocation
      *     6: updateRenderedPassengerPositions
      *     7: spawnParticles
-     *     if attached {
+     *     if has attached vehicles {
      *         8: updateAttachedVehicles
      *     }
      * }
@@ -889,6 +900,13 @@ public abstract class Vehicle implements Listener {
             this.niSlime.toNormalEntity();
             this.niSlime = null;
         }
+        if (this.attachedVehicles != null) {
+            for (Vehicle vehicle : this.attachedVehicles.keySet()) {
+                if (vehicle.isNonInterpolating() != nonInterpolating) {
+                    vehicle.setNonInterpolating(nonInterpolating);
+                }
+            }
+        }
     }
 
     /**
@@ -1161,6 +1179,12 @@ public abstract class Vehicle implements Listener {
 
         this.attachedVehicles.put(vehicle, attachmentData);
         vehicle.attachedTo = this;
+
+        if (vehicle.isNonInterpolating() != this.isNonInterpolating()) {
+            vehicle.setNonInterpolating(this.isNonInterpolating());
+            vehicle.updateRenderedLocation();
+        }
+
         this.updateAttachedVehicles();
         // TODO: Play sound maybe?
     }
@@ -1189,9 +1213,20 @@ public abstract class Vehicle implements Listener {
     }
 
     /**
+     * Check whether this vehicle has other vehicles attached to it.
+     *
+     * @return Whether there are attached vehicles
+     */
+    public boolean hasAttachedVehicles() {
+        if (this.attachedVehicles == null) return false;
+
+        return this.attachedVehicles.size() > 0;
+    }
+
+    /**
      * Update the positions of attached vehicles.
      */
-    private void updateAttachedVehicles() {
+    protected void updateAttachedVehicles() {
         for (Map.Entry<Vehicle, AttachmentData> entry : this.attachedVehicles.entrySet()) {
             Vehicle attachedVehicle = entry.getKey();
             AttachmentData attachmentData = entry.getValue();

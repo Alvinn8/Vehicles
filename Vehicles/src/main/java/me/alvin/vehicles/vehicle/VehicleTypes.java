@@ -1,11 +1,13 @@
 package me.alvin.vehicles.vehicle;
 
+import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicles.AttackHelicopterVehicle;
 import me.alvin.vehicles.vehicles.GolfCartVehicle;
+import me.alvin.vehicles.vehicles.MiniSubmarineVehicle;
 import me.alvin.vehicles.vehicles.MotorcycleVehicle;
 import me.alvin.vehicles.vehicles.SimpleBoatVehicle;
 import me.alvin.vehicles.vehicles.SimpleCarVehicle;
@@ -35,6 +37,7 @@ public class VehicleTypes {
     public static final VehicleType TRUCK;
     public static final VehicleType WOODEN_PLANE;
     public static final VehicleType ATTACK_HELICOPTER;
+    public static final VehicleType MINI_SUBMARINE;
 
     static {
         // Test Vehicle
@@ -52,7 +55,7 @@ public class VehicleTypes {
                         new Seat(new RelativePos(0.1, 1, -0.4))
                 ),
                 40,
-                // Recipe,
+                // Recipe
                 recipe()
                     .displayItem(new ItemStack(Material.STONE))
                     .addStep(step()
@@ -88,7 +91,7 @@ public class VehicleTypes {
                 new Seat(new RelativePos(0.1, 1, -0.4))
             ),
             100,
-            // Recipe,
+            // Recipe
             null
         );
 
@@ -107,7 +110,7 @@ public class VehicleTypes {
                         new Seat(new RelativePos(0, 0, -1))
                 ),
                 100,
-            // Recipe,
+            // Recipe
             null
         );
 
@@ -128,7 +131,7 @@ public class VehicleTypes {
                         new Seat(new RelativePos(-0.5, 0.5, -1))
                 ),
                 150,
-            // Recipe,
+            // Recipe
             null
         );
 
@@ -149,7 +152,7 @@ public class VehicleTypes {
                 new Seat(new RelativePos(-0.35, 0.3, -1.0))
             ),
             150,
-            // Recipe,
+            // Recipe
             null
         );
 
@@ -166,7 +169,7 @@ public class VehicleTypes {
             new Seat(new RelativePos(-0.1, 1.3, -0.8)),
             null,
             50,
-            // Recipe,
+            // Recipe
             null
         );
 
@@ -185,7 +188,7 @@ public class VehicleTypes {
                 new Seat(new RelativePos(-0.5, 2, 0.5))
             ),
             200,
-            // Recipe,
+            // Recipe
             null
         );
 
@@ -204,7 +207,7 @@ public class VehicleTypes {
                 new Seat(new RelativePos(0, 0.8, -1.4))
             ),
             80,
-            // Recipe,
+            // Recipe
             null
         );
 
@@ -223,8 +226,47 @@ public class VehicleTypes {
                 new Seat(new RelativePos(0, 1.0, -0.3))
             ),
             200,
-            // Recipe,
+            // Recipe
             null
+        );
+
+        // Mini Submarine
+        MINI_SUBMARINE = new VehicleType(
+            "mini_submarine",
+            Component.text("Mini Submarine"),
+            MiniSubmarineVehicle.class,
+            MiniSubmarineVehicle::new,
+            MiniSubmarineVehicle::new,
+            // Collision
+            new AABBCollision(1.5, 2),
+            // Seats
+            new Seat(new RelativePos(0, 0, 0)),
+            null,
+            50,
+            // Recipe
+            recipe()
+                .displayItem(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/mini_submarine"))
+                .addStep(step()
+                    .name(Component.text("Body"))
+                    .addItem(new ItemStack(Material.IRON_BLOCK, 4))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 10))
+                    .addItem(new ItemStack(Material.PRISMARINE, 5))
+                    .completeTime(60000)
+                )
+                .addStep(step()
+                    .name(Component.text("Glass"))
+                    .addItem(new ItemStack(Material.GLASS_PANE, 6))
+                    .addItem(new ItemStack(Material.GLASS, 2))
+                    .completeTime(120000)
+                )
+                .addStep(step()
+                    .name(Component.text("Engine"))
+                    .addItem(new ItemStack(Material.PISTON))
+                    .addItem(new ItemStack(Material.DISPENSER))
+                    .addItem(new ItemStack(Material.REDSTONE, 10))
+                    .addItem(new ItemStack(Material.REPEATER, 2))
+                    .completeTime(120000)
+                )
         );
     }
 
@@ -238,5 +280,6 @@ public class VehicleTypes {
         registry.registerVehicle(TRUCK);
         registry.registerVehicle(WOODEN_PLANE);
         registry.registerVehicle(ATTACK_HELICOPTER);
+        registry.registerVehicle(MINI_SUBMARINE);
     }
 }

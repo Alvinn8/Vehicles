@@ -29,7 +29,7 @@ public class SeatData {
         Location location = seat.getRelativePos().relativeTo(vehicle.getLocation(), vehicle.getRoll());
         location.subtract(0, RIDER_ENTITY_Y_OFFSET, 0);
 
-        Mule spawnedMule = location.getWorld().spawn(location, Mule.class, mule -> {
+        Mule spawnedMule = SVCraftVehicles.getInstance().getNMS().spawnSeatEntity(location, mule -> {
             mule.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
             mule.setTamed(true);
             mule.setAI(false);

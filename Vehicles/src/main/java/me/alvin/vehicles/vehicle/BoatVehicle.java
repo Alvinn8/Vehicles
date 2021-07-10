@@ -43,10 +43,14 @@ public abstract class BoatVehicle extends Vehicle {
             this.location.setYaw(this.location.getYaw() + this.movement.side * -5);
         }
         this.calculateGravity();
+
+        this.velX *= 0.95;
+        this.velZ *= 0.95;
         Vector direction = this.location.getDirection();
         direction.multiply(this.speed / 20);
-        this.velX = direction.getX();
-        this.velZ = direction.getZ();
+        direction.multiply(0.05);
+        this.velX += direction.getX();
+        this.velZ += direction.getZ();
 
         if (this.inWater) {
             this.speed *= 0.95;
@@ -61,13 +65,16 @@ public abstract class BoatVehicle extends Vehicle {
     @Override
     protected boolean doCollisionBlockCheck(double x, double y, double z, Axis axis) {
         Block block = this.location.getWorld().getBlockAt(Location.locToBlock(x), Location.locToBlock(y), Location.locToBlock(z));
-        BlockData blockData = block.getBlockData();
         boolean check;
         if (axis == Axis.Y || axis == null) {
             // On only the Y axis can water be collided with
             // Or if the axis is null its being spawned using the vehicle spawner
-            boolean inWater = block.getType() == Material.WATER
-                || (blockData instanceof Waterlogged && ((Waterlogged) blockData).isWaterlogged());
+            boolean inWater = block.getType() == Material.WATER;
+            if (!inWater) {
+                // Check water logged too (but only if we didn't already find water)
+                BlockData blockData = block.getBlockData();
+                inWater = blockData instanceof Waterlogged && ((Waterlogged) blockData).isWaterlogged();
+            }
 
             check = inWater || !block.isPassable();
             if (!this.inWater && inWater) this.inWater = true;

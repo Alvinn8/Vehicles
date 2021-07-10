@@ -5,16 +5,22 @@ import me.alvin.vehicles.actions.StorageAction;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.util.ni.NIArmorStand;
 import me.alvin.vehicles.util.ni.NIE;
+import me.alvin.vehicles.vehicle.AttachmentData;
 import me.alvin.vehicles.vehicle.GroundVehicle;
+import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class TruckVehicle extends GroundVehicle {
     private static final RelativePos SMOKE_OFFSET = new RelativePos(0, 2.75, 2.5);
@@ -128,6 +134,24 @@ public class TruckVehicle extends GroundVehicle {
 
         Location backLocation = BACK_PART_OFFSET.relativeTo(this.location, this.getRoll());
         NIArmorStand.setLocation(this.backNiEntity, this.backEntity, backLocation.getX(), backLocation.getY(), backLocation.getZ(), backLocation.getYaw(), 0);
+    }
+
+    @Override
+    public void calculateVelocity() {
+        super.calculateVelocity();
+
+        if (this.speed < 0 && Bukkit.getCurrentTick() % 20 == 0 && !this.hasAttachedVehicles()) {
+            List<Entity> nearbyEntities = this.backEntity.getNearbyEntities(10, 5, 10);
+            for (Entity nearbyEntity : nearbyEntities) {
+                Vehicle vehicle = SVCraftVehicles.getInstance().getVehiclePartMap().get(nearbyEntity);
+                if (vehicle == null) continue;
+                if (vehicle == this) continue;
+                if (vehicle.isAttached()) continue;
+
+                this.attachVehicle(vehicle, new AttachmentData(new RelativePos(-0.15, 1.6, -4.5)));
+                break;
+            }
+        }
     }
 
     @Override

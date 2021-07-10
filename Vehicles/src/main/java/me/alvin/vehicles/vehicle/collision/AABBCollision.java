@@ -21,7 +21,7 @@ public class AABBCollision implements VehicleCollisionType {
     /**
      * Get the axis aligned bounding box of this AABBCollision.
      *
-     * <p><strong>Note: </strong>As bounding boxes are mutable, so be very careful
+     * <p><strong>Note: </strong>As bounding boxes are mutable, be very careful
      * not to modify the returned bounding box. It is not cloned before being
      * returned for performance reasons as this will be called a lot when
      * vehicle collision is being checked.</p>

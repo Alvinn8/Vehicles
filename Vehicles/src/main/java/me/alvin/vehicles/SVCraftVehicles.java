@@ -49,6 +49,8 @@ public final class SVCraftVehicles extends SVCraftPlugin {
 
         if (!this.setupNMS()) return;
 
+        // Bukkit.getPluginManager().registerEvents(new TestEventListener(), this);
+
         ResourcePack vehiclesResourcePack = SVCraft.getInstance().getResourcePackManager().getResourcePack("vehicles");
         if (vehiclesResourcePack != null && vehiclesResourcePack.hasRPCModelManagerData()) {
             this.resourcepackData = vehiclesResourcePack.getRpcModelManagerData();
