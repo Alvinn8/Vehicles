@@ -1,6 +1,8 @@
-package me.alvin.vehicles.nms;
+package me.alvin.vehicles.nms.v1_17_R1;
 
 import com.comphenix.protocol.events.PacketEvent;
+import me.alvin.vehicles.nms.NMS;
+import me.alvin.vehicles.nms.VehicleSteeringMovement;
 import net.minecraft.network.protocol.game.PacketPlayInSteerVehicle;
 import net.minecraft.server.level.WorldServer;
 import org.bukkit.Location;
@@ -43,7 +45,7 @@ public class NMS_v1_17_R1 implements NMS {
     public Mule spawnSeatEntity(Location location, Consumer<Mule> consumer) {
         WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
 
-        SeatEntity_v1_17_R1 entity = new SeatEntity_v1_17_R1(world);
+        SeatEntity entity = new SeatEntity(world);
         entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         entity.setHeadRotation(location.getYaw());
 
@@ -54,7 +56,7 @@ public class NMS_v1_17_R1 implements NMS {
     public Slime spawnHitboxEntity(Location location, Consumer<Slime> consumer) {
         WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
 
-        HitboxEntity_v1_17_R1 entity = new HitboxEntity_v1_17_R1(world);
+        HitboxEntity entity = new HitboxEntity(world);
         entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         entity.setHeadRotation(location.getYaw());
 

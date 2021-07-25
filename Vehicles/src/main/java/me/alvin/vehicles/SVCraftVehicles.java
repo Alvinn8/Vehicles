@@ -3,7 +3,7 @@ package me.alvin.vehicles;
 import com.comphenix.protocol.ProtocolLibrary;
 import me.alvin.vehicles.commands.VehiclesCommand;
 import me.alvin.vehicles.nms.NMS;
-import me.alvin.vehicles.nms.NMS_v1_17_R1;
+import me.alvin.vehicles.nms.v1_17_R1.NMS_v1_17_R1;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;

@@ -1,5 +1,6 @@
-package me.alvin.vehicles.nms;
+package me.alvin.vehicles.nms.v1_17_R1;
 
+import me.alvin.vehicles.nms.NMS;
 import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.animal.horse.EntityHorseMule;
 import net.minecraft.world.level.World;
@@ -9,8 +10,8 @@ import org.bukkit.util.Consumer;
 /**
  * @see NMS#spawnSeatEntity(Location, Consumer)
  */
-public class SeatEntity_v1_17_R1 extends EntityHorseMule {
-    public SeatEntity_v1_17_R1(World world) {
+public class SeatEntity extends EntityHorseMule {
+    public SeatEntity(World world) {
         super(EntityTypes.ag, world);
     }
 
