@@ -230,7 +230,7 @@ public abstract class Vehicle implements Listener {
             size = (int) Math.floor(Math.max(boundingBox.getMaxX(), boundingBox.getMaxY()) * 2); // slime size = (slime size in blocks) * 2
         }
         int finalSize = size;
-        this.slime = this.location.getWorld().spawn(this.location, Slime.class, slime -> {
+        this.slime = SVCraftVehicles.getInstance().getNMS().spawnHitboxEntity(this.location, slime -> {
             slime.setSize(finalSize);
             slime.setAI(false);
             slime.setInvulnerable(false);

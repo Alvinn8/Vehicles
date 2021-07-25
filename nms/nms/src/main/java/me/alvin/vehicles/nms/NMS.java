@@ -4,6 +4,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mule;
+import org.bukkit.entity.Slime;
 import org.bukkit.util.Consumer;
 
 public interface NMS {
@@ -70,5 +71,23 @@ public interface NMS {
      * @return The spawned entity.
      */
     Mule spawnSeatEntity(Location location, Consumer<Mule> consumer);
+
+    /**
+     * Spawn a hitbox slime.
+     *
+     * <p>Iron Golems and other entities capable of attacking mobs will not attack
+     * this slime in contrast to normal slimes. This prevents for example Iron
+     * Golems from attacking and blowing up vehicles in villages.</p>
+     *
+     * <p>This entity should be marked as {@link Entity#setPersistent(boolean)} {@code false}
+     * as this is simply a subclass of the normal slime, not an actual new entity. Meaning
+     * it won't get saved into the world, and when the chunk is loaded it will become a
+     * normal slime instead as it does not have it's own registered entity id.</p>
+     *
+     * @param location The location to spawn the hitbox entity at.
+     * @param consumer A consumer that is ran before the entity is spawned.
+     * @return The spawned entity.
+     */
+    Slime spawnHitboxEntity(Location location, Consumer<Slime> consumer);
 
 }

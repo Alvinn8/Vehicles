@@ -8,6 +8,7 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mule;
+import org.bukkit.entity.Slime;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Consumer;
 
@@ -43,6 +44,17 @@ public class NMS_v1_17_R1 implements NMS {
         WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
 
         SeatEntity_v1_17_R1 entity = new SeatEntity_v1_17_R1(world);
+        entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        entity.setHeadRotation(location.getYaw());
+
+        return ((CraftWorld) location.getWorld()).addEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM, consumer);
+    }
+
+    @Override
+    public Slime spawnHitboxEntity(Location location, Consumer<Slime> consumer) {
+        WorldServer world = ((CraftWorld) location.getWorld()).getHandle();
+
+        HitboxEntity_v1_17_R1 entity = new HitboxEntity_v1_17_R1(world);
         entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         entity.setHeadRotation(location.getYaw());
 
