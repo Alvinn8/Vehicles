@@ -59,6 +59,11 @@ public class VehicleTypes {
                 recipe()
                     .displayItem(new ItemStack(Material.STONE))
                     .addStep(step()
+                        .name(Component.text("Test Vehicle").decorate(TextDecoration.ITALIC))
+                        .addItem(new ItemStack(Material.BEDROCK))
+                        .completeTime(20)
+                    )
+                    .addStep(step()
                         .name(Component.text("Test Step 1"))
                         .addItem(new ItemStack(Material.DIAMOND, 10))
                         .addItem(new ItemStack(Material.COPPER_INGOT, 10))
@@ -92,7 +97,31 @@ public class VehicleTypes {
             ),
             100,
             // Recipe
-            null
+            recipe()
+                .displayItem(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/golf_cart"))
+                .addStep(step()
+                    .name(Component.text("Body"))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 20))
+                    .addItem(new ItemStack(Material.WHITE_CONCRETE, 10))
+                    .addItem(new ItemStack(Material.BLACK_CONCRETE, 10))
+                    .addItem(new ItemStack(Material.GLASS_PANE, 4))
+                    .completeTime(180000)
+                )
+                .addStep(step()
+                    .name(Component.text("Wheels"))
+                    .addItem(new ItemStack(Material.BLACK_WOOL, 4))
+                    .completeTime(40000)
+                )
+                .addStep(step()
+                    .name(Component.text("Electric Engine"))
+                    .addItem(new ItemStack(Material.PISTON, 1))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 6))
+                    .addItem(new ItemStack(Material.COPPER_INGOT, 12))
+                    .addItem(new ItemStack(Material.REDSTONE, 15))
+                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 10))
+                    .addItem(new ItemStack(Material.REPEATER, 5))
+                    .completeTime(120000)
+                )
         );
 
         // Simple Boat
@@ -111,7 +140,26 @@ public class VehicleTypes {
                 ),
                 100,
             // Recipe
-            null
+            recipe()
+                .displayItem(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/simple_car"))
+                .addStep(step()
+                    .name(Component.text("Body"))
+                    .addItem(new ItemStack(Material.IRON_BLOCK, 1))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 35))
+                    .addItem(new ItemStack(Material.COPPER_INGOT, 10))
+                    .addItem(new ItemStack(Material.GLASS_PANE, 1))
+                    .addItem(new ItemStack(Material.GRAY_WOOL, 2))
+                    .completeTime(210000)
+                )
+                .addStep(step()
+                    .name(Component.text("Engine"))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 2))
+                    .addItem(new ItemStack(Material.FURNACE, 1))
+                    .addItem(new ItemStack(Material.REDSTONE, 10))
+                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 2))
+                    .addItem(new ItemStack(Material.REPEATER, 5))
+                    .completeTime(180000)
+                )
         );
 
         // Simple Helicopter
@@ -132,7 +180,40 @@ public class VehicleTypes {
                 ),
                 150,
             // Recipe
-            null
+            recipe()
+                .displayItem(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:missing"))
+                .addStep(step()
+                    .name(Component.text("Body"))
+                    .addItem(new ItemStack(Material.IRON_BLOCK, 2))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 50))
+                    .addItem(new ItemStack(Material.COPPER_INGOT, 16))
+                    .addItem(new ItemStack(Material.GLASS_PANE, 4))
+                    .completeTime(300000)
+                )
+                .addStep(step()
+                    .name(Component.text("Tail"))
+                    .addItem(new ItemStack(Material.IRON_BLOCK, 1))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 15))
+                    .addItem(new ItemStack(Material.IRON_NUGGET, 6))
+                    .completeTime(180000)
+                )
+                .addStep(step()
+                    .name(Component.text("Skids"))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 10))
+                    .addItem(new ItemStack(Material.IRON_NUGGET, 8))
+                    .completeTime(60000)
+                )
+                .addStep(step()
+                    .name(Component.text("Engine"))
+                    .addItem(new ItemStack(Material.DISPENSER, 2))
+                    .addItem(new ItemStack(Material.FURNACE, 2))
+                    .addItem(new ItemStack(Material.DROPPER, 1))
+                    .addItem(new ItemStack(Material.REDSTONE, 20))
+                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 10))
+                    .addItem(new ItemStack(Material.REPEATER, 5))
+                    .addItem(new ItemStack(Material.COMPARATOR, 3))
+                    .completeTime(180000)
+                )
         );
 
         // Simple Car
@@ -153,7 +234,31 @@ public class VehicleTypes {
             ),
             150,
             // Recipe
-            null
+            recipe()
+                .displayItem(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/simple_car"))
+                .addStep(step()
+                    .name(Component.text("Body"))
+                    .addItem(new ItemStack(Material.IRON_BLOCK, 2))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 50))
+                    .addItem(new ItemStack(Material.COPPER_INGOT, 16))
+                    .addItem(new ItemStack(Material.GLASS_PANE, 6))
+                    .completeTime(300000)
+                )
+                .addStep(step()
+                    .name(Component.text("Wheels"))
+                    .addItem(new ItemStack(Material.BLACK_WOOL, 4))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 4))
+                    .completeTime(60000)
+                )
+                .addStep(step()
+                    .name(Component.text("Engine"))
+                    .addItem(new ItemStack(Material.PISTON, 2))
+                    .addItem(new ItemStack(Material.FURNACE, 1))
+                    .addItem(new ItemStack(Material.REDSTONE, 10))
+                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 2))
+                    .addItem(new ItemStack(Material.REPEATER, 5))
+                    .completeTime(180000)
+                )
         );
 
         // Motorcycle
@@ -170,7 +275,26 @@ public class VehicleTypes {
             null,
             50,
             // Recipe
-            null
+            recipe()
+                .displayItem(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/motorcycle"))
+                .addStep(step()
+                    .name(Component.text("Body"))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 36))
+                    .addItem(new ItemStack(Material.COPPER_INGOT, 12))
+                    .completeTime(120000)
+                )
+                .addStep(step()
+                    .name(Component.text("Wheels"))
+                    .addItem(new ItemStack(Material.BLACK_WOOL, 2))
+                    .completeTime(20000)
+                )
+                .addStep(step()
+                    .name(Component.text("Engine"))
+                    .addItem(new ItemStack(Material.FURNACE, 1))
+                    .addItem(new ItemStack(Material.REDSTONE, 5))
+                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 2))
+                    .completeTime(60000)
+                )
         );
 
         // Truck
@@ -208,7 +332,36 @@ public class VehicleTypes {
             ),
             80,
             // Recipe
-            null
+            recipe()
+                .displayItem(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/wooden_plane"))
+                .addStep(step()
+                    .name(Component.text("Body"))
+                    .addItem(new ItemStack(Material.OAK_BOAT, 1))
+                    .addItem(new ItemStack(Material.OAK_PLANKS, 10))
+                    .addItem(new ItemStack(Material.OAK_SLAB, 20))
+                    .addItem(new ItemStack(Material.OAK_FENCE, 4))
+                    .completeTime(120000)
+                )
+                .addStep(step()
+                    .name(Component.text("Wheels"))
+                    .addItem(new ItemStack(Material.BLACK_WOOL, 3))
+                    .addItem(new ItemStack(Material.STICK, 3))
+                    .completeTime(30000)
+                )
+                .addStep(step()
+                    .name(Component.text("Propeller"))
+                    .addItem(new ItemStack(Material.STICK, 5))
+                    .completeTime(30000)
+                )
+                .addStep(step()
+                    .name(Component.text("Engine"))
+                    .addItem(new ItemStack(Material.PISTON, 2))
+                    .addItem(new ItemStack(Material.FURNACE, 1))
+                    .addItem(new ItemStack(Material.REDSTONE, 10))
+                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 2))
+                    .addItem(new ItemStack(Material.REPEATER, 5))
+                    .completeTime(60000)
+                )
         );
 
         // Attack Helicopter

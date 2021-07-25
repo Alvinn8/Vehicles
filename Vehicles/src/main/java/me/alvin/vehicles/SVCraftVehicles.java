@@ -8,6 +8,9 @@ import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleTypes;
+import org.bukkit.Material;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import svcraft.core.SVCraft;
 import svcraft.core.config.Config;
 import svcraft.core.plugin.SVCraftPlugin;
@@ -75,6 +78,17 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         this.registerItem(CustomItems.VEHICLE_CRAFTING_TABLE);
         this.registerItem(CustomItems.FUEL);
         this.registerItem(CustomItems.VEHICLE_SPAWNER);
+
+        ShapedRecipe vehicleCraftingTableRecipe = new ShapedRecipe(new NamespacedKey(this, "vehicle_crafting_table"), CustomItems.VEHICLE_CRAFTING_TABLE.makeItemStack());
+        vehicleCraftingTableRecipe.shape(" # ", "#-#", " # ");
+        vehicleCraftingTableRecipe.setIngredient('#', Material.IRON_INGOT);
+        vehicleCraftingTableRecipe.setIngredient('-', Material.CRAFTING_TABLE);
+        this.registerRecipe(vehicleCraftingTableRecipe);
+
+        ShapelessRecipe fuelRecipe = new ShapelessRecipe(new NamespacedKey(this, "fuel"), CustomItems.FUEL.makeItemStack());
+        fuelRecipe.addIngredient(Material.IRON_INGOT);
+        fuelRecipe.addIngredient(5, Material.COAL);
+        this.registerRecipe(fuelRecipe);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
 
