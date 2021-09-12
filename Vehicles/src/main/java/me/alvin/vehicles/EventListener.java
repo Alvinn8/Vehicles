@@ -1,6 +1,5 @@
 package me.alvin.vehicles;
 
-import com.destroystokyo.paper.event.entity.EntityAddToWorldEvent;
 import me.alvin.vehicles.crafting.VehicleCraftingTable;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
@@ -9,7 +8,6 @@ import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.SeatData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -27,8 +25,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -43,59 +41,29 @@ import svcraft.core.world.event.PerWorldListener;
 import java.util.Map;
 
 public class EventListener implements PerWorldListener {
-    /**
-     * 5 for player reach + 3 for vehicle radius.
-     */
-    public static final int VEHICLE_ENTER_SEARCH_DISTANCE = 5 + 3;
-
     @Override
     public boolean isEnabledIn(World world) {
         return SVCraftVehicles.getInstance().isEnabledIn(world);
     }
 
     @EventHandler
-    public void onChunkLoad(ChunkLoadEvent event) {
-        Chunk chunk = event.getChunk();
-        for (Entity entity : chunk.getEntities()) {
+    public void onChunkLoad(EntitiesLoadEvent event) {
+        for (Entity entity : event.getEntities()) {
             if (entity instanceof ArmorStand) {
                 PersistentDataContainer data = entity.getPersistentDataContainer();
                 if (data.has(Vehicle.VEHICLE_ID, PersistentDataType.STRING)) {
                     String id = data.get(Vehicle.VEHICLE_ID, PersistentDataType.STRING);
                     VehicleType vehicleType = SVCraftVehicles.getInstance().getRegistry().getVehicle(id);
                     if (vehicleType == null) {
-                        SVCraftVehicles.getInstance().getLogger().warning("Unknown vehicle id '" + id + "' when loading entity " + entity.getUniqueId().toString() + " in chunk " + chunk.getX() + " " + chunk.getZ() + " in world " + event.getWorld().getName());
+                        SVCraftVehicles.getInstance().getLogger().warning("Unknown vehicle id '" + id + "' when loading entity " + entity.getUniqueId() + " in chunk " + event.getChunk().getX() + " " + event.getChunk().getZ() + " in world " + event.getWorld().getName());
                         continue;
                     }
                     try {
                         vehicleType.construct((ArmorStand) entity);
                     } catch (Throwable e) {
-                        SVCraftVehicles.getInstance().getLogger().severe("Failed to load vehicle with id '" + id + "' when loading entity " + entity.getUniqueId().toString() + " in chunk " + chunk.getX() + " " + chunk.getZ() + " in world " + event.getWorld().getName());
+                        SVCraftVehicles.getInstance().getLogger().severe("Failed to load vehicle with id '" + id + "' when loading entity " + entity.getUniqueId() + " in chunk " + event.getChunk().getX() + " " + event.getChunk().getZ() + " in world " + event.getWorld().getName());
                         e.printStackTrace();
                     }
-                }
-            }
-        }
-    }
-
-    // Workaround for https://github.com/PaperMC/Paper/issues/5872
-    @EventHandler
-    public void onEntityAddToWorld(EntityAddToWorldEvent event) {
-        Entity entity = event.getEntity();
-        if (entity instanceof ArmorStand) {
-            PersistentDataContainer data = entity.getPersistentDataContainer();
-            if (data.has(Vehicle.VEHICLE_ID, PersistentDataType.STRING)) {
-                String id = data.get(Vehicle.VEHICLE_ID, PersistentDataType.STRING);
-                VehicleType vehicleType = SVCraftVehicles.getInstance().getRegistry().getVehicle(id);
-                Chunk chunk = entity.getChunk();
-                if (vehicleType == null) {
-                    SVCraftVehicles.getInstance().getLogger().warning("Unknown vehicle id '" + id + "' when loading entity " + entity.getUniqueId().toString() + " in chunk " + chunk.getX() + " " + chunk.getZ() + " in world " + entity.getWorld().getName());
-                    return;
-                }
-                try {
-                    vehicleType.construct((ArmorStand) entity);
-                } catch (Throwable e) {
-                    SVCraftVehicles.getInstance().getLogger().severe("Failed to load vehicle with id '" + id + "' when loading entity " + entity.getUniqueId().toString() + " in chunk " + chunk.getX() + " " + chunk.getZ() + " in world " + entity.getWorld().getName());
-                    e.printStackTrace();
                 }
             }
         }

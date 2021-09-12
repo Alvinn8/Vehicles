@@ -49,7 +49,7 @@ public class NMS_v1_17_R1 implements NMS {
         entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         entity.setHeadRotation(location.getYaw());
 
-        return ((CraftWorld) location.getWorld()).addEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM, consumer);
+        return ((CraftWorld) location.getWorld()).addEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM, consumer, false);
     }
 
     @Override
@@ -60,6 +60,6 @@ public class NMS_v1_17_R1 implements NMS {
         entity.setPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         entity.setHeadRotation(location.getYaw());
 
-        return ((CraftWorld) location.getWorld()).addEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM, consumer);
+        return ((CraftWorld) location.getWorld()).addEntity(entity, CreatureSpawnEvent.SpawnReason.CUSTOM, consumer, false);
     }
 }
