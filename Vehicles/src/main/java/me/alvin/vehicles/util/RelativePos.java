@@ -10,13 +10,13 @@ import org.jetbrains.annotations.NotNull;
  * the location, with an optional roll that can be supplied as a
  * parameter. Similar to the vanilla ^ ^ ^ notation in commands.
  *
- * A RelativePos consists of how much be moved forward, up and left
+ * <p>A RelativePos consists of how much be moved forward, up and left
  * with respect to the current rotation. This can be used to for
  * example get the location of a point in a vehicle even when it is
- * rotated in yaw, pitch and roll.
+ * rotated in yaw, pitch and roll.</p>
  *
- * This class is immutable, the {@link #add(double, double, double)} and other
- * methods create new instances.
+ * <p>This class is immutable, the {@link #add(double, double, double)} and other
+ * methods create new instances.</p>
  */
 public class RelativePos {
     private final double left;
@@ -33,9 +33,9 @@ public class RelativePos {
      * Get the world location relative with this RelativePos' values to the
      * specified location.
      *
-     * This RelativePos' forward, up and left values will be applied to the
+     * <p>This RelativePos' forward, up and left values will be applied to the
      * location with its yaw and pitch, and with the roll taken from the
-     * roll parameter.
+     * roll parameter.</p>
      *
      * @param location The location to base from
      * @param roll The roll rotation

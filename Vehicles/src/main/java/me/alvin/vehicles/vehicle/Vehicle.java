@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class Vehicle implements Listener {
+public abstract class Vehicle {
 
     // Persistent Data Keys
 
@@ -1132,8 +1132,6 @@ public abstract class Vehicle implements Listener {
         Seat seat = this.getNearestAvailableSeat(passenger.getLocation());
         if (seat == null) return false;
         this.setPassenger(seat, passenger);
-        if (this.text == null) this.createText();
-        this.text.addEntry(new TemporaryMessage(Component.text("Welcome "+ passenger.getName() +" to the vehicle!"), 200));
         return true;
     }
 
