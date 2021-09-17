@@ -4,6 +4,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mule;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.util.Consumer;
 
@@ -35,8 +36,7 @@ public interface NMS {
 
     /**
      * Mark the entity as "dirty", this tells the server it needs to resend information to the
-     * clients. Internally this changes the "impulse" public variable of the entity to true,
-     * causing the EntityTracker to send update packets.
+     * clients.
      *
      * @param entity The entity to mark dirty.
      */
@@ -90,4 +90,12 @@ public interface NMS {
      */
     Slime spawnHitboxEntity(Location location, Consumer<Slime> consumer);
 
+    /**
+     * Set the player as a passenger on the specified entity, but it's only visible
+     * for the player being set as a passenger.
+     *
+     * @param passenger The player to make a passenger.
+     * @param vehicle The entity to put the player on.
+     */
+    void setClientSidePassenger(Player passenger, Entity vehicle);
 }
