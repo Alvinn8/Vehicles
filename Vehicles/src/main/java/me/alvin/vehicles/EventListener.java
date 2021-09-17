@@ -5,7 +5,7 @@ import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import me.alvin.vehicles.vehicle.seat.Seat;
-import me.alvin.vehicles.vehicle.seat.SeatData;
+import me.alvin.vehicles.vehicle.seat.PassengerData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
@@ -114,10 +114,10 @@ public class EventListener implements PerWorldListener {
             if (vehicle != null) {
                 // We also have to get the seat directly from the map
                 // as the methods will think the seat data is invalid
-                for (Map.Entry<Seat, SeatData> entry : vehicle.getSeatData().entrySet()) {
-                    SeatData seatData = entry.getValue();
+                for (Map.Entry<Seat, PassengerData> entry : vehicle.getPassengerData().entrySet()) {
+                    PassengerData passengerData = entry.getValue();
                     // skip isValid check
-                    if (seatData.getPassenger() == passenger) {
+                    if (passengerData.getPassenger() == passenger) {
                         Seat seat = entry.getKey();
                         vehicle.setPassenger(seat, null);
                         break;

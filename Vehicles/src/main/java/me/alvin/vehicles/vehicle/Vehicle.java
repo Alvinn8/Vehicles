@@ -17,7 +17,7 @@ import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.seat.Seat;
-import me.alvin.vehicles.vehicle.seat.SeatData;
+import me.alvin.vehicles.vehicle.seat.PassengerData;
 import me.alvin.vehicles.vehicle.text.VehicleText;
 import me.alvin.vehicles.vehicle.text.TemporaryMessage;
 import me.alvin.vehicles.vehicle.text.VehicleTextEntry;
@@ -39,7 +39,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
@@ -120,7 +119,7 @@ public abstract class Vehicle {
     private int fuelUsage = 0;
     private int maxFuel = 0;
     // Seats
-    private final Map<Seat, SeatData> seatData = new HashMap<>();
+    private final Map<Seat, PassengerData> passengerData = new HashMap<>();
     // Attachment
     private Map<Vehicle, AttachmentData> attachedVehicles;
     private Vehicle attachedTo;
@@ -349,8 +348,8 @@ public abstract class Vehicle {
         if (this.niEntity != null) this.niEntity.remove();
         this.entity.remove();
 
-        for (SeatData seatData : this.seatData.values()) {
-            seatData.exitSeat();
+        for (PassengerData passengerData : this.passengerData.values()) {
+            passengerData.exitSeat();
         }
 
         if (this.niSlime != null) this.niSlime.remove();
@@ -612,7 +611,7 @@ public abstract class Vehicle {
             }
         }
 
-        if (this.seatData.size() > 0) {
+        if (this.passengerData.size() > 0) {
             // Has passengers
             if (this.text == null) this.createText();
 
@@ -620,9 +619,9 @@ public abstract class Vehicle {
                 this.text.addEntry(new TemporaryMessage(Component.text("Out of fuel!", NamedTextColor.RED), 1));
             }
 
-            for (SeatData seatData : this.seatData.values()) {
-                if (seatData.getPassenger() instanceof Player) {
-                    Player player = (Player) seatData.getPassenger();
+            for (PassengerData passengerData : this.passengerData.values()) {
+                if (passengerData.getPassenger() instanceof Player) {
+                    Player player = (Player) passengerData.getPassenger();
                     player.sendActionBar(this.text.getComponent(player));
                 }
             }
@@ -657,7 +656,7 @@ public abstract class Vehicle {
                 }
             }
         } else {
-            if (this.isNonInterpolating() && this.seatData.size() <= 0) {
+            if (this.isNonInterpolating() && this.passengerData.size() <= 0) {
                 this.setNonInterpolating(false);
             }
         }
@@ -845,14 +844,14 @@ public abstract class Vehicle {
      * speed is not 0.
      */
     public void updateRenderedPassengerPositions() {
-        for (Map.Entry<Seat, SeatData> entry : this.seatData.entrySet()) {
+        for (Map.Entry<Seat, PassengerData> entry : this.passengerData.entrySet()) {
             Seat seat = entry.getKey();
-            SeatData seatData = entry.getValue();
-            if (!seatData.isValid()) continue;
+            PassengerData passengerData = entry.getValue();
+            if (!passengerData.isValid()) continue;
 
             Location location = seat.getRelativePos().relativeTo(this.location, this.getRoll());
             if (seat.hasOffsetYaw()) location.setYaw(location.getYaw() + seat.getOffsetYaw());
-            seatData.getRiderEntity().setLocation(location.getX(), location.getY() - SeatData.RIDER_ENTITY_Y_OFFSET, location.getZ(), location.getYaw(), location.getPitch());
+            passengerData.getRiderEntity().setLocation(location.getX(), location.getY() - PassengerData.RIDER_ENTITY_Y_OFFSET, location.getZ(), location.getYaw(), location.getPitch());
         }
     }
 
@@ -1042,21 +1041,21 @@ public abstract class Vehicle {
      * @return The seat data
      */
     @NotNull
-    public Map<Seat, SeatData> getSeatData() {
-        return this.seatData;
+    public Map<Seat, PassengerData> getPassengerData() {
+        return this.passengerData;
     }
 
     @Nullable
     public LivingEntity getPassenger(Seat seat) {
-        SeatData seatData = this.seatData.get(seat);
-        if (seatData == null) return null;
-        if (!seatData.isValid()) {
+        PassengerData passengerData = this.passengerData.get(seat);
+        if (passengerData == null) return null;
+        if (!passengerData.isValid()) {
             SVCraftVehicles.getInstance().getLogger().warning("Invalid seat data");
-            // seatData.exitSeat();
-            // this.seatData.remove(seat);
+            // passengerData.exitSeat();
+            // this.passengerData.remove(seat);
             return null;
         }
-        return seatData.getPassenger();
+        return passengerData.getPassenger();
     }
 
     @Nullable
@@ -1073,9 +1072,9 @@ public abstract class Vehicle {
      */
     @Nullable
     public Seat getPassengerSeat(LivingEntity passenger) {
-        for (Map.Entry<Seat, SeatData> entry : this.seatData.entrySet()) {
-            SeatData seatData = entry.getValue();
-            if (seatData.getPassenger() == passenger && seatData.isValid()) return entry.getKey();
+        for (Map.Entry<Seat, PassengerData> entry : this.passengerData.entrySet()) {
+            PassengerData passengerData = entry.getValue();
+            if (passengerData.getPassenger() == passenger && passengerData.isValid()) return entry.getKey();
         }
         return null;
     }
@@ -1108,15 +1107,15 @@ public abstract class Vehicle {
      */
     public void setPassenger(@NotNull Seat seat, @Nullable LivingEntity passenger) {
         if (this.isHologram) return;
-        if (this.seatData.containsKey(seat)) {
-            SeatData oldSeatData = this.seatData.get(seat);
-            this.seatData.remove(seat);
-            oldSeatData.exitSeat();
+        if (this.passengerData.containsKey(seat)) {
+            PassengerData oldPassengerData = this.passengerData.get(seat);
+            this.passengerData.remove(seat);
+            oldPassengerData.exitSeat();
             if (this.getType().getDriverSeat() == seat) this.movement.reset();
         }
 
         if (passenger != null) {
-            this.seatData.put(seat, new SeatData(this, seat, passenger));
+            this.passengerData.put(seat, new PassengerData(this, seat, passenger));
             SVCraftVehicles.getInstance().getCurrentVehicleMap().put(passenger, this);
         }
     }
@@ -1142,8 +1141,8 @@ public abstract class Vehicle {
      * @return {@code true} if the entity is a passenger {@code false} if not
      */
     public boolean isPassenger(LivingEntity entity) {
-        for (SeatData seatData : this.seatData.values()) {
-            if (seatData.getPassenger() == entity && seatData.isValid()) {
+        for (PassengerData passengerData : this.passengerData.values()) {
+            if (passengerData.getPassenger() == entity && passengerData.isValid()) {
                 return true;
             }
         }
@@ -1305,11 +1304,11 @@ public abstract class Vehicle {
         Seat seat = this.getPassengerSeat(player);
         if (seat == null) return;
 
-        SeatData seatData = this.seatData.get(seat);
-        if (seatData == null) return;
+        PassengerData passengerData = this.passengerData.get(seat);
+        if (passengerData == null) return;
 
         // Make sure the player has been in a seat for at least one second
-        if (System.currentTimeMillis() > seatData.getTimeEntered() + 1000) {
+        if (System.currentTimeMillis() > passengerData.getTimeEntered() + 1000) {
             int index = player.getInventory().getHeldItemSlot();
             VehicleClickAction action = this.getClickAction(index);
             if (action != null) {

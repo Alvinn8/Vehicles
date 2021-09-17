@@ -17,14 +17,14 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Represents data about a seat in a vehicle
  */
-public class SeatData {
+public class PassengerData {
     private final LivingEntity passenger;
     private final NIE<Mule> riderEntity;
     private final long enteredAt;
 
     public static final double RIDER_ENTITY_Y_OFFSET = 1.0D;
 
-    public SeatData(@NotNull Vehicle vehicle, @NotNull Seat seat, @NotNull LivingEntity passenger) {
+    public PassengerData(@NotNull Vehicle vehicle, @NotNull Seat seat, @NotNull LivingEntity passenger) {
         DebugUtil.debug("Constructing seat data");
         Location location = seat.getRelativePos().relativeTo(vehicle.getLocation(), vehicle.getRoll());
         location.subtract(0, RIDER_ENTITY_Y_OFFSET, 0);
@@ -62,7 +62,7 @@ public class SeatData {
     }
 
     /**
-     * Get the time in milliseconds when the player sat in this seatdata.
+     * Get the time in milliseconds when the player entered this seat.
      *
      * @return The time in milliseconds
      */

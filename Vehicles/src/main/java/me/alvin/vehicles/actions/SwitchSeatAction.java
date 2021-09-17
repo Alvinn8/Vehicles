@@ -6,7 +6,6 @@ import me.alvin.vehicles.vehicle.seat.Seat;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class SwitchSeatAction implements VehicleMenuAction {
     @Override
     public void onMenuClick(Vehicle vehicle, Player player) {
         List<Seat> seats = new ArrayList<>(vehicle.getType().getSeats());
-        if (vehicle.getSeatData().size() >= seats.size()) {
+        if (vehicle.getPassengerData().size() >= seats.size()) {
             player.sendMessage("The vehicle is full!");
             return;
         }
