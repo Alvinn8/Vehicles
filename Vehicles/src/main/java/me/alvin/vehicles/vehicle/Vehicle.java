@@ -3,6 +3,7 @@ package me.alvin.vehicles.vehicle;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.actions.FuelAction;
 import me.alvin.vehicles.actions.HealthAction;
+import me.alvin.vehicles.actions.SwitchPerspectiveAction;
 import me.alvin.vehicles.actions.SwitchSeatAction;
 import me.alvin.vehicles.explosion.CoolExplosion;
 import me.alvin.vehicles.nms.VehicleSteeringMovement;
@@ -16,6 +17,7 @@ import me.alvin.vehicles.vehicle.action.VehicleClickAction;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
+import me.alvin.vehicles.vehicle.perspective.Perspective;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.PassengerData;
 import me.alvin.vehicles.vehicle.text.VehicleText;
@@ -36,6 +38,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mule;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.Cancellable;
@@ -212,6 +215,7 @@ public abstract class Vehicle {
         this.addAction(HealthAction.INSTANCE);
         if (this.usesFuel()) this.addAction(FuelAction.INSTANCE);
         if (this.getType().getSeats().size() > 1) this.addAction(SwitchSeatAction.INSTANCE);
+        if (this.getType().getPerspectives().size() > 0) this.addAction(SwitchPerspectiveAction.INSTANCE);
 
         SVCraftVehicles.getInstance().getLoadedVehicles().put(this.entity, this);
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.entity, this);
@@ -620,9 +624,21 @@ public abstract class Vehicle {
             }
 
             for (PassengerData passengerData : this.passengerData.values()) {
-                if (passengerData.getPassenger() instanceof Player) {
-                    Player player = (Player) passengerData.getPassenger();
+                if (passengerData.getPassenger() instanceof Player player) {
+                    // Text
                     player.sendActionBar(this.text.getComponent(player));
+
+                    // Update perspective camera
+                    Perspective perspective = passengerData.getPerspective();
+                    if (perspective != null) {
+                        NIE<Mule> cameraEntity = passengerData.getCameraEntity();
+
+                        Location cameraLocation = perspective.getCameraLocation(this, player);
+
+                        if (cameraEntity == null) cameraEntity = passengerData.createCameraEntity(cameraLocation, this);
+
+                        cameraEntity.setLocation(cameraLocation.getX(), cameraLocation.getY(), cameraLocation.getZ(), 0, 0);
+                    }
                 }
             }
             this.text.tickMessages();
@@ -851,7 +867,7 @@ public abstract class Vehicle {
 
             Location location = seat.getRelativePos().relativeTo(this.location, this.getRoll());
             if (seat.hasOffsetYaw()) location.setYaw(location.getYaw() + seat.getOffsetYaw());
-            passengerData.getRiderEntity().setLocation(location.getX(), location.getY() - PassengerData.RIDER_ENTITY_Y_OFFSET, location.getZ(), location.getYaw(), location.getPitch());
+            passengerData.getSeatEntity().setLocation(location.getX(), location.getY() - PassengerData.SEAT_ENTITY_Y_OFFSET, location.getZ(), location.getYaw(), location.getPitch());
         }
     }
 

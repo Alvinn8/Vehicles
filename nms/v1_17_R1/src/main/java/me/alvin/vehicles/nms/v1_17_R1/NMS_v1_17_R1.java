@@ -74,7 +74,7 @@ public class NMS_v1_17_R1 implements NMS {
         // values, we therefore create a serialized data that we can then
         // pass to the constructor which deserializes it.
 
-        PacketDataSerializer data = new PacketDataSerializer(Unpooled.wrappedBuffer(new byte[12]));
+        PacketDataSerializer data = new PacketDataSerializer(Unpooled.buffer());
         // The vehicle has this entity id
         data.d(vehicle.getEntityId());
         // The length of the following array of entity ids is 1

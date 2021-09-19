@@ -2,6 +2,7 @@ package me.alvin.vehicles.vehicle;
 
 import me.alvin.vehicles.crafting.recipe.VehicleCraftingRecipe;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
+import me.alvin.vehicles.vehicle.perspective.Perspective;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +32,7 @@ public class VehicleType {
     private final Function<ArmorStand, Vehicle> loadConstructor;
     private final VehicleSpawnConstructorFunction spawnConstructor;
     private final VehicleCollisionType collisionType;
+    private final List<Perspective> perspectives;
     private final double maxHealth;
     private final VehicleCraftingRecipe recipe;
 
@@ -41,6 +44,7 @@ public class VehicleType {
                        @NotNull VehicleCollisionType collisionType,
                        @NotNull Seat driverSeat,
                        @Nullable List<Seat> seats,
+                       @Nullable List<Perspective> perspectives,
                        double maxHealth,
                        @Nullable VehicleCraftingRecipe.Builder recipe) {
         this.id = id;
@@ -54,6 +58,7 @@ public class VehicleType {
         this.seats = seatSet;
         this.driverSeat = driverSeat;
         this.collisionType = collisionType;
+        this.perspectives = perspectives == null ? Collections.emptyList() : perspectives;
         this.maxHealth = maxHealth;
         this.recipe = recipe == null ? null : recipe.build();
     }
@@ -140,6 +145,16 @@ public class VehicleType {
     @NotNull
     public VehicleCollisionType getCollisionType() {
         return this.collisionType;
+    }
+
+    /**
+     * Get the {@link Perspective}s players can view when they are in the vehicle.
+     *
+     * @return The list of perspectives.
+     */
+    @NotNull
+    public List<Perspective> getPerspectives() {
+        return this.perspectives;
     }
 
     /**

@@ -13,7 +13,17 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A Non Interpolating Entity (NIE).
- * Consists of an AreaEffectCloud and an entity of the type specified below
+ * Consists of an AreaEffectCloud and an entity of the type in the generic type.
+ * <p>
+ * The client does not do interpolation with area effect clouds, meaning
+ * teleportations happen instantly which is required when vehicles with multiple
+ * parts (seats, and some vehicles have more than 1 armor stand to render the
+ * model).
+ * <p>
+ * This class abstracts the area effect cloud stuff away so all that you need to
+ * do is construct a new instance of this class and the entity will be converted
+ * to a non interpolating one.
+ *
  * @param <T> The EntityType class of the entity to make non interpolating
  */
 public class NIE<T extends Entity> {

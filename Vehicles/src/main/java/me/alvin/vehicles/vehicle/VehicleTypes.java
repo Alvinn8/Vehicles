@@ -4,6 +4,8 @@ import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.collision.AABBCollision;
+import me.alvin.vehicles.vehicle.perspective.ThirdPersonPerspective;
+import me.alvin.vehicles.vehicle.perspective.VehiclePartPerspective;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicles.AttackHelicopterVehicle;
 import me.alvin.vehicles.vehicles.GolfCartVehicle;
@@ -54,6 +56,12 @@ public class VehicleTypes {
                 Collections.singletonList(
                         new Seat(new RelativePos(0.1, 1, -0.4))
                 ),
+                // Perspectives
+                Arrays.asList(
+                    new ThirdPersonPerspective(new RelativePos(0, 0, -15)),
+                    new VehiclePartPerspective("Test", new RelativePos(3, 3, -3))
+                ),
+                // Max Health
                 40,
                 // Recipe
                 recipe()
@@ -95,6 +103,11 @@ public class VehicleTypes {
             Collections.singletonList(
                 new Seat(new RelativePos(0.1, 1, -0.4))
             ),
+            // Perspectives
+            Collections.singletonList(
+                new ThirdPersonPerspective(new RelativePos(0, 0, -5))
+            ),
+            // Max Health
             100,
             // Recipe
             recipe()
@@ -138,6 +151,11 @@ public class VehicleTypes {
                 Collections.singletonList(
                         new Seat(new RelativePos(0, 0, -1))
                 ),
+                // Perspectives
+                Collections.singletonList(
+                    new ThirdPersonPerspective(new RelativePos(0, 0, -5))
+                ),
+                // Max Health
                 100,
             // Recipe
             recipe()
@@ -178,6 +196,11 @@ public class VehicleTypes {
                         new Seat(new RelativePos(0, 0.5, -1)),
                         new Seat(new RelativePos(-0.5, 0.5, -1))
                 ),
+                // Perspectives
+                Collections.singletonList(
+                    new ThirdPersonPerspective(new RelativePos(0, 0, -10))
+                ),
+                // Max Health
                 150,
             // Recipe
             recipe()
@@ -232,6 +255,11 @@ public class VehicleTypes {
                 new Seat(new RelativePos(0.35, 0.3, -1.0)),
                 new Seat(new RelativePos(-0.35, 0.3, -1.0))
             ),
+            // Perspectives
+            Collections.singletonList(
+                new ThirdPersonPerspective(new RelativePos(0, 0, -5))
+            ),
+            // Max Health
             150,
             // Recipe
             recipe()
@@ -273,6 +301,11 @@ public class VehicleTypes {
             // Seat
             new Seat(new RelativePos(-0.1, 1.3, -0.8)),
             null,
+            // Perspectives
+            Collections.singletonList(
+                new ThirdPersonPerspective(new RelativePos(0, 0, -5))
+            ),
+            // Max Health
             50,
             // Recipe
             recipe()
@@ -311,6 +344,11 @@ public class VehicleTypes {
             Collections.singletonList(
                 new Seat(new RelativePos(-0.5, 2, 0.5))
             ),
+            // Perspectives
+            Collections.singletonList(
+                new ThirdPersonPerspective(new RelativePos(0, 0, -12))
+            ),
+            // Max Health
             200,
             // Recipe
             null
@@ -330,6 +368,11 @@ public class VehicleTypes {
             Collections.singletonList(
                 new Seat(new RelativePos(0, 0.8, -1.4))
             ),
+            // Perspectives
+            Collections.singletonList(
+                new ThirdPersonPerspective(new RelativePos(0, 0, -10))
+            ),
+            // Max Health
             80,
             // Recipe
             recipe()
@@ -378,6 +421,11 @@ public class VehicleTypes {
             Collections.singletonList(
                 new Seat(new RelativePos(0, 1.0, -0.3))
             ),
+            // Perspectives
+            Collections.singletonList(
+                new ThirdPersonPerspective(new RelativePos(0, 0, -15))
+            ),
+            // Max Health
             200,
             // Recipe
             null
@@ -395,6 +443,11 @@ public class VehicleTypes {
             // Seats
             new Seat(new RelativePos(0, 0, 0)),
             null,
+            // Perspectives
+            Collections.singletonList(
+                new ThirdPersonPerspective(new RelativePos(0, 0, -5))
+            ),
+            // Max Health
             50,
             // Recipe
             recipe()
