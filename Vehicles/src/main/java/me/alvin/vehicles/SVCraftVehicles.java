@@ -78,6 +78,7 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         this.registerItem(CustomItems.VEHICLE_CRAFTING_TABLE);
         this.registerItem(CustomItems.FUEL);
         this.registerItem(CustomItems.VEHICLE_SPAWNER);
+        this.registerItem(CustomItems.MISSILE);
 
         ShapedRecipe vehicleCraftingTableRecipe = new ShapedRecipe(new NamespacedKey(this, "vehicle_crafting_table"), CustomItems.VEHICLE_CRAFTING_TABLE.makeItemStack());
         vehicleCraftingTableRecipe.shape(" # ", "#-#", " # ");

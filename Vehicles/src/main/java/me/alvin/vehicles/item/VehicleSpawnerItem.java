@@ -36,7 +36,7 @@ public class VehicleSpawnerItem extends CustomItem {
     public ItemStack makeItemStack() {
         ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/vehicle_spawner");
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text(this.name).decoration(TextDecoration.ITALIC, false));
+        meta.displayName(Component.text(this.name, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
         meta.lore(Arrays.asList(
             Component.text("Left-click to select a vehicle type").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY),
             Component.text("Right-click to spawn the vehicle").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY)
