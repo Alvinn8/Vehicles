@@ -22,4 +22,9 @@ public record VehiclePartPerspective(String name, RelativePos relativePos) imple
     public Location getCameraLocation(Vehicle vehicle, Player player) {
         return this.relativePos.relativeTo(vehicle.getLocation(), vehicle.getRoll());
     }
+
+    @Override
+    public boolean interpolate() {
+        return false;
+    }
 }

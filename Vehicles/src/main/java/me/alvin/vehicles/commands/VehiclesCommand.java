@@ -76,11 +76,9 @@ public class VehiclesCommand {
                                 Player player = source.getPlayerRequired();
 
                                 Vehicle vehicle = vehicleType.construct(player.getLocation(), player, VehicleSpawnReason.COMMAND);
-                                Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
-                                    if (player.getGameMode() == GameMode.CREATIVE && vehicle.usesFuel()) {
-                                        vehicle.setCurrentFuel(vehicle.getMaxFuel());
-                                    }
-                                }, 1L);
+                                if (player.getGameMode() == GameMode.CREATIVE && vehicle.usesFuel()) {
+                                    vehicle.setCurrentFuel(vehicle.getMaxFuel());
+                                }
                                 return 1;
                             })
                         )

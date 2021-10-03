@@ -24,4 +24,9 @@ public record ThirdPersonPerspective(RelativePos relativePos) implements Perspec
     public Location getCameraLocation(Vehicle vehicle, Player player) {
         return this.relativePos.relativeTo(player.getLocation(), 0);
     }
+
+    @Override
+    public boolean interpolate() {
+        return true;
+    }
 }

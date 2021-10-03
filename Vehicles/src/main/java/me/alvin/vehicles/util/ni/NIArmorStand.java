@@ -50,7 +50,7 @@ public class NIArmorStand {
 
     public void setLocation(double x, double y, double z, float yaw, float pitch) {
         NMS nms = SVCraftVehicles.getInstance().getNMS();
-        nms.setEntityLocation(this.aec, x, y - 0.5D, z, yaw, pitch);
+        nms.setEntityLocation(this.aec, x, y - NIE.AEC_Y_OFFSET, z, yaw, pitch);
         nms.setEntityRotation(this.armorStand, yaw);
         nms.markDirty(this.aec);
     }
@@ -73,7 +73,7 @@ public class NIArmorStand {
     public ArmorStand toArmorStand() {
         this.armorStand.leaveVehicle();
         Location location = this.aec.getLocation();
-        location.add(0, 0.5, 0);
+        location.add(0, NIE.AEC_Y_OFFSET, 0);
         SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.armorStand, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         this.aec.remove();
         return this.armorStand;
@@ -87,7 +87,7 @@ public class NIArmorStand {
         if (niEntity != null) {
             niEntity.setLocation(x, y, z, yaw, pitch);
         } else {
-            SVCraftVehicles.getInstance().getNMS().setEntityLocation(entity, x, y, z, yaw ,pitch);
+            SVCraftVehicles.getInstance().getNMS().setEntityLocation(entity, x, y, z, yaw, pitch);
         }
     }
 }

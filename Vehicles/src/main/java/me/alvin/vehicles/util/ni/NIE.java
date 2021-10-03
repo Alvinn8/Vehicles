@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
  * Consists of an AreaEffectCloud and an entity of the type in the generic type.
  * <p>
  * The client does not do interpolation with area effect clouds, meaning
- * teleportations happen instantly which is required when vehicles with multiple
+ * teleportations happen instantly which is required for vehicles with multiple
  * parts (seats, and some vehicles have more than 1 armor stand to render the
  * model).
  * <p>
@@ -29,6 +29,8 @@ import org.jetbrains.annotations.Nullable;
 public class NIE<T extends Entity> {
     private final AreaEffectCloud aec;
     private final T entity;
+
+    public static final double AEC_Y_OFFSET = 0.515;
 
     public NIE(Location location, EntityType entityType) {
         World world = location.getWorld();
@@ -58,7 +60,7 @@ public class NIE<T extends Entity> {
      * @return The newly created Area Effect Cloud set up and ready for working as a NIE base
      */
     public static AreaEffectCloud spawnAEC(Location location) {
-        return location.getWorld().spawn(location.clone().subtract(0, 0.5, 0), AreaEffectCloud.class, aec -> {
+        return location.getWorld().spawn(location.clone().subtract(0, AEC_Y_OFFSET, 0), AreaEffectCloud.class, aec -> {
             aec.setRadius(0);
             aec.setDuration(-1);
             aec.setWaitTime(Integer.MIN_VALUE);
@@ -76,7 +78,7 @@ public class NIE<T extends Entity> {
 
     public void setLocation(double x, double y, double z, float yaw, float pitch) {
         NMS nms = SVCraftVehicles.getInstance().getNMS();
-        nms.setEntityLocation(this.aec, x, y - 0.5D, z, yaw, pitch);
+        nms.setEntityLocation(this.aec, x, y - AEC_Y_OFFSET, z, yaw, pitch);
         nms.setEntityRotation(this.entity, yaw);
         nms.markDirty(this.aec);
     }
@@ -99,7 +101,7 @@ public class NIE<T extends Entity> {
     public T toNormalEntity() {
         this.entity.leaveVehicle();
         Location location = this.aec.getLocation();
-        location.add(0, 0.5, 0);
+        location.add(0, AEC_Y_OFFSET, 0);
         SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.entity, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         this.aec.remove();
         return this.entity;

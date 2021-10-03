@@ -4,7 +4,7 @@ import me.alvin.vehicles.item.VehicleSpawnerItem;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
-import svcraft.core.item.CustomItem;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +16,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import svcraft.core.item.CustomItem;
 
 public class VehicleSpawnerTask extends BukkitRunnable {
     public static final double MAX_DISTANCE = 20;
@@ -108,7 +109,12 @@ public class VehicleSpawnerTask extends BukkitRunnable {
         ItemStack selectedItem = this.player.getInventory().getItemInMainHand();
         if (this.vehicle != null) {
             VehicleType vehicleType = this.getVehicleType(selectedItem);
-            if (vehicleType != null) vehicleType.construct(this.vehicle.getLocation(), this.player, VehicleSpawnReason.CREATIVE);
+            if (vehicleType != null) {
+                Vehicle spawnedVehicle = vehicleType.construct(this.vehicle.getLocation(), this.player, VehicleSpawnReason.CREATIVE);
+                if (this.player.getGameMode() == GameMode.CREATIVE && spawnedVehicle.usesFuel()) {
+                    spawnedVehicle.setCurrentFuel(spawnedVehicle.getMaxFuel());
+                }
+            }
         }
     }
 

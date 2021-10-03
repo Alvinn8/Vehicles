@@ -31,7 +31,7 @@ import java.util.Map;
 
 public final class SVCraftVehicles extends SVCraftPlugin {
 
-    public static boolean EXPLOSIONS_BREAK_BLOCKS = true;
+    public static boolean EXPLOSIONS_BREAK_BLOCKS = false;
 
     private static SVCraftVehicles instance;
 

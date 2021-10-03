@@ -628,17 +628,8 @@ public abstract class Vehicle {
                     // Text
                     player.sendActionBar(this.text.getComponent(player));
 
-                    // Update perspective camera
-                    Perspective perspective = passengerData.getPerspective();
-                    if (perspective != null) {
-                        NIE<Mule> cameraEntity = passengerData.getCameraEntity();
-
-                        Location cameraLocation = perspective.getCameraLocation(this, player);
-
-                        if (cameraEntity == null) cameraEntity = passengerData.createCameraEntity(cameraLocation, this);
-
-                        cameraEntity.setLocation(cameraLocation.getX(), cameraLocation.getY(), cameraLocation.getZ(), 0, 0);
-                    }
+                    // Update perspective camera (if applicable)
+                    passengerData.updateCamera(this, player);
                 }
             }
             this.text.tickMessages();

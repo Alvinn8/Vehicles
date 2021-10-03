@@ -26,4 +26,22 @@ public interface Perspective {
      * @return The location to put the camera.
      */
     Location getCameraLocation(Vehicle vehicle, Player player);
+
+    /**
+     * Whether this perspective should use a normal interpolating entity or a non
+     * interpolating entity.
+     *
+     * <p>Perspectives that are close to the vehicle or are at a part of the vehicle
+     * should be non-interpolating to avoid the camera shaking and getting gradually
+     * further away from the vehicle due to interpolation.</p>
+     *
+     * <p>For perspectives that are controlled by the player and that can move rapidly
+     * (third person perspective), they should be interpolated to make harch movements
+     * smoother. These perspectives should avoid being too close to the vehicle though
+     * to avoid the problems described in the paragraph above.</p>
+     *
+     * @return Whether to use an interpolated (normal) entity.
+     * @see me.alvin.vehicles.util.ni.NIE
+     */
+    boolean interpolate();
 }

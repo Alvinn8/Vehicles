@@ -6,6 +6,7 @@ import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.perspective.Perspective;
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mule;
@@ -25,7 +26,9 @@ public class PassengerData {
     private final long enteredAt;
     private final NIE<Mule> seatEntity;
     private @Nullable Perspective perspective;
-    private @Nullable NIE<Mule> cameraEntity;
+    private @Nullable Mule cameraEntity;
+    private @Nullable NIE<Mule> niCameraEntity;
+    private @Nullable ArmorStand iCameraEntityBase; // interpolating (i) camera-entity armor stand (base)
 
     public static final double SEAT_ENTITY_Y_OFFSET = 1.0D;
 
@@ -36,7 +39,7 @@ public class PassengerData {
 
         this.passenger = passenger;
         this.enteredAt = System.currentTimeMillis(); // They entered now
-        this.seatEntity = this.spawnSeatEntity(location, vehicle);
+        this.seatEntity = new NIE<>(this.spawnSeatEntity(location, vehicle));
 
         this.seatEntity.getEntity().addPassenger(this.passenger);
 
@@ -44,7 +47,8 @@ public class PassengerData {
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.seatEntity.getAreaEffectCloud(), vehicle);
     }
 
-    private NIE<Mule> spawnSeatEntity(Location location, Vehicle vehicle) {
+    @NotNull
+    private Mule spawnSeatEntity(Location location, Vehicle vehicle) {
         Mule spawnedMule = SVCraftVehicles.getInstance().getNMS().spawnSeatEntity(location, mule -> {
             mule.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 1000000, 0, false, false));
             mule.setTamed(true);
@@ -58,7 +62,7 @@ public class PassengerData {
             vehicle.updateMenuInventory(spawnedMule.getInventory(), (Player) this.passenger);
         }
 
-        return new NIE<>(spawnedMule);
+        return spawnedMule;
     }
 
     @NotNull
@@ -84,25 +88,70 @@ public class PassengerData {
             // the passenger is a player, so we can cast.
             SVCraftVehicles.getInstance().getNMS().setClientSidePassenger((Player) this.passenger, this.seatEntity.getEntity());
 
-            this.cameraEntity.remove();
-            this.cameraEntity = null;
+            this.removeCameraEntity();
         }
     }
 
-    @Nullable
-    public NIE<Mule> getCameraEntity() {
+    public Mule getCameraEntity() {
         return this.cameraEntity;
     }
 
-    public NIE<Mule> createCameraEntity(Location location, Vehicle vehicle) {
-        this.cameraEntity = this.spawnSeatEntity(location, vehicle);
+    private void removeCameraEntity() {
+        if (this.cameraEntity != null) {
+            this.cameraEntity.remove();
+            this.cameraEntity = null;
+        }
+        if (this.niCameraEntity != null) {
+            this.niCameraEntity.remove();
+            this.niCameraEntity = null;
+        }
+        if (this.iCameraEntityBase != null) {
+            this.iCameraEntityBase.remove();
+            this.iCameraEntityBase = null;
+        }
+    }
 
-        // Make the player ride the camera entity, but it's only visible for them
-        // This method will only be called in Vehicle if the passenger is a player,
-        // so we can cast
-        SVCraftVehicles.getInstance().getNMS().setClientSidePassenger((Player) this.passenger, this.cameraEntity.getEntity());
+    public void updateCamera(Vehicle vehicle, Player player) {
+        if (this.perspective == null) return;
 
-        return this.cameraEntity;
+        Location cameraLocation = this.perspective.getCameraLocation(vehicle, player);
+
+        if (this.cameraEntity != null && (
+            (this.perspective.interpolate() && this.iCameraEntityBase == null) ||
+            (!this.perspective.interpolate() && this.niCameraEntity == null))) {
+            // The current interpolation state and the perspective's one does not match.
+            // Let's remove the camera and the entities will be respawned by the block
+            // below, and in the right interpolation state.
+            DebugUtil.debug("Mismatched interpolation state, respawning the camera");
+            this.removeCameraEntity();
+        }
+
+        if (this.cameraEntity == null) {
+            // No camera entity present, we need to create it
+            this.cameraEntity = this.spawnSeatEntity(cameraLocation, vehicle);
+
+            // Make the player ride the camera entity, but it's only visible for them
+            SVCraftVehicles.getInstance().getNMS().setClientSidePassenger(player, this.cameraEntity);
+
+            if (this.perspective.interpolate()) {
+                // interpolating
+                cameraLocation.subtract(0, 1, 0);
+                this.iCameraEntityBase = cameraLocation.getWorld().spawn(cameraLocation, ArmorStand.class);
+                Vehicle.setupArmorStand(this.iCameraEntityBase);
+                this.iCameraEntityBase.addPassenger(this.cameraEntity);
+            } else {
+                // non-interpolating
+                this.niCameraEntity = new NIE<>(this.cameraEntity);
+            }
+        }
+
+        if (this.perspective.interpolate()) {
+            // interpolating
+            SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.iCameraEntityBase, cameraLocation.getX(), cameraLocation.getY(), cameraLocation.getZ(), 0, 0);
+        } else {
+            // non-interpolating
+            this.niCameraEntity.setLocation(cameraLocation.getX(), cameraLocation.getY(), cameraLocation.getZ(), 0, 0);
+        }
     }
 
     /**
