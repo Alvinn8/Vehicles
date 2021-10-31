@@ -7,6 +7,8 @@ import org.bukkit.Particle;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +21,13 @@ public class CoolExplosion {
     public static void explode(@NotNull Location location, int power, @Nullable Entity source) {
         // Actual explosion
         location.getWorld().createExplosion(location, power, false, SVCraftVehicles.EXPLOSIONS_BREAK_BLOCKS, source);
+
+        // Stun nearby players
+        for (Player player : location.getNearbyPlayers(10)) {
+            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 8*20, 0, false, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 15*20, 2, false, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 10*20, 0, false, false, false));
+        }
 
         // Muffled sound for players far away
         for (Player player : location.getNearbyPlayers(128)) {

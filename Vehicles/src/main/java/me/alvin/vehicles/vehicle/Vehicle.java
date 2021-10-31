@@ -1386,6 +1386,10 @@ public abstract class Vehicle {
 
         this.health -= amount;
 
+        for (PassengerData passengerData : this.passengerData.values()) {
+            passengerData.setHealth(this.health, this.getType().getMaxHealth());
+        }
+
         float pitch = (float) Math.random() + 1.0F;
         this.location.getWorld().playSound(this.location, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 1, pitch);
 

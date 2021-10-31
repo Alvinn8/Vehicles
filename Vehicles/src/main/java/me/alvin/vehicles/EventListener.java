@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
@@ -195,17 +196,20 @@ public class EventListener implements PerWorldListener {
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+    public void onEntityDamage(EntityDamageEvent event) {
         Vehicle vehicle = SVCraftVehicles.getInstance().getVehiclePartMap().get(event.getEntity());
         if (vehicle != null) {
             event.setCancelled(true);
+            Entity damager = event instanceof EntityDamageByEntityEvent event2 ? event2.getDamager() : null;
+            Vehicle damagerVehicle = damager instanceof LivingEntity ? SVCraftVehicles.getInstance().getVehicle((LivingEntity) damager) : null;
             // Prevent damaging the vehicle you are inside
-            Vehicle damagerVehicle = event.getDamager() instanceof LivingEntity ? SVCraftVehicles.getInstance().getVehicle((LivingEntity) event.getDamager()) : null;
             if (damagerVehicle != vehicle) {
-                if (event.getDamager() instanceof Player && ((Player) event.getDamager()).getGameMode() == GameMode.CREATIVE) {
+                if (damager instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK && ((Player) damager).getGameMode() == GameMode.CREATIVE) {
+                    // Creative mode players destroy vehicles instantly
                     vehicle.remove();
                 } else {
-                    vehicle.damage(event.getDamage(), event.getDamager());
+                    // Damage the vehicle normally
+                    vehicle.damage(event.getDamage(), damager);
                 }
             }
         }

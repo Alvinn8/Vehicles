@@ -108,8 +108,15 @@ public class MissileAction extends AbstractStorageAction implements VehicleMenuA
 
             Location location = player.getEyeLocation();
             Vector direction = location.getDirection();
-            location.add(direction.clone().multiply(5));
-            new Missile(location, direction, missileItem.getExplosionPower(item), player).start();
+            // location.add(direction.clone().multiply(5));
+            new Missile(location, direction, missileItem.getExplosionPower(item), player, entity -> {
+                // Do not blow up if there is collision with this vehicle
+                if (SVCraftVehicles.getInstance().getVehiclePartMap().get(entity) == vehicle) return false;
+                // Do not blow up if there is collision with a passenger of this vehicle
+                if (SVCraftVehicles.getInstance().getVehicle(entity) == vehicle) return false;
+                // Otherwise it's a valid entity collision
+                return true;
+            }).start();
             this.delayExpire = System.currentTimeMillis() + 500;
             player.getWorld().playSound(vehicle.getLocation(), Sound.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 3, 1);
         }

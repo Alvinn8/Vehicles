@@ -6,6 +6,7 @@ import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.perspective.Perspective;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -57,6 +58,8 @@ public class PassengerData {
             mule.setInvulnerable(true);
             mule.setSilent(true);
             mule.customName(vehicle.getType().getName());
+            mule.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
+            mule.setHealth((vehicle.getHealth() / vehicle.getType().getMaxHealth()) * 20);
         });
         if (this.passenger instanceof Player) {
             vehicle.updateMenuInventory(spawnedMule.getInventory(), (Player) this.passenger);
@@ -194,5 +197,14 @@ public class PassengerData {
         // camera entity. This means this check will always work even if it looks like
         // the player is in the camera entity.
         return this.passenger.getVehicle() == this.seatEntity.getEntity();
+    }
+
+    public void setHealth(double vehicleHealth, double maxHealth) {
+        double health = (vehicleHealth / maxHealth) * 20;
+        if (health <= 0) health = 1;
+        this.seatEntity.getEntity().setHealth(health);
+        if (this.niCameraEntity != null) {
+            this.niCameraEntity.getEntity().setHealth(health);
+        }
     }
 }
