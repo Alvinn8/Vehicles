@@ -25,7 +25,7 @@ public class TestVehicle extends GroundVehicle {
     protected void init() {
         super.init();
 
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/golf_cart"));
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/golf_cart"));
 
         this.setMaxFuel(10000);
         this.setFuelUsage(1);
@@ -37,7 +37,7 @@ public class TestVehicle extends GroundVehicle {
 
     @Override
     public void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/golf_cart_hologram"));
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/golf_cart_hologram"));
     }
 
     @NotNull

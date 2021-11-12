@@ -7,7 +7,7 @@ public final class CustomBlocks {
     public static final VehicleCraftingTableBlock VEHICLE_CRAFTING_TABLE = new VehicleCraftingTableBlock(
         new CustomBlock.BlockProperties()
             .renderItemStack(
-                SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:block/vehicle_crafting_table")
+                SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:block/vehicle_crafting_table")
             )
     );
 

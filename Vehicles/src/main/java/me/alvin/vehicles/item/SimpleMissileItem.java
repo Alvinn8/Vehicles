@@ -21,7 +21,7 @@ public class SimpleMissileItem extends CustomItem implements MissileItem {
 
     @Override
     public ItemStack makeItemStack() {
-        ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/missile");
+        ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/missile");
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text(this.name, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
         meta.lore(Collections.singletonList(Component.text("Explosion Power: " + this.getExplosionPower(item), NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false)));

@@ -28,7 +28,7 @@ public class SimpleBoatVehicle extends BoatVehicle {
     protected void init() {
         super.init();
 
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/boat"));
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/boat"));
 
         this.setMaxFuel(10000);
         this.setFuelUsage(1);
@@ -36,7 +36,7 @@ public class SimpleBoatVehicle extends BoatVehicle {
 
     @Override
     public void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/boat_hologram"));
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/boat_hologram"));
     }
 
     @NotNull

@@ -39,7 +39,6 @@ import svcraft.core.util.CustomInventory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -201,7 +200,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
 
                 // Cancel button
                 for (int slot = 43; slot <= 44; slot++) {
-                    ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/transparent");
+                    ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
                     item.editMeta(meta -> {
                         meta.displayName(Component.text("Will send you back to the").decoration(TextDecoration.ITALIC, false));
                         meta.lore(Collections.singletonList(Component.text("vehicle selection screen", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
@@ -220,7 +219,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
                     }
                 }
 
-                ItemStack materialListItem = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/transparent");
+                ItemStack materialListItem = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
                 materialListItem.editMeta(meta -> {
                     meta.displayName(Component.text("Total items required:").decoration(TextDecoration.ITALIC, false).decorate(TextDecoration.UNDERLINED));
                     List<Component> lore = new ArrayList<>();
@@ -304,13 +303,13 @@ public class VehicleCraftingTable extends CustomTileEntity {
     }
 
     private void setBackground(String key) {
-        ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem(key);
+        ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem(key);
         item.editMeta(meta -> meta.displayName(Component.empty()));
         this.inventory.setItem(53, item);
     }
 
     private ItemStack makeCancelItem() {
-       ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/transparent");
+       ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
        item.editMeta(meta -> {
            meta.displayName(       Component.text("Will send you back to the vehicle").decoration(TextDecoration.ITALIC, false));
            meta.lore(Arrays.asList(Component.text("selection screen. You will get all", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false),
@@ -337,7 +336,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
 
         // Craft button
         for (int slot = 16; slot <= 17; slot++) {
-            ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/transparent");
+            ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
             item.editMeta(meta -> {
                 if (vehicleFits) {
                     meta.displayName(Component.text("Start crafting the vehicle").decoration(TextDecoration.ITALIC, false));
@@ -370,7 +369,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
             this.setBackground("svcraftvehicles:gui/vehicle_crafting_table/crafting_enabled");
 
             for (int slot = 16; slot <= 17; slot++) {
-                ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/transparent");
+                ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
                 item.editMeta(meta -> meta.displayName(Component.text("Complete step").decoration(TextDecoration.ITALIC, false)));
                 this.inventory.setItem(slot, item);
             }
@@ -379,7 +378,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
             this.setBackground("svcraftvehicles:gui/vehicle_crafting_table/crafting_disabled");
 
             for (int slot = 16; slot <= 17; slot++) {
-                ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/transparent");
+                ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
                 item.editMeta(meta -> meta.displayName(Component.text("You do not have all the required items").decoration(TextDecoration.ITALIC, false)));
                 this.inventory.setItem(slot, item);
             }
@@ -411,7 +410,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
     }
 
     private void renderDigit(int slot, int digit, Component name, Component lore) {
-        ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("numbers:" + digit);
+        ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("numbers:" + digit);
         item.editMeta(meta -> {
             meta.displayName(name);
             meta.lore(Collections.singletonList(lore));

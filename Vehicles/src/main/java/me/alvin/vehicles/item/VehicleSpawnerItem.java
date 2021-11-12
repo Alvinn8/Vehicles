@@ -34,7 +34,7 @@ public class VehicleSpawnerItem extends CustomItem {
 
     @Override
     public ItemStack makeItemStack() {
-        ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/vehicle_spawner");
+        ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/vehicle_spawner");
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text(this.name, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
         meta.lore(Arrays.asList(

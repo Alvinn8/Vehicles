@@ -23,7 +23,7 @@ public class FuelItem extends CustomItem {
 
     @Override
     public ItemStack makeItemStack() {
-        ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:item/fuel");
+        ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/fuel");
         ItemMeta meta = item.getItemMeta();
         meta.displayName(Component.text(this.name).decoration(TextDecoration.ITALIC, false));
         PersistentDataContainer data = meta.getPersistentDataContainer();

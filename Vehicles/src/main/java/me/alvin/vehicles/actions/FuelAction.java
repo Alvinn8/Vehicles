@@ -7,7 +7,7 @@ import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import svcraft.core.item.CustomItem;
-import svcraft.core.resourcepack.modelmanagerdata.RPCModelManagerData;
+import svcraft.core.resourcepack.modeldb.ModelDB;
 import svcraft.core.util.CustomInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -49,7 +49,7 @@ public class FuelAction implements VehicleMenuAction {
 
     @Override
     public ItemStack getEntryItem(Vehicle vehicle, Player player) {
-        ItemStack item = SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:gui/vehicle_menu_icon/fuel");
+        ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:gui/vehicle_menu_icon/fuel");
         item.editMeta(meta -> meta.displayName(Component.text("Fuel").decoration(TextDecoration.ITALIC, false)));
         return item;
     }
@@ -84,12 +84,12 @@ public class FuelAction implements VehicleMenuAction {
     private static void renderInventory(Inventory inventory, Vehicle vehicle) {
         inventory.clear();
 
-        RPCModelManagerData resourcepackData = SVCraftVehicles.getInstance().getResourcepackData();
+        ModelDB modelDB = SVCraftVehicles.getInstance().getModelDB();
         double decimalCurrentFuel = vehicle.getMaxFuel() != 0 ? (double) vehicle.getCurrentFuel() / (double) vehicle.getMaxFuel() : 0;
         int percentage = (int) Math.round(decimalCurrentFuel * 100.0D);
         TextComponent percentageComponent = Component.text(percentage + "%").color(percentage < 0.1 ? NamedTextColor.RED : NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false);
 
-        ItemStack percentageItem = resourcepackData.generateItem("svcraftvehicles:item/transparent");
+        ItemStack percentageItem = modelDB.generateItem("svcraftvehicles:item/transparent");
         ItemMeta percentageMeta = percentageItem.getItemMeta();
         percentageMeta.displayName(percentageComponent);
         percentageMeta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
@@ -116,7 +116,7 @@ public class FuelAction implements VehicleMenuAction {
             } else {
                 texture = "svcraftvehicles:item/transparent";
             }
-            ItemStack item = resourcepackData.generateItem(texture);
+            ItemStack item = modelDB.generateItem(texture);
             ItemMeta meta = item.getItemMeta();
             meta.displayName(percentageComponent);
             meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
@@ -124,7 +124,7 @@ public class FuelAction implements VehicleMenuAction {
             inventory.setItem(i, item);
         }
 
-        inventory.setItem(26, resourcepackData.generateItem("svcraftvehicles:gui/fuel/fuel"));
+        inventory.setItem(26, modelDB.generateItem("svcraftvehicles:gui/fuel/fuel"));
     }
 
     private static void fuelVehicle(Vehicle vehicle, HumanEntity player, Inventory inventory) {

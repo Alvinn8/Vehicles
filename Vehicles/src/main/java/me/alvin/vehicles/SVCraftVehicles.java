@@ -15,7 +15,6 @@ import svcraft.core.SVCraft;
 import svcraft.core.config.Config;
 import svcraft.core.plugin.SVCraftPlugin;
 import svcraft.core.resourcepack.ResourcePack;
-import svcraft.core.resourcepack.modelmanagerdata.RPCModelManagerData;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -24,6 +23,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
+import svcraft.core.resourcepack.modeldb.ModelDB;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public final class SVCraftVehicles extends SVCraftPlugin {
     private final Map<Entity, Vehicle> vehiclePartMap = new HashMap<>();
     private final Map<Player, VehicleSpawnerTask> vehicleSpawnerTaskMap = new HashMap<>();
 
-    private RPCModelManagerData resourcepackData;
+    private ModelDB modelDB;
 
     @Override
     public void onPluginEnable() {
@@ -55,10 +55,10 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         // Bukkit.getPluginManager().registerEvents(new TestEventListener(), this);
 
         ResourcePack vehiclesResourcePack = SVCraft.getInstance().getResourcePackManager().getResourcePack("vehicles");
-        if (vehiclesResourcePack != null && vehiclesResourcePack.hasRPCModelManagerData()) {
-            this.resourcepackData = vehiclesResourcePack.getRpcModelManagerData();
+        if (vehiclesResourcePack != null && vehiclesResourcePack.getModelDB() != null) {
+            this.modelDB = vehiclesResourcePack.getModelDB();
         } else {
-            this.getLogger().severe("No \"vehicles\" resource pack detected, or it doesn't have rpCompiler ModelManager data! It is required for SVCraftVehicles to know what models to use for what vehicles!");
+            this.getLogger().severe("No \"vehicles\" resource pack found, or it doesn't a ModelDB! It is required for SVCraftVehicles to know what models to use for what vehicles!");
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -202,10 +202,10 @@ public final class SVCraftVehicles extends SVCraftPlugin {
     }
 
     /**
-     * Get the rpCompiler ModelManager data used for determining what models to use.
+     * Get the ModelDB used for getting the models to use.
      */
-    public RPCModelManagerData getResourcepackData() {
-        return this.resourcepackData;
+    public ModelDB getModelDB() {
+        return this.modelDB;
     }
 
     /**

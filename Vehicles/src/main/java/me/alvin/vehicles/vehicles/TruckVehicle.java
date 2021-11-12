@@ -44,10 +44,10 @@ public class TruckVehicle extends GroundVehicle {
     protected void init() {
         super.init();
 
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/truck/truck"));
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/truck/truck"));
 
         this.backEntity = spawnArmorStand(BACK_PART_OFFSET.relativeTo(this.location, this.getRoll()));
-        this.backEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/truck/truck_back"));
+        this.backEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/truck/truck_back"));
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.backEntity, this);
 
         this.setMaxFuel(20000);
@@ -69,8 +69,8 @@ public class TruckVehicle extends GroundVehicle {
 
     @Override
     public void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/truck/truck_hologram"));
-        this.backEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/truck/truck_back_hologram"));
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/truck/truck_hologram"));
+        this.backEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/truck/truck_back_hologram"));
     }
 
     @Override

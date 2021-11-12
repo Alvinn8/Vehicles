@@ -26,7 +26,7 @@ public class WoodenPlaneVehicle extends PlaneVehicle {
     protected void init() {
         super.init();
 
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/wooden_plane"));
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/wooden_plane"));
 
         this.setMaxFuel(15000);
         this.setFuelUsage(2);
@@ -39,7 +39,7 @@ public class WoodenPlaneVehicle extends PlaneVehicle {
 
     @Override
     protected void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getResourcepackData().generateItem("svcraftvehicles:vehicle/wooden_plane_hologram"));
+        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/wooden_plane_hologram"));
     }
 
     @Override
