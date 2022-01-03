@@ -1,4 +1,4 @@
-package me.alvin.vehicles.nms.v1_17_R1;
+package me.alvin.vehicles.nms.v1_18_R1;
 
 import me.alvin.vehicles.nms.NMS;
 import net.minecraft.world.entity.EntityType;

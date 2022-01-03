@@ -1,4 +1,4 @@
-package me.alvin.vehicles.nms.v1_17_R1;
+package me.alvin.vehicles.nms.v1_18_R1;
 
 import com.comphenix.protocol.events.PacketEvent;
 import io.netty.buffer.Unpooled;
@@ -9,9 +9,9 @@ import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftEntity;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_18_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mule;
 import org.bukkit.entity.Player;
@@ -19,9 +19,9 @@ import org.bukkit.entity.Slime;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.util.Consumer;
 
-public class NMS_v1_17_R1 implements NMS {
+public class NMS_v1_18_R1 implements NMS {
     public String getVersion() {
-        return "v1_17_R1";
+        return "v1_18_R1";
     }
 
     public void setEntityLocation(Entity entity, double x, double y, double z, float yaw, float pitch) {

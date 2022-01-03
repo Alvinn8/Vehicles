@@ -115,3 +115,6 @@ buildNumber.properties
 
 # Common working directory
 run/
+
+# paper-nms-maven-plugin
+.paper-nms
