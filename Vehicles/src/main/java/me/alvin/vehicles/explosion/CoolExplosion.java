@@ -24,9 +24,9 @@ public class CoolExplosion {
 
         // Stun nearby players
         for (Player player : location.getNearbyPlayers(10)) {
-            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 8*20, 0, false, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 15*20, 2, false, false, false));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 10*20, 0, false, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 20, 0, false, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 8*20, 2, false, false, false));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 5*20, 0, false, false, false));
         }
 
         // Muffled sound for players far away
