@@ -199,6 +199,8 @@ public abstract class Vehicle {
                 this.setColor(this.getDefaultColor());
             }
         }, 1L);
+
+        Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), this::updateRenderedLocation, 2L);
     }
 
     /**

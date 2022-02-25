@@ -17,12 +17,15 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 /**
  * Data about a passenger in a seat in a vehicle.
  * <p>
  * Also creates and manages the entities the player sits in.
  */
 public class PassengerData {
+    private final Vehicle vehicle;
     private final LivingEntity passenger;
     private final long enteredAt;
     private final NIE<Mule> seatEntity;
@@ -38,6 +41,7 @@ public class PassengerData {
         Location location = seat.getRelativePos().relativeTo(vehicle.getLocation(), vehicle.getRoll());
         location.subtract(0, SEAT_ENTITY_Y_OFFSET, 0);
 
+        this.vehicle = vehicle;
         this.passenger = passenger;
         this.enteredAt = System.currentTimeMillis(); // They entered now
         this.seatEntity = new NIE<>(this.spawnSeatEntity(location, vehicle));
@@ -100,16 +104,21 @@ public class PassengerData {
     }
 
     private void removeCameraEntity() {
+        Map<Entity, Vehicle> map = SVCraftVehicles.getInstance().getVehiclePartMap();
+
         if (this.cameraEntity != null) {
             this.cameraEntity.remove();
+            map.remove(this.cameraEntity);
             this.cameraEntity = null;
         }
         if (this.niCameraEntity != null) {
             this.niCameraEntity.remove();
+            map.remove(this.niCameraEntity.getAreaEffectCloud());
             this.niCameraEntity = null;
         }
         if (this.iCameraEntityBase != null) {
             this.iCameraEntityBase.remove();
+            map.remove(this.iCameraEntityBase);
             this.iCameraEntityBase = null;
         }
     }
@@ -132,6 +141,7 @@ public class PassengerData {
         if (this.cameraEntity == null) {
             // No camera entity present, we need to create it
             this.cameraEntity = this.spawnSeatEntity(cameraLocation, vehicle);
+            SVCraftVehicles.getInstance().getVehiclePartMap().put(this.cameraEntity, this.vehicle);
 
             // Make the player ride the camera entity, but it's only visible for them
             SVCraftVehicles.getInstance().getNMS().setClientSidePassenger(player, this.cameraEntity);
@@ -140,11 +150,13 @@ public class PassengerData {
                 // interpolating
                 cameraLocation.subtract(0, 1, 0);
                 this.iCameraEntityBase = cameraLocation.getWorld().spawn(cameraLocation, ArmorStand.class);
+                SVCraftVehicles.getInstance().getVehiclePartMap().put(this.iCameraEntityBase, this.vehicle);
                 Vehicle.setupArmorStand(this.iCameraEntityBase);
                 this.iCameraEntityBase.addPassenger(this.cameraEntity);
             } else {
                 // non-interpolating
                 this.niCameraEntity = new NIE<>(this.cameraEntity);
+                SVCraftVehicles.getInstance().getVehiclePartMap().put(this.niCameraEntity.getAreaEffectCloud(), this.vehicle);
             }
         }
 

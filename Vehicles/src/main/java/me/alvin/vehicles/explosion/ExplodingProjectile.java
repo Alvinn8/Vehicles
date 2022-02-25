@@ -14,20 +14,23 @@ import org.bukkit.util.Vector;
 import java.util.Collection;
 import java.util.function.Predicate;
 
-public class Missile extends BukkitRunnable {
+public class ExplodingProjectile extends BukkitRunnable {
     private final World world;
     private final Location location;
     private final Vector direction;
     private final Player source;
+    private final boolean gravity;
     private final int explosionPower;
     private final Predicate<LivingEntity> predicate;
     private int ticks = 0;
+    private double velY;
 
-    public Missile(Location start, Vector direction, int explosionPower, Player source, Predicate<LivingEntity> predicate) {
+    public ExplodingProjectile(Location start, Vector direction, boolean gravity, int explosionPower, Player source, Predicate<LivingEntity> predicate) {
         this.location = start.clone();
         this.world = this.location.getWorld();
         if (this.world == null) throw new IllegalArgumentException("start location has to have a world");
         this.direction = direction;
+        this.gravity = gravity;
         this.explosionPower = explosionPower;
         this.source = source;
         this.predicate = predicate;
@@ -49,6 +52,14 @@ public class Missile extends BukkitRunnable {
         this.world.spawnParticle(Particle.CLOUD, this.location, 5, 0, 0, 0, 0, null, true);
         // Move
         this.location.add(this.direction);
+        // Gravity
+        if (this.gravity) {
+            this.velY += 0.02;
+            if (this.velY > 2) {
+                this.velY = 2;
+            }
+            this.location.add(0, -this.velY, 0);
+        }
         // Check if the missile went to an unloaded chunk
         if (!this.location.isChunkLoaded()) {
             this.explode(false);

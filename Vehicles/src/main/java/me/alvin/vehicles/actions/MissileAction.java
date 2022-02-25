@@ -1,7 +1,7 @@
 package me.alvin.vehicles.actions;
 
 import me.alvin.vehicles.SVCraftVehicles;
-import me.alvin.vehicles.explosion.Missile;
+import me.alvin.vehicles.explosion.ExplodingProjectile;
 import me.alvin.vehicles.item.MissileItem;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.action.VehicleClickAction;
@@ -108,8 +108,8 @@ public class MissileAction extends AbstractStorageAction implements VehicleMenuA
 
             Location location = player.getEyeLocation();
             Vector direction = location.getDirection();
-            // location.add(direction.clone().multiply(5));
-            new Missile(location, direction, missileItem.getExplosionPower(item), player, entity -> {
+
+            new ExplodingProjectile(location, direction, false, missileItem.getExplosionPower(item), player, entity -> {
                 // Do not blow up if there is collision with this vehicle
                 if (SVCraftVehicles.getInstance().getVehiclePartMap().get(entity) == vehicle) return false;
                 // Do not blow up if there is collision with a passenger of this vehicle
@@ -117,6 +117,7 @@ public class MissileAction extends AbstractStorageAction implements VehicleMenuA
                 // Otherwise it's a valid entity collision
                 return true;
             }).start();
+
             this.delayExpire = System.currentTimeMillis() + 500;
             player.getWorld().playSound(vehicle.getLocation(), Sound.ITEM_FIRECHARGE_USE, SoundCategory.PLAYERS, 3, 1);
         }
