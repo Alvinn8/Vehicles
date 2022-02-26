@@ -7,7 +7,6 @@ import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.perspective.ThirdPersonPerspective;
 import me.alvin.vehicles.vehicle.perspective.VehiclePartPerspective;
 import me.alvin.vehicles.vehicle.seat.Seat;
-import me.alvin.vehicles.vehicles.AttackHelicopterVehicle;
 import me.alvin.vehicles.vehicles.GolfCartVehicle;
 import me.alvin.vehicles.vehicles.MiniSubmarineVehicle;
 import me.alvin.vehicles.vehicles.MotorcycleVehicle;
@@ -38,7 +37,6 @@ public class VehicleTypes {
     public static final VehicleType MOTORCYCLE;
     public static final VehicleType TRUCK;
     public static final VehicleType WOODEN_PLANE;
-    public static final VehicleType ATTACK_HELICOPTER;
     public static final VehicleType MINI_SUBMARINE;
 
     static {
@@ -407,30 +405,6 @@ public class VehicleTypes {
                 )
         );
 
-        // Attack Helicopter
-        ATTACK_HELICOPTER = new VehicleType(
-            "attack_helicopter",
-            Component.text("Attack Helicopter"),
-            AttackHelicopterVehicle.class,
-            AttackHelicopterVehicle::new,
-            AttackHelicopterVehicle::new,
-            // Collision
-            new AABBCollision(2, 3),
-            // Seats
-            new Seat(new RelativePos(0, 1.2, -1.25)),
-            Collections.singletonList(
-                new Seat(new RelativePos(0, 1.0, -0.3))
-            ),
-            // Perspectives
-            Collections.singletonList(
-                new ThirdPersonPerspective(new RelativePos(0, 0, -15))
-            ),
-            // Max Health
-            200,
-            // Recipe
-            null
-        );
-
         // Mini Submarine
         MINI_SUBMARINE = new VehicleType(
             "mini_submarine",
@@ -485,7 +459,6 @@ public class VehicleTypes {
         registry.registerVehicle(MOTORCYCLE);
         registry.registerVehicle(TRUCK);
         registry.registerVehicle(WOODEN_PLANE);
-        registry.registerVehicle(ATTACK_HELICOPTER);
         registry.registerVehicle(MINI_SUBMARINE);
     }
 }
