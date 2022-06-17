@@ -71,15 +71,14 @@ public final class SVCraftVehicles extends SVCraftPlugin {
             e.printStackTrace();
         }
 
-        // this.registerCommand("vehicles", new VehiclesCommand(this));
         this.registerCommand(VehiclesCommand::register);
         this.registerPerWorldEvents(new EventListener());
 
-        this.registerCustomBlock(new NamespacedKey(SVCraft.getInstance(), "vehicle_crafting_table"), CustomBlocks.VEHICLE_CRAFTING_TABLE);
+        this.registerBlock(new NamespacedKey(this, "vehicle_crafting_table"), CustomBlocks.VEHICLE_CRAFTING_TABLE);
 
-        this.registerItem(CustomItems.VEHICLE_CRAFTING_TABLE);
-        this.registerItem(CustomItems.FUEL);
-        this.registerItem(CustomItems.VEHICLE_SPAWNER);
+        this.registerItem(new NamespacedKey(this, "vehicle_crafting_table"), CustomItems.VEHICLE_CRAFTING_TABLE);
+        this.registerItem(new NamespacedKey(this, "fuel"), CustomItems.FUEL);
+        this.registerItem(new NamespacedKey(this, "vehicle_spawner"), CustomItems.VEHICLE_SPAWNER);
 
         ShapedRecipe vehicleCraftingTableRecipe = new ShapedRecipe(new NamespacedKey(this, "vehicle_crafting_table"), CustomItems.VEHICLE_CRAFTING_TABLE.makeItemStack());
         vehicleCraftingTableRecipe.shape(" # ", "#-#", " # ");
@@ -109,7 +108,7 @@ public final class SVCraftVehicles extends SVCraftPlugin {
             try {
                 entry.getValue().save();
             } catch (Throwable e) {
-                this.getLogger().severe("Failed to save vehicle for "+ entry.getKey().getUniqueId().toString());
+                this.getLogger().severe("Failed to save vehicle for "+ entry.getKey().getUniqueId());
                 e.printStackTrace();
             }
         }

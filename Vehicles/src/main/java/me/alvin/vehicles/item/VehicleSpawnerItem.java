@@ -28,21 +28,17 @@ public class VehicleSpawnerItem extends CustomItem {
     public VehicleType DEFAULT_VEHICLE_TYPE = VehicleTypes.SIMPLE_CAR;
     public static final NamespacedKey VEHICLE_TYPE_TAG = new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle_type");
 
-    public VehicleSpawnerItem() {
-        super(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle_spawner"), Material.DIAMOND_HOE, "Vehicle Spawner");
-    }
-
     @Override
     public ItemStack makeItemStack() {
         ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/vehicle_spawner");
         ItemMeta meta = item.getItemMeta();
-        meta.displayName(Component.text(this.name, NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
+        this.addId(meta);
+        this.setName(meta, "Vehicle Spawner");
         meta.lore(Arrays.asList(
             Component.text("Left-click to select a vehicle type").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY),
             Component.text("Right-click to spawn the vehicle").decoration(TextDecoration.ITALIC, false).color(NamedTextColor.GRAY)
         ));
         PersistentDataContainer data = meta.getPersistentDataContainer();
-        data.set(CUSTOM_ITEM_ID_KEY, PersistentDataType.STRING, this.id.toString());
         data.set(VEHICLE_TYPE_TAG, PersistentDataType.STRING, DEFAULT_VEHICLE_TYPE.getId());
         item.setItemMeta(meta);
         return item;

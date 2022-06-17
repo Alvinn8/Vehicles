@@ -85,7 +85,7 @@
         <dependency>
             <groupId>svcraft</groupId>
             <artifactId>svcraft</artifactId>
-            <version>1.10-SNAPSHOT</version>
+            <version>1.12-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
