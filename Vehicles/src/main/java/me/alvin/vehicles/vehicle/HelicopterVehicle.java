@@ -145,9 +145,9 @@ public abstract class HelicopterVehicle extends Vehicle {
     public void onZeroHealth(@Nullable Entity source) {
         // Only explode instantly if the conditions which would cause
         // calculateVelocity to not fire (not moving), which would mean
-        // that the the crashing logic in calculateVelocity would never
-        // get called.
-        // Otherwise don't explode now and let the calculateVelocity
+        // that the crashing logic in calculateVelocity would never be
+        // called.
+        // Otherwise, don't explode now and let the calculateVelocity
         // method handle the crash.
 
         if (!this.isMoving()) this.explode(source);

@@ -7,7 +7,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,7 +79,7 @@ public class NIArmorStand {
     }
 
     /**
-     * Set the location of the {@code niEntity} if it exist, otherwise
+     * Set the location of the {@code niEntity} if it exists, otherwise
      * set it for the {@code entity}
      */
     public static void setLocation(@Nullable NIArmorStand niEntity, @NotNull ArmorStand entity, double x, double y, double z, float yaw, float pitch) {

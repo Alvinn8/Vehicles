@@ -103,7 +103,7 @@ public class VehiclesCommand {
                             message.append('\n');
                             for (Map.Entry<ArmorStand, Vehicle> entry : loadedVehicles.entrySet()) {
                                 Vehicle vehicle = entry.getValue();
-                                message.append(entry.getKey().getUniqueId().toString());
+                                message.append(entry.getKey().getUniqueId());
                                 message.append(": ");
                                 message.append(vehicle.getType().getId());
                                 message.append(' ');
@@ -242,70 +242,6 @@ public class VehiclesCommand {
                             e.printStackTrace();
                         }
 
-                        /*
-                        Set<Seat> seats = vehicle.getType().getSeats();
-                        seats.clear();
-                        Seat driverSeat = new Seat(new RelativePos(0, 1.2, -0.8));
-                        seats.add(driverSeat);
-                        // seats.add(new Seat(new RelativePos(-0.35, 0.3, 0.1)));
-                        // seats.add(new Seat(new RelativePos(0.35, 0.3, -1.0)));
-                        // seats.add(new Seat(new RelativePos(-0.35, 0.3, -1.0)));
-
-                        try {
-                            Field field = VehicleType.class.getDeclaredField("driverSeat");
-                            field.setAccessible(true);
-
-                            Field modifiersField = Field.class.getDeclaredField("modifiers");
-                            modifiersField.setAccessible(true);
-                            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-                            field.set(vehicle.getType(), driverSeat);
-                        } catch (NoSuchFieldException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                        */
-
-                        /*
-                        // java 8 version
-
-                        Seat driverSeat1 = vehicle.getType().getDriverSeat();
-                        try {
-                            Field field = Seat.class.getDeclaredField("relativePos");
-                            field.setAccessible(true);
-
-                            Field modifiersField = Field.class.getDeclaredField("modifiers");
-                            modifiersField.setAccessible(true);
-                            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-
-                            field.set(driverSeat1, new RelativePos(0.2, 1.5, 0.1));
-                        } catch (NoSuchFieldException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                        */
-
-                        /*
-                        // java 12+ version (doesn't work)
-                        try {
-                            // java really doesn't want us to do this...
-                            // thanks https://stackoverflow.com/a/61150853
-                            Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
-                            final Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
-                            unsafeField.setAccessible(true);
-                            final Object unsafe = unsafeField.get(null);
-                            System.out.println("unsafe = " + unsafe);
-
-                            final Field ourField = Seat.class.getDeclaredField("relativePos");
-                            System.out.println("ourField = " + ourField);
-                            final Object staticFieldBase = unsafeClass.getMethod("staticFieldBase", Field.class).invoke(unsafe, ourField);
-                            System.out.println("staticFieldBase = " + staticFieldBase);
-                            final long staticFieldOffset = (long) unsafeClass.getMethod("staticFieldOffset", Field.class).invoke(unsafe, ourField);
-                            System.out.println("staticFieldOffset = " + staticFieldOffset);
-                            unsafeClass.getMethod("putObject", Object.class, long.class, Object.class).invoke(unsafe, staticFieldBase, staticFieldOffset, newDriverSeatRelPos);
-                        } catch (NoSuchFieldException | IllegalAccessException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
-                        */
-
                         source.getCommandSender().sendMessage("Driver seat updated");
                         return 1;
                     })
@@ -321,10 +257,6 @@ public class VehiclesCommand {
                     float yaw = gameTime % 360.0F;
                     float pitch = gameTime % 180.0F - 90.0F;
                     float roll = gameTime % 180.0F - 90.0F;
-
-                    // yaw = 0;
-                    // pitch = 10;
-                    // roll = 0;
 
                     sender.sendMessage("yaw = " + yaw);
                     sender.sendMessage("pitch = " + pitch);
@@ -394,6 +326,7 @@ public class VehiclesCommand {
             .then(
                 Cmd.literal("hijack")
                     .executes(context -> {
+                        System.out.println("Hello, world!");
                         return 1;
                     })
             )

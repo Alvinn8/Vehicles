@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class GolfCartVehicle extends GroundVehicle {
-    private static final RelativePos SMOKE_OFFSET = new RelativePos(0.75, 1, 0.5);
+    private static final RelativePos SMOKE_OFFSET = new RelativePos(0.4, 1.2, 1.5);
 
     public GolfCartVehicle(@NotNull ArmorStand entity) {
         super(entity);
@@ -62,7 +62,7 @@ public class GolfCartVehicle extends GroundVehicle {
     @Override
     public void spawnParticles() {
         if (this.health < 50) {
-            this.smokeAt(new RelativePos(0.4, 1.2, 1.5));
+            this.smokeAt(SMOKE_OFFSET);
         }
     }
 }

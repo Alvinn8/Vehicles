@@ -27,7 +27,6 @@ public class SwitchSeatAction implements VehicleMenuAction {
             player.sendMessage("The vehicle is full!");
             return;
         }
-        // This logic can probably be done better and might not even work idk
         Seat currentSeat = vehicle.getPassengerSeat(player);
         if (currentSeat == null) return; // Should never happen
         int index = seats.indexOf(currentSeat);

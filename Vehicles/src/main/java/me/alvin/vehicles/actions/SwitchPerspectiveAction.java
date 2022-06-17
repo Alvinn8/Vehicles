@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SwitchPerspectiveAction implements VehicleMenuAction {
-    public static SwitchPerspectiveAction INSTANCE = new SwitchPerspectiveAction();
+    public static final SwitchPerspectiveAction INSTANCE = new SwitchPerspectiveAction();
 
     private SwitchPerspectiveAction() {}
 

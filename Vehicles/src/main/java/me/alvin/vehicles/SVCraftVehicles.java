@@ -34,7 +34,7 @@ import java.util.Map;
 
 public final class SVCraftVehicles extends SVCraftPlugin {
 
-    public static boolean EXPLOSIONS_BREAK_BLOCKS = false;
+    public static final boolean EXPLOSIONS_BREAK_BLOCKS = false;
 
     private static SVCraftVehicles instance;
 
@@ -118,12 +118,13 @@ public final class SVCraftVehicles extends SVCraftPlugin {
     private boolean setupNMS() {
         String nmsVersion = SVCraft.getInstance().getNMS().getVersion();
 
-        switch (nmsVersion) {
-            case "v1_17_R1": this.nms = new NMS_v1_17_R1(); break;
-            case "v1_18_R1": this.nms = new NMS_v1_18_R1(); break;
-            case "v1_18_R2": this.nms = new NMS_v1_18_R2(); break;
-            case "v1_19_R1": this.nms = new NMS_v1_19_R1(); break;
-        }
+        this.nms = switch (nmsVersion) {
+            case "v1_17_R1" -> new NMS_v1_17_R1();
+            case "v1_18_R1" -> new NMS_v1_18_R1();
+            case "v1_18_R2" -> new NMS_v1_18_R2();
+            case "v1_19_R1" -> new NMS_v1_19_R1();
+            default -> null;
+        };
 
         if (this.nms != null) {
             this.getLogger().info("NMS set up successfully for minecraft version "+ this.nms.getVersion());

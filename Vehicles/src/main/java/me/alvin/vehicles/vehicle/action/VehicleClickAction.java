@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 /**
  * An interface that can be added to a {@link VehicleAction} class which can be
- * clicked directly trough the player selecting a certain hotbar slot and left clicking.
+ * clicked directly through the player selecting a certain hotbar slot and left-clicking.
  */
 public interface VehicleClickAction extends VehicleAction {
     /**

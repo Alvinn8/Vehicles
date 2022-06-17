@@ -1,7 +1,7 @@
 # Vehicles
 A plugin that adds vehicles.
 
-**Note:** This plugin depends on a closed source core plugin that I use on my server so it cannot be compiled or ran, I might port a standalone version sometime though.
+**Note:** This plugin depends on a closed source core plugin that I use on my server, so it cannot be compiled or ran, I might port a standalone version sometime though.
 
 ## Development help:
 ## Creating a new vehicle type
@@ -17,4 +17,4 @@ I use the instructions below to not forget anything when creating a new vehicle 
 6. Add smoke offsets and override the spawnParticles method to render smoke at the right place when the vehicle is damaged (usually less than half of the health).
 7. Done.
 
-These instructions are for creating a new vehicle inside this plugin. If a new vehicle type is registered from a different plugin that plugin should store the vehicle types somewhere staticly much like how VehicleTypes is done. Create a register method and call that method in your onEnable with `SVCraftVehicles.getInstance().getRegistry()` as the registry.
+These instructions are for creating a new vehicle inside this plugin. If a new vehicle type is registered from a different plugin that plugin should store the vehicle types somewhere statically much like how VehicleTypes is done. Create a register method and call that method in your onEnable with `SVCraftVehicles.getInstance().getRegistry()` as the registry.

@@ -96,7 +96,7 @@ public class VehicleType {
     }
 
     /**
-     * Construct the a new instance of the vehicle from
+     * Construct a new instance of the vehicle from
      * an existing entity. Used when loading the vehicle
      *
      * @see Vehicle#Vehicle(ArmorStand)

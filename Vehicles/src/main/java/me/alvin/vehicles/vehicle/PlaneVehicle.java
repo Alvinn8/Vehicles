@@ -163,7 +163,7 @@ public abstract class PlaneVehicle extends Vehicle {
     public void onZeroHealth(@Nullable Entity source) {
         // Only explode instantly if the conditions which would cause
         // the crashing logic in calculateVelocity to not happen.
-        // Otherwise let the calculateVelocity method handle the crash.
+        // Otherwise, let the calculateVelocity method handle the crash.
 
         boolean canFly = this.speed >= this.getMinTakeoffSpeed();
         if (this.isOnGround() || !this.isMoving() || !canFly || this.getDriver() == null) this.explode(source);

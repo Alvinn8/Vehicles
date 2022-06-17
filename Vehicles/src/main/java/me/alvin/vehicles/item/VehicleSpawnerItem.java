@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class VehicleSpawnerItem extends CustomItem {
-    public VehicleType DEFAULT_VEHICLE_TYPE = VehicleTypes.SIMPLE_CAR;
+    public static final VehicleType DEFAULT_VEHICLE_TYPE = VehicleTypes.SIMPLE_CAR;
     public static final NamespacedKey VEHICLE_TYPE_TAG = new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle_type");
 
     @Override

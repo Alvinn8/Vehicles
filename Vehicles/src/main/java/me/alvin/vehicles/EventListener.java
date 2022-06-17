@@ -85,7 +85,7 @@ public class EventListener implements PerWorldListener {
             try {
                 vehicle.unload();
             } catch (Throwable e) {
-                SVCraftVehicles.getInstance().getLogger().severe("Failed to unload vehicle with id '" + vehicle.getType().getId() + "' for entity "+ entity.getUniqueId().toString() + " in chunk "+ event.getChunk().getX() + " "+ event.getChunk().getZ() + " in world "+ event.getWorld().getName());
+                SVCraftVehicles.getInstance().getLogger().severe("Failed to unload vehicle with id '" + vehicle.getType().getId() + "' for entity "+ entity.getUniqueId() + " in chunk "+ event.getChunk().getX() + " "+ event.getChunk().getZ() + " in world "+ event.getWorld().getName());
                 e.printStackTrace();
             }
             // TODO: Load vehicles from already loaded chunks in onEnable (reloads)
@@ -94,8 +94,7 @@ public class EventListener implements PerWorldListener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (event.getEntity() instanceof ArmorStand) {
-            ArmorStand entity = (ArmorStand) event.getEntity();
+        if (event.getEntity() instanceof ArmorStand entity) {
             if (SVCraftVehicles.getInstance().getLoadedVehicles().containsKey(entity)) {
                 // If the main entity of a vehicle is killed, we destroy the vehicle
                 Vehicle vehicle = SVCraftVehicles.getInstance().getLoadedVehicles().get(entity);
@@ -107,8 +106,7 @@ public class EventListener implements PerWorldListener {
     @EventHandler
     public void onEntityDismount(EntityDismountEvent event) {
         Entity entity = event.getEntity();
-        if (entity instanceof LivingEntity) {
-            LivingEntity passenger = (LivingEntity) entity;
+        if (entity instanceof LivingEntity passenger) {
             // The vehicle has to be fetched directly from the map as mc has
             // already started dismounting the entity by this point
             Vehicle vehicle = SVCraftVehicles.getInstance().getCurrentVehicleMap().get(passenger);

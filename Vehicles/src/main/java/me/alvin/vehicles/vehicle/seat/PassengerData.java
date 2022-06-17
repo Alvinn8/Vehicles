@@ -99,6 +99,7 @@ public class PassengerData {
         }
     }
 
+    @Nullable
     public Mule getCameraEntity() {
         return this.cameraEntity;
     }

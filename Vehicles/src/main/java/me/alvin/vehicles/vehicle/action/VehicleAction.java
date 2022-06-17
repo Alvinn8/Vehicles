@@ -17,7 +17,7 @@ public interface VehicleAction {
     default void onLoad(Vehicle vehicle, PersistentDataContainer data) {}
 
     /**
-     * Called when the vehicle is saving it's data.
+     * Called when the vehicle is saving its data.
      *
      * @param vehicle The vehicle that is saving
      * @param data The container the vehicle is using to save data to.

@@ -1,7 +1,5 @@
 package me.alvin.vehicles.vehicle;
 
-import me.alvin.vehicles.vehicle.text.TemporaryMessage;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Axis;
 import org.bukkit.Location;
 import org.bukkit.Material;

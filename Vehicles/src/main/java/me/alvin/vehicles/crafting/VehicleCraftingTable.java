@@ -224,7 +224,14 @@ public class VehicleCraftingTable extends CustomTileEntity {
                     meta.displayName(Component.text("Total items required:").decoration(TextDecoration.ITALIC, false).decorate(TextDecoration.UNDERLINED));
                     List<Component> lore = new ArrayList<>();
                     for (Map.Entry<ItemStack, Integer> entry : map.entrySet()) {
-                        lore.add(Component.text().color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false).append(Component.text(entry.getValue() + "x ", NamedTextColor.YELLOW)).append(Component.translatable(entry.getKey().getTranslationKey())).build());
+                        ItemStack item = entry.getKey();
+                        lore.add(Component.text()
+                            .color(NamedTextColor.WHITE)
+                            .decoration(TextDecoration.ITALIC, false)
+                            .append(Component.text(entry.getValue() + "x ", NamedTextColor.YELLOW))
+                            .append(Component.translatable(item))
+                            .build()
+                        );
                     }
                     meta.lore(lore);
                 });
@@ -258,7 +265,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
                     ItemStack renderItem = item.clone();
                     Component name = Component.text().decoration(TextDecoration.ITALIC, false)
                         .append(Component.text(item.getAmount() + "x "))
-                        .append(Component.translatable(item.getTranslationKey()))
+                        .append(Component.translatable(item))
                         .build();
                     renderItem.editMeta(meta -> meta.displayName(name));
                     this.inventory.setItem(slot, renderItem);

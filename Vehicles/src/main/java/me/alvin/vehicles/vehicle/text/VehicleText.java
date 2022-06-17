@@ -1,16 +1,13 @@
 package me.alvin.vehicles.vehicle.text;
 
 import me.alvin.vehicles.vehicle.Vehicle;
-import me.alvin.vehicles.vehicle.action.VehicleClickAction;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Stores what text to display on the action bar when inside a vehicle.
@@ -75,8 +72,7 @@ public class VehicleText {
         Iterator<VehicleTextEntry> iterator = this.entries.iterator();
         while (iterator.hasNext()) {
             VehicleTextEntry entry = iterator.next();
-            if (entry instanceof TemporaryMessage) {
-                TemporaryMessage message = (TemporaryMessage) entry;
+            if (entry instanceof TemporaryMessage message) {
                 message.incrementTime();
                 if (message.getTime() >= message.getMaxTime()) {
                     iterator.remove();

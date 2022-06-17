@@ -23,8 +23,8 @@ import java.util.List;
  */
 public record RecipeStep(List<ItemStack> items, Component name, int completeTime) {
     /**
-     * Check whether the player can complete this step and has all of the
-     * required ingredients.
+     * Check whether the player can complete this step and has all the required
+     * ingredients.
      *
      * @param player The player to check if they can complete the step.
      * @return {@code true} if they can complete the step, {@code false} otherwise.
@@ -37,15 +37,15 @@ public record RecipeStep(List<ItemStack> items, Component name, int completeTime
                 return false;
             }
         }
-        // If none if the ingredients were missing the recipe can be completed.
+        // If none of the ingredients were missing the recipe can be completed.
         return true;
     }
 
     /**
-     * Take all of the items this step requires from the player.
+     * Take all the items this step requires from the player.
      * <p>
-     * {@link #canComplete(Player)} should be ran first to make sure the player has
-     * all of the ingredients required.
+     * {@link #canComplete(Player)} should be run first to make sure the player has
+     * all the ingredients required.
      *
      * @param player The player to take the items from.
      */

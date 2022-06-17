@@ -17,11 +17,10 @@ import me.alvin.vehicles.vehicle.action.VehicleClickAction;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import me.alvin.vehicles.vehicle.collision.AABBCollision;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
-import me.alvin.vehicles.vehicle.perspective.Perspective;
-import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.PassengerData;
-import me.alvin.vehicles.vehicle.text.VehicleText;
+import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.text.TemporaryMessage;
+import me.alvin.vehicles.vehicle.text.VehicleText;
 import me.alvin.vehicles.vehicle.text.VehicleTextEntry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -38,7 +37,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mule;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.Cancellable;
@@ -85,7 +83,7 @@ public abstract class Vehicle {
     /**
      * The main entity of the vehicle. Used for saving persistent data
      */
-    protected @NotNull ArmorStand entity;
+    protected final @NotNull ArmorStand entity;
     /**
      * The main entity as a non interpolating armor stand. This will only
      * be present if the vehicle is in motion.
@@ -205,7 +203,7 @@ public abstract class Vehicle {
 
     /**
      * Called while the vehicle is being constructed. This method works as code that should
-     * be ran in both constructors.
+     * run in both constructors.
      *
      * <p>This is the method that sets the entity up and spawns extra entities, registers all
      * {@link VehicleAction}s and sets fuel information.</p>
@@ -299,7 +297,7 @@ public abstract class Vehicle {
     }
 
     protected void smokeAt(RelativePos relativePos) {
-        this.location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, relativePos.relativeTo(this.location, this.getRoll()), 2, 0.1, 0.1, 0.1, 0.02);;
+        this.location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, relativePos.relativeTo(this.location, this.getRoll()), 2, 0.1, 0.1, 0.1, 0.02);
     }
 
     /**
@@ -377,7 +375,7 @@ public abstract class Vehicle {
     }
 
     /**
-     * The method that actually turns the entity into into a hologram.
+     * The method that actually turns the entity into a hologram.
      *
      * <p>This method should change the render item of all render entities a
      * part of this vehicle to hologram variants.</p>
@@ -453,7 +451,6 @@ public abstract class Vehicle {
      */
     protected boolean colorArmorStand(ArmorStand entity, Color color) {
         EntityEquipment equipment = entity.getEquipment();
-        if (equipment == null) return false;
         ItemStack helmet = equipment.getHelmet();
         if (helmet == null) return false;
         ItemMeta meta = helmet.getItemMeta();
@@ -474,7 +471,7 @@ public abstract class Vehicle {
      * @param color The color to set
      * @return {@code true} if the color was successfully applied, {@code false} if not, for
      * example due to the vehicle not being colorable or if the entity does not wear a leather
-     * armor in it's helmet slot
+     * armor in its helmet slot
      */
     public boolean setColor(Color color) {
         if (!this.canBeColored()) return false;
@@ -492,7 +489,6 @@ public abstract class Vehicle {
         if (!this.canBeColored()) return null;
 
         EntityEquipment equipment = this.entity.getEquipment();
-        if (equipment == null) return null;
         ItemStack helmet = equipment.getHelmet();
         if (helmet == null) return null;
         ItemMeta meta = helmet.getItemMeta();
@@ -506,7 +502,7 @@ public abstract class Vehicle {
 
     /**
      * Get the default color of the vehicle. Will be set when a new vehicle is spawned
-     * if the vehicle is colorable. The default default color is white.
+     * if the vehicle is colorable.
      *
      * @return The default color
      */
@@ -871,7 +867,7 @@ public abstract class Vehicle {
     public void spawnParticles() {}
 
     /**
-     * Check if the vehicle is currently made of non interpolating entites.
+     * Check if the vehicle is currently made of non interpolating entities.
      *
      * <p>Subclasses should not need to override this method as if the main
      * entity is non interpolating, all entities should be non interpolating,
@@ -962,7 +958,7 @@ public abstract class Vehicle {
     //<editor-fold desc="Fuel related methods" defaultstate="collapsed">
 
     /**
-     * Whether the vehicle uses fuel or not. Can be overriden by subclasses
+     * Whether the vehicle uses fuel or not. Can be overridden by subclasses
      * that do not use fuel.
      *
      * @return {@code true} if the vehicle uses fuel and {@code false} if not.
@@ -1059,9 +1055,7 @@ public abstract class Vehicle {
         PassengerData passengerData = this.passengerData.get(seat);
         if (passengerData == null) return null;
         if (!passengerData.isValid()) {
-            SVCraftVehicles.getInstance().getLogger().warning("Invalid seat data");
-            // passengerData.exitSeat();
-            // this.passengerData.remove(seat);
+            DebugUtil.debug("Invalid seat data");
             return null;
         }
         return passengerData.getPassenger();
@@ -1196,7 +1190,7 @@ public abstract class Vehicle {
     }
 
     /**
-     * Detatch the specified vehicle from this vehicle.
+     * Detach the specified vehicle from this vehicle.
      *
      * @param vehicle The vehicle to detach
      */

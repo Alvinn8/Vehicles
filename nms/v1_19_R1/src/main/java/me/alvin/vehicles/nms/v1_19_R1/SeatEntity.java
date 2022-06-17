@@ -18,7 +18,7 @@ public class SeatEntity extends Mule {
     @Override
     public boolean rideableUnderWater() {
         // This stops the entity from dismounting passengers
-        // when they go under water.
+        // when they go underwater.
         return true;
     }
 

@@ -38,9 +38,9 @@ public class CoolExplosion {
         location.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, location, power * 50, power / 2.0, power / 2.0, power / 2.0, 0.01);
         location.getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, location, power * 7, power / 2.0, power / 2.0, power / 2.0, 0);
         location.getWorld().spawnParticle(Particle.CAMPFIRE_SIGNAL_SMOKE, location, power * 3, power / 2.0, power / 2.0, power / 2.0, 0.02);
-        Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () -> {
-            location.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, location, power * 10, power / 2.0, power / 2.0, power / 2.0, 0.01);
-        }, 40);
+        Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () ->
+            location.getWorld().spawnParticle(Particle.CAMPFIRE_COSY_SMOKE, location, power * 10, power / 2.0, power / 2.0, power / 2.0, 0.01)
+        , 40);
 
         // Spawn flying debris
         List<ExplosionDebris> debrisList = new ArrayList<>();

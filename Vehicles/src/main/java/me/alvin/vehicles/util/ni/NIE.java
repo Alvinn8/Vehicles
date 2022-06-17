@@ -32,12 +32,12 @@ public class NIE<T extends Entity> {
 
     public static final double AEC_Y_OFFSET = 0.515;
 
-    public NIE(Location location, EntityType entityType) {
+    public NIE(Location location, Class<T> entityType) {
         World world = location.getWorld();
         if (world == null) throw new IllegalArgumentException("The specified location has to have a world");
 
         this.aec = spawnAEC(location);
-        this.entity = (T) world.spawnEntity(location, entityType);
+        this.entity = world.spawn(location, entityType);
         this.aec.addPassenger(this.entity);
     }
 
@@ -108,7 +108,7 @@ public class NIE<T extends Entity> {
     }
 
     /**
-     * Set the location of the {@code niEntity} if it exist, otherwise
+     * Set the location of the {@code niEntity} if it exists, otherwise
      * set it for the {@code entity}
      */
     public static <T extends Entity> void setLocation(@Nullable NIE<T> niEntity, @NotNull T entity, double x, double y, double z, float yaw, float pitch) {

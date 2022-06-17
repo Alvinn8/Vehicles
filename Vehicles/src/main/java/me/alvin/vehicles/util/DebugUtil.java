@@ -6,7 +6,7 @@ import org.bukkit.Particle;
 import org.jetbrains.annotations.Nullable;
 
 public final class DebugUtil {
-    private DebugUtil() {};
+    private DebugUtil() {}
 
     public static void debug(@Nullable String message) {
         if (SVCraftVehicles.getInstance().isInDebugMode()) {

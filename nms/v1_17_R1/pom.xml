@@ -24,7 +24,7 @@
             <plugin>
                 <groupId>ca.bkaw</groupId>
                 <artifactId>paper-nms-maven-plugin</artifactId>
-                <version>1.1</version>
+                <version>1.2.1</version>
                 <executions>
                     <execution>
                         <phase>process-classes</phase>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>18.0.0</version>
+            <version>23.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
