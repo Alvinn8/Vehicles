@@ -43,7 +43,7 @@ import java.util.Map;
 
 public class EventListener implements PerWorldListener {
     @Override
-    public boolean isEnabledIn(World world) {
+    public boolean isListenerEnabledIn(World world) {
         return SVCraftVehicles.getInstance().isEnabledIn(world);
     }
 
