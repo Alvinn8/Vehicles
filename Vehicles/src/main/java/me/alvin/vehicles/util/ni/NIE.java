@@ -76,11 +76,18 @@ public class NIE<T extends Entity> {
         return this.entity;
     }
 
+    @Deprecated
     public void setLocation(double x, double y, double z, float yaw, float pitch) {
         NMS nms = SVCraftVehicles.getInstance().getNMS();
         nms.setEntityLocation(this.aec, x, y - AEC_Y_OFFSET, z, yaw, pitch);
         nms.setEntityRotation(this.entity, yaw);
         nms.markDirty(this.aec);
+    }
+
+    public void setLocation(Location location) {
+        this.aec.teleport(location.clone().subtract(0, AEC_Y_OFFSET, 0), true, false);
+        this.entity.setRotation(location.getYaw(), location.getPitch());
+        SVCraftVehicles.getInstance().getNMS().markDirty(this.aec);
     }
 
     public boolean isValid() {
@@ -102,7 +109,7 @@ public class NIE<T extends Entity> {
         this.entity.leaveVehicle();
         Location location = this.aec.getLocation();
         location.add(0, AEC_Y_OFFSET, 0);
-        SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.entity, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        this.entity.teleport(location, true, false);
         this.aec.remove();
         return this.entity;
     }
@@ -111,11 +118,20 @@ public class NIE<T extends Entity> {
      * Set the location of the {@code niEntity} if it exist, otherwise
      * set it for the {@code entity}
      */
+    @Deprecated
     public static <T extends Entity> void setLocation(@Nullable NIE<T> niEntity, @NotNull T entity, double x, double y, double z, float yaw, float pitch) {
         if (niEntity != null) {
             niEntity.setLocation(x, y, z, yaw, pitch);
         } else {
             SVCraftVehicles.getInstance().getNMS().setEntityLocation(entity, x, y, z, yaw ,pitch);
+        }
+    }
+
+    public static <T extends Entity> void setLocation(@Nullable NIE<T> niEntity, @NotNull T entity, Location location) {
+        if (niEntity != null) {
+            niEntity.setLocation(location);
+        } else {
+            entity.teleport(location, true, false);
         }
     }
 }

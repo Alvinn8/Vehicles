@@ -24,6 +24,7 @@ public interface NMS {
      * @param yaw The yaw rotation of the entity
      * @param pitch The pitch rotation of the entity
      */
+    @Deprecated
     void setEntityLocation(Entity entity, double x, double y, double z, float yaw, float pitch);
 
     /**
@@ -32,6 +33,7 @@ public interface NMS {
      * @param entity The entity to change the yaw for
      * @param yaw The yaw to change to
      */
+    @Deprecated
     void setEntityRotation(Entity entity, float yaw);
 
     /**

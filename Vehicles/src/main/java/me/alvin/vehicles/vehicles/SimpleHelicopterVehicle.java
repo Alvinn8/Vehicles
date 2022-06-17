@@ -79,14 +79,17 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
 
     @Override
     public void updateRenderedLocation() {
-        NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
-        NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
+        NIArmorStand.setLocation(this.niEntity, this.entity, this.location);
+        NIE.setLocation(this.niSlime, this.slime, this.location);
 
         Location tailLocation = TAIL_OFFSET.relativeTo(this.location, this.getRoll());
-        NIArmorStand.setLocation(this.tailNiEntity, this.tailEntity, tailLocation.getX(), tailLocation.getY(), tailLocation.getZ(), tailLocation.getYaw(), 0);
+        tailLocation.setPitch(0);
+        NIArmorStand.setLocation(this.tailNiEntity, this.tailEntity, tailLocation);
 
         Location rotorLocation = ROTOR_OFFSET.relativeTo(this.location, this.getRoll());
-        NIArmorStand.setLocation(this.rotorNiEntity, this.rotorEntity, rotorLocation.getX(), rotorLocation.getY(), rotorLocation.getZ(), this.rotorRotation, 0);
+        rotorLocation.setYaw(this.rotorRotation);
+        rotorLocation.setPitch(0);
+        NIArmorStand.setLocation(this.rotorNiEntity, this.rotorEntity, rotorLocation);
     }
 
     @Override

@@ -127,13 +127,14 @@ public class TruckVehicle extends GroundVehicle {
 
     @Override
     public void updateRenderedLocation() {
-        NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
+        NIE.setLocation(this.niSlime, this.slime, this.location);
 
         Location mainLocation = MAIN_PART_OFFSET.relativeTo(this.location, this.getRoll());
-        NIArmorStand.setLocation(this.niEntity, this.entity, mainLocation.getX(), mainLocation.getY(), mainLocation.getZ(), this.location.getYaw(), this.location.getPitch());
+        NIArmorStand.setLocation(this.niEntity, this.entity, mainLocation);
 
         Location backLocation = BACK_PART_OFFSET.relativeTo(this.location, this.getRoll());
-        NIArmorStand.setLocation(this.backNiEntity, this.backEntity, backLocation.getX(), backLocation.getY(), backLocation.getZ(), backLocation.getYaw(), 0);
+        backLocation.setPitch(0);
+        NIArmorStand.setLocation(this.backNiEntity, this.backEntity, backLocation);
     }
 
     @Override

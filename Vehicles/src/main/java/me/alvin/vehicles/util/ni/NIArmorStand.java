@@ -48,11 +48,18 @@ public class NIArmorStand {
         return this.armorStand;
     }
 
+    @Deprecated
     public void setLocation(double x, double y, double z, float yaw, float pitch) {
         NMS nms = SVCraftVehicles.getInstance().getNMS();
         nms.setEntityLocation(this.aec, x, y - NIE.AEC_Y_OFFSET, z, yaw, pitch);
         nms.setEntityRotation(this.armorStand, yaw);
         nms.markDirty(this.aec);
+    }
+
+    public void setLocation(Location location) {
+        this.aec.teleport(location.clone().subtract(0, NIE.AEC_Y_OFFSET, 0), true, false);
+        this.armorStand.setRotation(location.getYaw(), location.getPitch());
+        SVCraftVehicles.getInstance().getNMS().markDirty(this.aec);
     }
 
     public boolean isValid() {
@@ -74,7 +81,7 @@ public class NIArmorStand {
         this.armorStand.leaveVehicle();
         Location location = this.aec.getLocation();
         location.add(0, NIE.AEC_Y_OFFSET, 0);
-        SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.armorStand, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+        this.armorStand.teleport(location, true, false);
         this.aec.remove();
         return this.armorStand;
     }
@@ -83,11 +90,20 @@ public class NIArmorStand {
      * Set the location of the {@code niEntity} if it exist, otherwise
      * set it for the {@code entity}
      */
+    @Deprecated
     public static void setLocation(@Nullable NIArmorStand niEntity, @NotNull ArmorStand entity, double x, double y, double z, float yaw, float pitch) {
         if (niEntity != null) {
             niEntity.setLocation(x, y, z, yaw, pitch);
         } else {
             SVCraftVehicles.getInstance().getNMS().setEntityLocation(entity, x, y, z, yaw, pitch);
+        }
+    }
+
+    public static void setLocation(@Nullable NIArmorStand niEntity, @NotNull ArmorStand entity, Location location) {
+        if (niEntity != null) {
+            niEntity.setLocation(location);
+        } else {
+            entity.teleport(location, true, false);
         }
     }
 }

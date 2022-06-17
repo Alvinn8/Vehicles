@@ -843,8 +843,8 @@ public abstract class Vehicle {
      * if the vehicle's speed is not 0.
      */
     public void updateRenderedLocation() {
-        NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
-        NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
+        NIArmorStand.setLocation(this.niEntity, this.entity, this.location);
+        NIE.setLocation(this.niSlime, this.slime, this.location);
     }
 
     /**
@@ -860,7 +860,9 @@ public abstract class Vehicle {
 
             Location location = seat.getRelativePos().relativeTo(this.location, this.getRoll());
             if (seat.hasOffsetYaw()) location.setYaw(location.getYaw() + seat.getOffsetYaw());
-            passengerData.getSeatEntity().setLocation(location.getX(), location.getY() - PassengerData.SEAT_ENTITY_Y_OFFSET, location.getZ(), location.getYaw(), location.getPitch());
+            // passengerData.getSeatEntity().setLocation(location.getX(), location.getY() - PassengerData.SEAT_ENTITY_Y_OFFSET, location.getZ(), location.getYaw(), location.getPitch());
+            location.subtract(0, PassengerData.SEAT_ENTITY_Y_OFFSET, 0);
+            passengerData.getSeatEntity().setLocation(location);
         }
     }
 

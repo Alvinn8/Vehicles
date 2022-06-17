@@ -162,10 +162,12 @@ public class PassengerData {
 
         if (this.perspective.interpolate()) {
             // interpolating
-            SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.iCameraEntityBase, cameraLocation.getX(), cameraLocation.getY(), cameraLocation.getZ(), 0, 0);
+            // SVCraftVehicles.getInstance().getNMS().setEntityLocation(this.iCameraEntityBase, cameraLocation.getX(), cameraLocation.getY(), cameraLocation.getZ(), 0, 0);
+            this.iCameraEntityBase.teleport(cameraLocation, true, false);
         } else {
             // non-interpolating
-            this.niCameraEntity.setLocation(cameraLocation.getX(), cameraLocation.getY(), cameraLocation.getZ(), 0, 0);
+            // this.niCameraEntity.setLocation(cameraLocation.getX(), cameraLocation.getY(), cameraLocation.getZ(), 0, 0);
+            this.niCameraEntity.setLocation(cameraLocation);
         }
     }
 
