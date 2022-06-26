@@ -4,6 +4,7 @@ import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.VehicleSpawnerTask;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
+import org.bukkit.World;
 import svcraft.core.item.CustomItem;
 import svcraft.core.util.CustomInventory;
 import net.kyori.adventure.text.Component;
@@ -51,7 +52,12 @@ public class VehicleSpawnerItem extends CustomItem {
      * @param selectedItem The item the player has selected, must be a vehicle spawner
      */
     public void openVehicleTypeSelector(Player player, ItemStack selectedItem) {
-        final List<VehicleType> vehicleTypes =  new ArrayList<>(SVCraftVehicles.getInstance().getRegistry().getRegisteredVehicles().values());
+        final List<VehicleType> vehicleTypes =  new ArrayList<>(SVCraftVehicles.getInstance().getRegistry().getValues());
+
+        // Filter to only show enabled vehicle types
+        World world = player.getWorld();
+        vehicleTypes.removeIf(vehicleType -> !vehicleType.getEnableable().isEnabledIn(world));
+
         int size = (int) Math.ceil((double) vehicleTypes.size() / 9.0D) * 9;
         Inventory inventory = Bukkit.createInventory(new CustomInventory() {
             @Override

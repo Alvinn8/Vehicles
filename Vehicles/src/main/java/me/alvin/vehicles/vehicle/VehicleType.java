@@ -10,6 +10,7 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import svcraft.core.world.Enableable;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ public class VehicleType {
     private final VehicleCollisionType collisionType;
     private final List<Perspective> perspectives;
     private final double maxHealth;
+    private final Enableable enableable;
     private final VehicleCraftingRecipe recipe;
 
     public VehicleType(@NotNull String id,
@@ -46,6 +48,7 @@ public class VehicleType {
                        @Nullable List<Seat> seats,
                        @Nullable List<Perspective> perspectives,
                        double maxHealth,
+                       @NotNull Enableable enableable,
                        @Nullable VehicleCraftingRecipe.Builder recipe) {
         this.id = id;
         this.name = name;
@@ -60,6 +63,7 @@ public class VehicleType {
         this.collisionType = collisionType;
         this.perspectives = perspectives == null ? Collections.emptyList() : perspectives;
         this.maxHealth = maxHealth;
+        this.enableable = enableable;
         this.recipe = recipe == null ? null : recipe.build();
     }
 
@@ -165,6 +169,15 @@ public class VehicleType {
      */
     public double getMaxHealth() {
         return this.maxHealth;
+    }
+
+    /**
+     * Get the {@link Enableable} that controls where this vehicle type is enabled.
+     *
+     * @return The Enableable.
+     */
+    public Enableable getEnableable() {
+        return this.enableable;
     }
 
     /**

@@ -2,6 +2,7 @@ package me.alvin.vehicles.registry;
 
 import me.alvin.vehicles.vehicle.VehicleType;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +35,7 @@ public class VehicleRegistry {
      *
      * @return The map of registered vehicles
      */
-    public Map<String, VehicleType> getRegisteredVehicles() {
+    public Map<String, VehicleType> getMap() {
         return Collections.unmodifiableMap(this.data);
     }
 
@@ -43,7 +44,16 @@ public class VehicleRegistry {
      *
      * @return The set of ids
      */
-    public Set<String> getVehicleTypes() {
+    public Set<String> getKeys() {
         return Collections.unmodifiableSet(this.data.keySet());
+    }
+
+    /**
+     * Get an unmodifiable collection of all registered vehicle types.
+     *
+     * @return The collection of vehicle types.
+     */
+    public Collection<VehicleType> getValues() {
+        return Collections.unmodifiableCollection(this.data.values());
     }
 }

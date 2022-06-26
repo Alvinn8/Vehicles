@@ -61,6 +61,8 @@ public class VehicleTypes {
                 ),
                 // Max Health
                 40,
+                // Enableable
+                SVCraftVehicles.getInstance(),
                 // Recipe
                 recipe()
                     .displayItem(new ItemStack(Material.STONE))
@@ -107,6 +109,8 @@ public class VehicleTypes {
             ),
             // Max Health
             100,
+            // Enableable
+            SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
                 .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/golf_cart"))
@@ -155,6 +159,8 @@ public class VehicleTypes {
                 ),
                 // Max Health
                 100,
+                // Enableable
+                SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
                 .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/simple_car"))
@@ -200,6 +206,8 @@ public class VehicleTypes {
                 ),
                 // Max Health
                 150,
+                // Enableable
+                SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
                 .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:missing"))
@@ -259,6 +267,8 @@ public class VehicleTypes {
             ),
             // Max Health
             150,
+            // Enableable
+            SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
                 .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/simple_car"))
@@ -305,6 +315,8 @@ public class VehicleTypes {
             ),
             // Max Health
             50,
+            // Enableable
+            SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
                 .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/motorcycle"))
@@ -348,6 +360,8 @@ public class VehicleTypes {
             ),
             // Max Health
             200,
+            // Enableable
+            SVCraftVehicles.getInstance(),
             // Recipe
             null
         );
@@ -372,6 +386,8 @@ public class VehicleTypes {
             ),
             // Max Health
             80,
+            // Enableable
+            SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
                 .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/wooden_plane"))
@@ -423,6 +439,8 @@ public class VehicleTypes {
             ),
             // Max Health
             50,
+            // Enableable
+            SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
                 .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/mini_submarine"))

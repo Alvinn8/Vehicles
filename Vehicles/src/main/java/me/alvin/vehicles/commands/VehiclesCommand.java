@@ -24,6 +24,7 @@ import org.bukkit.DyeColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -58,9 +59,11 @@ public class VehiclesCommand {
                         .then(
                             Cmd.argument("type", StringArgumentType.word())
                             .suggests((context, builder) -> {
-                                for (String vehicleType : SVCraftVehicles.getInstance().getRegistry().getVehicleTypes()) {
-                                    if (StringUtil.startsWithIgnoreCase(vehicleType, builder.getRemaining())) {
-                                        builder.suggest(vehicleType);
+                                World world = Cmd.getSource(context).getWorld();
+                                for (VehicleType vehicleType : SVCraftVehicles.getInstance().getRegistry().getValues()) {
+                                    String id = vehicleType.getId();
+                                    if (StringUtil.startsWithIgnoreCase(id, builder.getRemaining()) && vehicleType.getEnableable().isEnabledIn(world)) {
+                                        builder.suggest(id);
                                     }
                                 }
                                 return builder.buildFuture();
@@ -68,11 +71,12 @@ public class VehiclesCommand {
                             .executes(context -> {
                                 String id = StringArgumentType.getString(context, "type");
                                 VehicleType vehicleType = SVCraftVehicles.getInstance().getRegistry().getVehicle(id);
-                                if (vehicleType == null) {
+                                CommandSource source = Cmd.getSource(context);
+
+                                if (vehicleType == null || !vehicleType.getEnableable().isEnabledIn(source.getWorld())) {
                                     throw UNKNOWN_VEHICLE_TYPE.create(id);
                                 }
 
-                                CommandSource source = Cmd.getSource(context);
                                 Player player = source.getPlayerRequired();
 
                                 Vehicle vehicle = vehicleType.construct(player.getLocation(), player, VehicleSpawnReason.COMMAND);
@@ -90,7 +94,7 @@ public class VehiclesCommand {
 
                             message.append("Registered vehicle types:\n");
                             VehicleRegistry registry = SVCraftVehicles.getInstance().getRegistry();
-                            Map<String, VehicleType> registeredVehicles = registry.getRegisteredVehicles();
+                            Map<String, VehicleType> registeredVehicles = registry.getMap();
                             message.append(registeredVehicles.size());
                             message.append('\n');
                             for (String id : registeredVehicles.keySet()) {

@@ -165,7 +165,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
 
                 // Fill with vehicle types
                 int slot = 1;
-                for (VehicleType vehicleType : SVCraftVehicles.getInstance().getRegistry().getRegisteredVehicles().values()) {
+                for (VehicleType vehicleType : SVCraftVehicles.getInstance().getRegistry().getMap().values()) {
                     if (vehicleType.getRecipe() == null) continue;
 
                     ItemStack item = new ItemStack(Material.DIAMOND);
