@@ -363,7 +363,39 @@ public class VehicleTypes {
             // Enableable
             SVCraftVehicles.getInstance(),
             // Recipe
-            null
+            recipe()
+                .addStep(step()
+                    .name(Component.text("Body"))
+                    .addItem(new ItemStack(Material.IRON_BLOCK, 4))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 52))
+                    .addItem(new ItemStack(Material.COPPER_INGOT, 28))
+                    .addItem(new ItemStack(Material.GLASS_PANE, 8))
+                    .completeTime(330000)
+                )
+                .addStep(step()
+                    .name(Component.text("Back Part"))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 18))
+                    .addItem(new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 6))
+                    .completeTime(120000)
+                )
+                .addStep(step()
+                    .name(Component.text("Wheels"))
+                    .addItem(new ItemStack(Material.BLACK_WOOL, 6))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 6))
+                    .completeTime(60000)
+                )
+                .addStep(step()
+                    .name(Component.text("Engine"))
+                    .addItem(new ItemStack(Material.DISPENSER, 2))
+                    .addItem(new ItemStack(Material.DROPPER, 1))
+                    .addItem(new ItemStack(Material.FURNACE, 2))
+                    .addItem(new ItemStack(Material.PISTON, 2))
+                    .addItem(new ItemStack(Material.REDSTONE, 18))
+                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 10))
+                    .addItem(new ItemStack(Material.REPEATER, 5))
+                    .addItem(new ItemStack(Material.COMPARATOR, 3))
+                    .completeTime(180000)
+                )
         );
 
         // Wooden Plane
