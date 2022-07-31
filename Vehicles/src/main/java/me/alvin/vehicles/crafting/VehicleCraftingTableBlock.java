@@ -1,6 +1,8 @@
 package me.alvin.vehicles.crafting;
 
+import me.alvin.vehicles.CustomItems;
 import me.alvin.vehicles.util.DebugUtil;
+import org.bukkit.block.Block;
 import svcraft.core.block.CustomBlock;
 import svcraft.core.tileentity.CustomTileEntity;
 import svcraft.core.tileentity.TileEntityBlock;
@@ -22,5 +24,10 @@ public class VehicleCraftingTableBlock extends CustomBlock implements TileEntity
     public CustomTileEntity createTileEntity(World world, BlockLocation blockLocation) {
         DebugUtil.debug("Placing crafting table in " + world.getName() + " at "+ blockLocation.getX() + " " + blockLocation.getY() + " " + blockLocation.getZ());
         return new VehicleCraftingTable(world, blockLocation);
+    }
+
+    @Override
+    public void onBreak(Block block) {
+        block.getWorld().dropItemNaturally(block.getLocation(), CustomItems.VEHICLE_CRAFTING_TABLE.makeItemStack());
     }
 }
