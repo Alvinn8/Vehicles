@@ -108,7 +108,7 @@ public class VehicleTypes {
                 new ThirdPersonPerspective(new RelativePos(0, 0, -5))
             ),
             // Max Health
-            100,
+            60,
             // Enableable
             SVCraftVehicles.getInstance(),
             // Recipe
@@ -305,7 +305,7 @@ public class VehicleTypes {
             MotorcycleVehicle::new,
             MotorcycleVehicle::new,
             // Collision
-            new AABBCollision(1, 1.5),
+            new AABBCollision(0.75, 1.5),
             // Seat
             new Seat(new RelativePos(-0.1, 1.3, -0.8)),
             null,
