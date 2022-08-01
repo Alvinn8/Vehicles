@@ -952,6 +952,15 @@ public abstract class Vehicle {
             throw new IllegalStateException("Unknown collision type: "+ collisionType.getClass().getName());
         }
     }
+
+    /**
+     * Make the vehicle go upwards slightly.
+     */
+    public void raise() {
+        if (this.velY < 0.5) {
+            this.velY += 0.5;
+        }
+    }
     // </editor-fold>
 
     // Fuel

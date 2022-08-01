@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -207,14 +208,21 @@ public class EventListener implements PerWorldListener {
             Entity damager = event instanceof EntityDamageByEntityEvent event2 ? event2.getDamager() : null;
             Vehicle damagerVehicle = damager instanceof LivingEntity ? SVCraftVehicles.getInstance().getVehicle((LivingEntity) damager) : null;
             // Prevent damaging the vehicle you are inside
-            if (damagerVehicle != vehicle) {
-                if (damager instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK && ((Player) damager).getGameMode() == GameMode.CREATIVE) {
-                    // Creative mode players destroy vehicles instantly
-                    vehicle.remove();
-                } else {
-                    // Damage the vehicle normally
-                    vehicle.damage(event.getDamage(), damager);
-                }
+            if (damagerVehicle == vehicle) {
+                return;
+            }
+            // Prevent iron golems from destroying vehicles
+            if (damager instanceof IronGolem) {
+                ((IronGolem) damager).setTarget(null);
+                vehicle.raise();
+                return;
+            }
+            if (damager instanceof Player && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK && ((Player) damager).getGameMode() == GameMode.CREATIVE) {
+                // Creative mode players destroy vehicles instantly
+                vehicle.remove();
+            } else {
+                // Damage the vehicle normally
+                vehicle.damage(event.getDamage(), damager);
             }
         }
     }
