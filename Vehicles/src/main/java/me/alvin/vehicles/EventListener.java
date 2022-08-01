@@ -1,6 +1,7 @@
 package me.alvin.vehicles;
 
 import me.alvin.vehicles.crafting.VehicleCraftingTable;
+import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
@@ -82,6 +83,11 @@ public class EventListener implements PerWorldListener {
             if (!SVCraftVehicles.getInstance().getVehiclePartMap().containsKey(entity)) continue;
 
             Vehicle vehicle = SVCraftVehicles.getInstance().getVehiclePartMap().get(entity);
+            DebugUtil.debug("Unloading a vehicle with id " + vehicle.getType().getId()
+                + " because the chunk [" + event.getChunk().getX() + ", " + event.getChunk().getZ()
+                + "] was unloaded. The entity that was a vehicle has uuid " + entity.getUniqueId()
+                + " and is a " + entity.getType().getKey() + ", isInsideVehicle = " + entity.isInsideVehicle()
+                + " passengers size = " + entity.getPassengers().size() + " name = " + entity.getName());
             try {
                 vehicle.unload();
             } catch (Throwable e) {

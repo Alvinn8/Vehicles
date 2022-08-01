@@ -115,6 +115,7 @@ public class PassengerData {
         if (this.niCameraEntity != null) {
             this.niCameraEntity.remove();
             map.remove(this.niCameraEntity.getAreaEffectCloud());
+            map.remove(this.niCameraEntity.getEntity());
             this.niCameraEntity = null;
         }
         if (this.iCameraEntityBase != null) {
@@ -158,6 +159,7 @@ public class PassengerData {
                 // non-interpolating
                 this.niCameraEntity = new NIE<>(this.cameraEntity);
                 SVCraftVehicles.getInstance().getVehiclePartMap().put(this.niCameraEntity.getAreaEffectCloud(), this.vehicle);
+                SVCraftVehicles.getInstance().getVehiclePartMap().put(this.niCameraEntity.getEntity(), this.vehicle);
             }
         }
 
@@ -192,9 +194,7 @@ public class PassengerData {
         SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.seatEntity.getEntity());
         SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.seatEntity.getAreaEffectCloud());
         this.seatEntity.remove();
-        if (this.cameraEntity != null) {
-            this.cameraEntity.remove();
-        }
+        this.removeCameraEntity();
     }
 
     /**
