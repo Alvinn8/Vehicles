@@ -34,7 +34,7 @@ public class MotorcycleVehicle extends GroundVehicle {
 
         this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/motorcycle"));
 
-        this.setMaxFuel(20000);
+        this.setMaxFuel(40000);
         this.setFuelUsage(4);
     }
 

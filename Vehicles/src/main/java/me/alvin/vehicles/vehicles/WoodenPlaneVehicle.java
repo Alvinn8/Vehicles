@@ -28,7 +28,7 @@ public class WoodenPlaneVehicle extends PlaneVehicle {
 
         this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/wooden_plane"));
 
-        this.setMaxFuel(15000);
+        this.setMaxFuel(30000);
         this.setFuelUsage(2);
     }
 

@@ -8,7 +8,7 @@ public class FuelItem extends CustomItem {
     /**
      * The amount of fuel one fuel item adds to the vehicle's current fuel.
      */
-    public static final int FUEL_AMOUNT = 5000;
+    public static final int FUEL_AMOUNT = 10000;
 
     @Override
     public ItemStack makeItemStack() {

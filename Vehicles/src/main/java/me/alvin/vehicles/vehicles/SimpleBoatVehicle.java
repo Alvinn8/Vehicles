@@ -30,7 +30,7 @@ public class SimpleBoatVehicle extends BoatVehicle {
 
         this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/boat"));
 
-        this.setMaxFuel(10000);
+        this.setMaxFuel(20000);
         this.setFuelUsage(1);
     }
 

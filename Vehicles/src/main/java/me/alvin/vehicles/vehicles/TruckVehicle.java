@@ -50,7 +50,7 @@ public class TruckVehicle extends GroundVehicle {
         this.backEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/truck/truck_back"));
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.backEntity, this);
 
-        this.setMaxFuel(20000);
+        this.setMaxFuel(40000);
         this.setFuelUsage(5);
 
         // Actions

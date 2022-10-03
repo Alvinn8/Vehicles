@@ -50,7 +50,7 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
         this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor"));
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.rotorEntity, this);
 
-        this.setMaxFuel(20000);
+        this.setMaxFuel(40000);
         this.setFuelUsage(5);
     }
 

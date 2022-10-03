@@ -31,7 +31,7 @@ public class SimpleCarVehicle extends GroundVehicle {
 
         this.addAction(new StorageAction(9));
 
-        this.setMaxFuel(20000);
+        this.setMaxFuel(40000);
         this.setFuelUsage(2);
     }
 
@@ -47,7 +47,7 @@ public class SimpleCarVehicle extends GroundVehicle {
 
     @Override
     public float getAccelerationSpeed() {
-        return 1.0F;
+        return 1.5F;
     }
 
     @Override

@@ -170,7 +170,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
 
                     ItemStack item = new ItemStack(Material.DIAMOND);
                     item.editMeta(meta -> {
-                        meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(vehicleType.getName()));
+                        meta.displayName(Component.empty().color(NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false).append(vehicleType.getName()));
                         PersistentDataContainer container = meta.getPersistentDataContainer();
                         container.set(VEHICLE_TYPE_TAG, PersistentDataType.STRING, vehicleType.getId());
                     });
@@ -202,7 +202,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
                 for (int slot = 43; slot <= 44; slot++) {
                     ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
                     item.editMeta(meta -> {
-                        meta.displayName(Component.text("Will send you back to the").decoration(TextDecoration.ITALIC, false));
+                        meta.displayName(Component.text("Will send you back to the", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
                         meta.lore(Collections.singletonList(Component.text("vehicle selection screen", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
                     });
                     this.inventory.setItem(slot, item);
@@ -318,7 +318,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
     private ItemStack makeCancelItem() {
        ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
        item.editMeta(meta -> {
-           meta.displayName(       Component.text("Will send you back to the vehicle").decoration(TextDecoration.ITALIC, false));
+           meta.displayName(       Component.text("Will send you back to the vehicle", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
            meta.lore(Arrays.asList(Component.text("selection screen. You will get all", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false),
                                    Component.text("of the deposited items back.", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)
            ));
@@ -377,7 +377,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
 
             for (int slot = 16; slot <= 17; slot++) {
                 ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
-                item.editMeta(meta -> meta.displayName(Component.text("Complete step").decoration(TextDecoration.ITALIC, false)));
+                item.editMeta(meta -> meta.displayName(Component.text("Complete step", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
                 this.inventory.setItem(slot, item);
             }
         } else {
@@ -386,7 +386,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
 
             for (int slot = 16; slot <= 17; slot++) {
                 ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
-                item.editMeta(meta -> meta.displayName(Component.text("You do not have all the required items").decoration(TextDecoration.ITALIC, false)));
+                item.editMeta(meta -> meta.displayName(Component.text("You do not have all the required items", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
                 this.inventory.setItem(slot, item);
             }
         }
@@ -400,8 +400,8 @@ public class VehicleCraftingTable extends CustomTileEntity {
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
 
-        Component line1 = Component.text("This step is being assembled.").decoration(TextDecoration.ITALIC, false);
-        Component line2 = Component.text("It will complete in " + minutes + " " + (minutes == 1 ? "minute" : "minutes") + " and " + seconds + " " + (seconds == 1 ? "second" : "seconds")).decoration(TextDecoration.ITALIC, false).color(NamedTextColor.WHITE);
+        Component line1 = Component.text("This step is being assembled.", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false);
+        Component line2 = Component.text("It will complete in " + minutes + " " + (minutes == 1 ? "minute" : "minutes") + " and " + seconds + " " + (seconds == 1 ? "second" : "seconds"), NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false);
 
         int minutes1 = minutes / 10; // first digit
         int minutes2 = minutes % 10; // second digit
