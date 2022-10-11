@@ -312,6 +312,7 @@ public abstract class Vehicle {
         PersistentDataContainer data = this.entity.getPersistentDataContainer();
         data.set(VEHICLE_ID,   PersistentDataType.STRING,         this.getType().getId());
         data.set(CURRENT_FUEL, PersistentDataType.INTEGER,        this.currentFuel);
+        data.set(HEALTH,       PersistentDataType.DOUBLE,         this.health);
         data.set(LOCATION,     ExtraPersistentDataTypes.LOCATION, this.location);
         if (this.canBeColored()) data.set(COLOR, PersistentDataType.INTEGER, this.getColor().asRGB());
 

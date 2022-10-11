@@ -211,6 +211,10 @@ public class EventListener implements PerWorldListener {
             if (damagerVehicle == vehicle) {
                 return;
             }
+            // Prevent suffocation damage to prevent non perfect collision causing damage
+            if (event.getCause() == EntityDamageEvent.DamageCause.SUFFOCATION) {
+                return;
+            }
             // Prevent iron golems from destroying vehicles
             if (damager instanceof IronGolem) {
                 ((IronGolem) damager).setTarget(null);

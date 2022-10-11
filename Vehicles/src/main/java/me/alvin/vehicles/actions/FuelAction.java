@@ -6,6 +6,7 @@ import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import svcraft.core.item.CustomItem;
 import svcraft.core.resourcepack.modeldb.ModelDB;
 import svcraft.core.util.CustomInventory;
@@ -62,15 +63,29 @@ public class FuelAction implements VehicleMenuAction {
                 DebugUtil.debug("Event called");
                 boolean isTop = event.getClickedInventory() == event.getView().getTopInventory();
                 if (isTop && event.getSlot() == 19 && event.getAction() == InventoryAction.PLACE_ALL) {
-                    CustomItem item = CustomItem.getItem(event.getCursor());
+                    ItemStack cursorItem = event.getCursor();
+                    CustomItem item = CustomItem.getItem(cursorItem);
                     if (item == CustomItems.FUEL) {
-                        fuelVehicle(vehicle, event.getWhoClicked(), event.getInventory());
+                        HumanEntity player = event.getWhoClicked();
+                        fuelVehicle(vehicle, player, event.getInventory());
+                        if (cursorItem.getAmount() > 1) {
+                            cursorItem.setAmount(cursorItem.getAmount() - 1);
+                            event.setCancelled(true);
+                            Bukkit.getScheduler().runTaskLater(SVCraftVehicles.getInstance(), () ->
+                                player.setItemOnCursor(cursorItem)
+                            , 1);
+                        }
                         return;
                     }
                 }
                 if (isTop || event.getAction() == InventoryAction.MOVE_TO_OTHER_INVENTORY || event.getAction() == InventoryAction.COLLECT_TO_CURSOR) {
                     event.setCancelled(true);
                 }
+            }
+
+            @Override
+            public void onDrag(InventoryDragEvent event) {
+                event.setCancelled(true);
             }
         }, 27, Component.text("Fuel"));
 

@@ -221,7 +221,7 @@ public class VehicleCraftingTable extends CustomTileEntity {
 
                 ItemStack materialListItem = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
                 materialListItem.editMeta(meta -> {
-                    meta.displayName(Component.text("Total items required:").decoration(TextDecoration.ITALIC, false).decorate(TextDecoration.UNDERLINED));
+                    meta.displayName(Component.text("Total items required:", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false).decorate(TextDecoration.UNDERLINED));
                     List<Component> lore = new ArrayList<>();
                     for (Map.Entry<ItemStack, Integer> entry : map.entrySet()) {
                         ItemStack item = entry.getKey();
@@ -346,9 +346,9 @@ public class VehicleCraftingTable extends CustomTileEntity {
             ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
             item.editMeta(meta -> {
                 if (vehicleFits) {
-                    meta.displayName(Component.text("Start crafting the vehicle").decoration(TextDecoration.ITALIC, false));
+                    meta.displayName(Component.text("Start crafting the vehicle", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
                 } else {
-                    meta.displayName(                   Component.text("Please make room above the crafting").decoration(TextDecoration.ITALIC, false));
+                    meta.displayName(                   Component.text("Please make room above the crafting", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false));
                     meta.lore(Collections.singletonList(Component.text("table so the vehicle fits.", NamedTextColor.WHITE).decoration(TextDecoration.ITALIC, false)));
                 }
             });
