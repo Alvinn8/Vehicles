@@ -1,0 +1,10 @@
+{
+  "explosion_far_away": {
+    "sounds": [
+      {
+        "name": "svcraftvehicles:explosion_far_away",
+        "stream": false
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "type": "directory",
+      "source": "vehicle",
+      "prefix": "vehicle/"
+    },
+    {
+      "type": "directory",
+      "source": "gui/vehicle_crafting_table",
+      "prefix": "gui/vehicle_crafting_table/"
+    },
+    {
+      "type": "directory",
+      "source": "gui/vehicle_menu_icon",
+      "prefix": "gui/vehicle_menu_icon/"
+    }
+  ]
+}

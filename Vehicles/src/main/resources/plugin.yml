@@ -5,6 +5,7 @@ api-version: "1.16"
 depend:
 - SVCraft
 - ProtocolLib
+- Praeter
 authors: [Alvin]
 description: A vehicles plugin for SVCraft
 commands:

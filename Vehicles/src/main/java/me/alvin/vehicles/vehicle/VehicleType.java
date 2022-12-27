@@ -6,8 +6,10 @@ import me.alvin.vehicles.vehicle.perspective.Perspective;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import svcraft.core.world.Enableable;
@@ -190,5 +192,14 @@ public class VehicleType {
     @Nullable
     public VehicleCraftingRecipe getRecipe() {
         return this.recipe;
+    }
+
+    /**
+     * Get the {@link RepairData}.
+     *
+     * @return The data.
+     */
+    public RepairData getRepairData() {
+        return new RepairData(60_000, 10, new ItemStack(Material.IRON_INGOT, 3), new ItemStack(Material.COPPER_INGOT));
     }
 }

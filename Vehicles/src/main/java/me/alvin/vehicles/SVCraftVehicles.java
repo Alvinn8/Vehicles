@@ -1,7 +1,13 @@
 package me.alvin.vehicles;
 
+import ca.bkaw.praeter.core.PraeterPlugin;
+import ca.bkaw.praeter.core.resources.pack.ResourcePack;
+import ca.bkaw.praeter.gui.GuiRegistry;
+import ca.bkaw.praeter.gui.PraeterGui;
 import com.comphenix.protocol.ProtocolLibrary;
 import me.alvin.vehicles.commands.VehiclesCommand;
+import me.alvin.vehicles.gui.fuel.FuelGui;
+import me.alvin.vehicles.gui.repair.RepairGui;
 import me.alvin.vehicles.nms.NMS;
 import me.alvin.vehicles.nms.v1_17_R1.NMS_v1_17_R1;
 import me.alvin.vehicles.nms.v1_18_R1.NMS_v1_18_R1;
@@ -12,28 +18,28 @@ import me.alvin.vehicles.registry.VehicleRegistry;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleTypes;
-import org.bukkit.Material;
-import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.ShapelessRecipe;
-import svcraft.core.SVCraft;
-import svcraft.core.config.Config;
-import svcraft.core.plugin.SVCraftPlugin;
-import svcraft.core.resourcepack.ResourcePack;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.ShapelessRecipe;
 import org.jetbrains.annotations.Nullable;
+import svcraft.core.SVCraft;
+import svcraft.core.config.Config;
+import svcraft.core.plugin.SVCraftPlugin;
 import svcraft.core.resourcepack.modeldb.ModelDB;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class SVCraftVehicles extends SVCraftPlugin {
+public final class SVCraftVehicles extends SVCraftPlugin implements PraeterPlugin {
 
     public static final boolean EXPLOSIONS_BREAK_BLOCKS = true;
 
@@ -58,14 +64,7 @@ public final class SVCraftVehicles extends SVCraftPlugin {
 
         // Bukkit.getPluginManager().registerEvents(new TestEventListener(), this);
 
-        ResourcePack vehiclesResourcePack = SVCraft.getInstance().getResourcePackManager().getResourcePack("vehicles");
-        if (vehiclesResourcePack != null && vehiclesResourcePack.getModelDB() != null) {
-            this.modelDB = vehiclesResourcePack.getModelDB();
-        } else {
-            this.getLogger().severe("No \"vehicles\" resource pack found, or it doesn't a ModelDB! It is required for SVCraftVehicles to know what models to use for what vehicles!");
-            this.getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
+        this.modelDB = new PraeterModelDB();
 
         try {
             this.reload();
@@ -82,6 +81,32 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         this.registerItem(new NamespacedKey(this, "fuel"), CustomItems.FUEL);
         this.registerItem(new NamespacedKey(this, "vehicle_spawner"), CustomItems.VEHICLE_SPAWNER);
 
+        GuiRegistry guiRegistry = PraeterGui.get().getGuiRegistry();
+        guiRegistry.register(
+            FuelGui.TYPE,
+            new NamespacedKey(this, "fuel_gui"),
+            this
+        );
+        guiRegistry.register(
+            RepairGui.TYPE,
+            new NamespacedKey(this, "repair_gui"),
+            this
+        );
+
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
+
+        Bukkit.getMessenger().registerOutgoingPluginChannel(SVCraftVehicles.getInstance(), "vehicles:vehicle-bb");
+
+        this.registry = new VehicleRegistry();
+
+        VehicleTypes.register(this.registry);
+
+        new VehicleTicker().start();
+    }
+
+    @Override
+    public void onPacksBaked() {
+
         ShapedRecipe vehicleCraftingTableRecipe = new ShapedRecipe(new NamespacedKey(this, "vehicle_crafting_table"), CustomItems.VEHICLE_CRAFTING_TABLE.makeItemStack());
         vehicleCraftingTableRecipe.shape(" # ", "#-#", " # ");
         vehicleCraftingTableRecipe.setIngredient('#', Material.IRON_INGOT);
@@ -93,15 +118,6 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         fuelRecipe.addIngredient(5, Material.COAL);
         this.registerRecipe(fuelRecipe);
 
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
-
-        Bukkit.getMessenger().registerOutgoingPluginChannel(SVCraftVehicles.getInstance(), "vehicles:vehicle-bb");
-
-        this.registry = new VehicleRegistry();
-
-        VehicleTypes.register(this.registry);
-
-        new VehicleTicker().start();
     }
 
     @Override
@@ -158,6 +174,22 @@ public final class SVCraftVehicles extends SVCraftPlugin {
         }
 
         DebugUtil.debug("Running in debug mode");
+    }
+
+    @Override
+    public boolean isEnabledIn(World world) {
+        // Implement explicitly for praeter
+        return super.isEnabledIn(world);
+    }
+
+    @Override
+    public void onIncludeAssets(ResourcePack resourcePack) {
+        AssetsManager assetsManager = new AssetsManager(resourcePack);
+        try {
+            assetsManager.processAssets();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static SVCraftVehicles getInstance() {

@@ -65,7 +65,7 @@ public class VehicleTypes {
                 SVCraftVehicles.getInstance(),
                 // Recipe
                 recipe()
-                    .displayItem(new ItemStack(Material.STONE))
+                    .displayItem("svcraftvehicles:vehicle/golf_cart")
                     .addStep(step()
                         .name(Component.text("Test Vehicle").decorate(TextDecoration.ITALIC))
                         .addItem(new ItemStack(Material.BEDROCK))
@@ -113,7 +113,7 @@ public class VehicleTypes {
             SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
-                .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/golf_cart"))
+                .displayItem("svcraftvehicles:vehicle/golf_cart")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_INGOT, 20))
@@ -163,7 +163,7 @@ public class VehicleTypes {
                 SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
-                .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/simple_car"))
+                .displayItem("svcraftvehicles:vehicle/simple_car")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_BLOCK, 1))
@@ -210,7 +210,7 @@ public class VehicleTypes {
                 SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
-                .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:missing"))
+                .displayItem("svcraftvehicles:missing")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_BLOCK, 2))
@@ -271,7 +271,7 @@ public class VehicleTypes {
             SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
-                .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/simple_car"))
+                .displayItem("svcraftvehicles:vehicle/simple_car")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_BLOCK, 2))
@@ -319,7 +319,7 @@ public class VehicleTypes {
             SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
-                .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/motorcycle"))
+                .displayItem("svcraftvehicles:vehicle/motorcycle")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_INGOT, 36))
@@ -422,7 +422,7 @@ public class VehicleTypes {
             SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
-                .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/wooden_plane"))
+                .displayItem("svcraftvehicles:vehicle/wooden_plane")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.OAK_BOAT, 1))
@@ -475,7 +475,7 @@ public class VehicleTypes {
             SVCraftVehicles.getInstance(),
             // Recipe
             recipe()
-                .displayItem(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/mini_submarine"))
+                .displayItem("svcraftvehicles:vehicle/mini_submarine")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_BLOCK, 4))

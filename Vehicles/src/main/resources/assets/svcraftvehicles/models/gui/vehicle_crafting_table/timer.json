@@ -1,0 +1,6 @@
+{
+	"parent": "custom-gui:gui",
+	"textures": {
+		"texture": "svcraftvehicles:gui/vehicle_crafting_table/timer"
+	}
+}

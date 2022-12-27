@@ -30,8 +30,11 @@ public class CoolExplosion {
         }
 
         // Muffled sound for players far away
-        for (Player player : location.getNearbyPlayers(128)) {
-            player.playSound(location, "svcraftvehicles:explosion_far_away", SoundCategory.BLOCKS,  1, 1);
+        for (Player player : location.getNearbyPlayers(256)) {
+            double distanceSq = player.getLocation().distanceSquared(location);
+            if (distanceSq > 64 * 64) {
+                player.playSound(location, "svcraftvehicles:explosion_far_away", SoundCategory.BLOCKS,  1, 1);
+            }
         }
 
         // Extra particles

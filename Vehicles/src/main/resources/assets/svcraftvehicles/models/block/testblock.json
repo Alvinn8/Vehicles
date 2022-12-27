@@ -1,0 +1,6 @@
+{
+    "parent": "custom-block-spawner:block",
+    "textures": {
+        "0": "svcraftvehicles:block/testblock"
+    }
+}
