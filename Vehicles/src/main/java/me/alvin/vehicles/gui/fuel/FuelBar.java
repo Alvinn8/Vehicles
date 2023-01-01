@@ -8,15 +8,13 @@ import ca.bkaw.praeter.gui.font.RenderSetupContext;
 import ca.bkaw.praeter.gui.gui.CustomGui;
 import me.alvin.vehicles.SVCraftVehicles;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 
 public class FuelBar extends GuiComponent {
     public static final NamespacedKey FUEL_BAR_TEXTURE
@@ -74,16 +72,10 @@ public class FuelBar extends GuiComponent {
 
         @Override
         public void renderItems(Inventory inventory) {
-            ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:item/transparent");
-            item.editMeta(meta ->
-                meta.displayName(
-                    Component.text(Math.round(this.percentage * 100) + "%", NamedTextColor.WHITE)
-                        .decoration(TextDecoration.ITALIC, false)
-                )
-            );
-            GuiUtils.forEachSlot(FuelBar.this, slot ->
-                inventory.setItem(slot, item)
-            );
+            this.setHoverText(List.of(
+                Component.text(Math.round(this.percentage * 100) + "%")
+            ));
+            super.renderItems(inventory);
         }
 
         @Override

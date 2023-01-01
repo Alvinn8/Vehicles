@@ -8,7 +8,6 @@ import me.alvin.vehicles.vehicle.perspective.ThirdPersonPerspective;
 import me.alvin.vehicles.vehicle.perspective.VehiclePartPerspective;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicles.GolfCartVehicle;
-import me.alvin.vehicles.vehicles.MiniSubmarineVehicle;
 import me.alvin.vehicles.vehicles.MotorcycleVehicle;
 import me.alvin.vehicles.vehicles.SimpleBoatVehicle;
 import me.alvin.vehicles.vehicles.SimpleCarVehicle;
@@ -20,6 +19,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
@@ -37,9 +37,11 @@ public class VehicleTypes {
     public static final VehicleType MOTORCYCLE;
     public static final VehicleType TRUCK;
     public static final VehicleType WOODEN_PLANE;
-    public static final VehicleType MINI_SUBMARINE;
+    // public static final VehicleType MINI_SUBMARINE;
 
     static {
+        SVCraftVehicles plugin = SVCraftVehicles.getInstance();
+
         // Test Vehicle
         TEST = new VehicleType(
                 "test",
@@ -59,13 +61,16 @@ public class VehicleTypes {
                     new ThirdPersonPerspective(new RelativePos(0, 0, -15)),
                     new VehiclePartPerspective("Test", new RelativePos(3, 3, -3))
                 ),
+                // Enableable
+                plugin,
+                // Preview
+                new NamespacedKey(plugin, "vehicle/golf_cart"),
                 // Max Health
                 40,
-                // Enableable
-                SVCraftVehicles.getInstance(),
+                // Repairing
+                new RepairData(30000, 10, new ItemStack(Material.IRON_INGOT, 3), new ItemStack(Material.COPPER_INGOT)),
                 // Recipe
                 recipe()
-                    .displayItem("svcraftvehicles:vehicle/golf_cart")
                     .addStep(step()
                         .name(Component.text("Test Vehicle").decorate(TextDecoration.ITALIC))
                         .addItem(new ItemStack(Material.BEDROCK))
@@ -107,13 +112,16 @@ public class VehicleTypes {
             Collections.singletonList(
                 new ThirdPersonPerspective(new RelativePos(0, 0, -5))
             ),
+            // Enableable
+            plugin,
+            // Preview
+            new NamespacedKey(plugin, "vehicle/golf_cart"),
             // Max Health
             60,
-            // Enableable
-            SVCraftVehicles.getInstance(),
+            // Repairing
+            new RepairData(30000, 10, new ItemStack(Material.IRON_INGOT, 3), new ItemStack(Material.COPPER_INGOT)),
             // Recipe
             recipe()
-                .displayItem("svcraftvehicles:vehicle/golf_cart")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_INGOT, 20))
@@ -157,31 +165,34 @@ public class VehicleTypes {
                 Collections.singletonList(
                     new ThirdPersonPerspective(new RelativePos(0, 0, -5))
                 ),
+                // Enableable
+                plugin,
+                // Preview
+                new NamespacedKey(plugin, "vehicle/boat"),
                 // Max Health
                 100,
-                // Enableable
-                SVCraftVehicles.getInstance(),
-            // Recipe
-            recipe()
-                .displayItem("svcraftvehicles:vehicle/simple_car")
-                .addStep(step()
-                    .name(Component.text("Body"))
-                    .addItem(new ItemStack(Material.IRON_BLOCK, 1))
-                    .addItem(new ItemStack(Material.IRON_INGOT, 35))
-                    .addItem(new ItemStack(Material.COPPER_INGOT, 10))
-                    .addItem(new ItemStack(Material.GLASS_PANE, 1))
-                    .addItem(new ItemStack(Material.GRAY_WOOL, 2))
-                    .completeTime(210000)
-                )
-                .addStep(step()
-                    .name(Component.text("Engine"))
-                    .addItem(new ItemStack(Material.IRON_INGOT, 2))
-                    .addItem(new ItemStack(Material.FURNACE, 1))
-                    .addItem(new ItemStack(Material.REDSTONE, 10))
-                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 2))
-                    .addItem(new ItemStack(Material.REPEATER, 5))
-                    .completeTime(180000)
-                )
+                // Repairing
+                new RepairData(40000, 20, new ItemStack(Material.IRON_INGOT, 3), new ItemStack(Material.COPPER_INGOT)),
+                // Recipe
+                recipe()
+                    .addStep(step()
+                        .name(Component.text("Body"))
+                        .addItem(new ItemStack(Material.IRON_BLOCK, 1))
+                        .addItem(new ItemStack(Material.IRON_INGOT, 35))
+                        .addItem(new ItemStack(Material.COPPER_INGOT, 10))
+                        .addItem(new ItemStack(Material.GLASS_PANE, 1))
+                        .addItem(new ItemStack(Material.GRAY_WOOL, 2))
+                        .completeTime(210000)
+                    )
+                    .addStep(step()
+                        .name(Component.text("Engine"))
+                        .addItem(new ItemStack(Material.IRON_INGOT, 2))
+                        .addItem(new ItemStack(Material.FURNACE, 1))
+                        .addItem(new ItemStack(Material.REDSTONE, 10))
+                        .addItem(new ItemStack(Material.REDSTONE_TORCH, 2))
+                        .addItem(new ItemStack(Material.REPEATER, 5))
+                        .completeTime(180000)
+                    )
         );
 
         // Simple Helicopter
@@ -204,45 +215,48 @@ public class VehicleTypes {
                 Collections.singletonList(
                     new ThirdPersonPerspective(new RelativePos(0, 0, -10))
                 ),
+                // Enableable
+                plugin,
+                // Preview
+                new NamespacedKey(plugin, "vehicle/helicopter/helicopter_preview"),
                 // Max Health
                 150,
-                // Enableable
-                SVCraftVehicles.getInstance(),
-            // Recipe
-            recipe()
-                .displayItem("svcraftvehicles:missing")
-                .addStep(step()
-                    .name(Component.text("Body"))
-                    .addItem(new ItemStack(Material.IRON_BLOCK, 2))
-                    .addItem(new ItemStack(Material.IRON_INGOT, 50))
-                    .addItem(new ItemStack(Material.COPPER_INGOT, 16))
-                    .addItem(new ItemStack(Material.GLASS_PANE, 4))
-                    .completeTime(300000)
-                )
-                .addStep(step()
-                    .name(Component.text("Tail"))
-                    .addItem(new ItemStack(Material.IRON_BLOCK, 1))
-                    .addItem(new ItemStack(Material.IRON_INGOT, 15))
-                    .addItem(new ItemStack(Material.IRON_NUGGET, 6))
-                    .completeTime(180000)
-                )
-                .addStep(step()
-                    .name(Component.text("Skids"))
-                    .addItem(new ItemStack(Material.IRON_INGOT, 10))
-                    .addItem(new ItemStack(Material.IRON_NUGGET, 8))
-                    .completeTime(60000)
-                )
-                .addStep(step()
-                    .name(Component.text("Engine"))
-                    .addItem(new ItemStack(Material.DISPENSER, 2))
-                    .addItem(new ItemStack(Material.FURNACE, 2))
-                    .addItem(new ItemStack(Material.DROPPER, 1))
-                    .addItem(new ItemStack(Material.REDSTONE, 20))
-                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 10))
-                    .addItem(new ItemStack(Material.REPEATER, 5))
-                    .addItem(new ItemStack(Material.COMPARATOR, 3))
-                    .completeTime(180000)
-                )
+                // Repairing
+                new RepairData(60000, 30, new ItemStack(Material.IRON_INGOT, 5), new ItemStack(Material.COPPER_INGOT, 2)),
+                // Recipe
+                recipe()
+                    .addStep(step()
+                        .name(Component.text("Body"))
+                        .addItem(new ItemStack(Material.IRON_BLOCK, 2))
+                        .addItem(new ItemStack(Material.IRON_INGOT, 50))
+                        .addItem(new ItemStack(Material.COPPER_INGOT, 16))
+                        .addItem(new ItemStack(Material.GLASS_PANE, 4))
+                        .completeTime(300000)
+                    )
+                    .addStep(step()
+                        .name(Component.text("Tail"))
+                        .addItem(new ItemStack(Material.IRON_BLOCK, 1))
+                        .addItem(new ItemStack(Material.IRON_INGOT, 15))
+                        .addItem(new ItemStack(Material.IRON_NUGGET, 6))
+                        .completeTime(180000)
+                    )
+                    .addStep(step()
+                        .name(Component.text("Skids"))
+                        .addItem(new ItemStack(Material.IRON_INGOT, 10))
+                        .addItem(new ItemStack(Material.IRON_NUGGET, 8))
+                        .completeTime(60000)
+                    )
+                    .addStep(step()
+                        .name(Component.text("Engine"))
+                        .addItem(new ItemStack(Material.DISPENSER, 2))
+                        .addItem(new ItemStack(Material.FURNACE, 2))
+                        .addItem(new ItemStack(Material.DROPPER, 1))
+                        .addItem(new ItemStack(Material.REDSTONE, 20))
+                        .addItem(new ItemStack(Material.REDSTONE_TORCH, 10))
+                        .addItem(new ItemStack(Material.REPEATER, 5))
+                        .addItem(new ItemStack(Material.COMPARATOR, 3))
+                        .completeTime(180000)
+                    )
         );
 
         // Simple Car
@@ -265,13 +279,16 @@ public class VehicleTypes {
             Collections.singletonList(
                 new ThirdPersonPerspective(new RelativePos(0, 0, -5))
             ),
+            // Enableable
+            plugin,
+            // Preview
+            new NamespacedKey(plugin, "vehicle/car"),
             // Max Health
             150,
-            // Enableable
-            SVCraftVehicles.getInstance(),
+            // Repairing
+            new RepairData(45000, 15, new ItemStack(Material.IRON_INGOT, 3), new ItemStack(Material.COPPER_INGOT)),
             // Recipe
             recipe()
-                .displayItem("svcraftvehicles:vehicle/simple_car")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_BLOCK, 2))
@@ -313,13 +330,16 @@ public class VehicleTypes {
             Collections.singletonList(
                 new ThirdPersonPerspective(new RelativePos(0, 0, -5))
             ),
+            // Enableable
+            plugin,
+            // Preview
+            new NamespacedKey(plugin, "vehicle/motorcycle"),
             // Max Health
             50,
-            // Enableable
-            SVCraftVehicles.getInstance(),
+            // Repairing
+            new RepairData(10000, 15, new ItemStack(Material.IRON_INGOT, 2), new ItemStack(Material.COPPER_INGOT)),
             // Recipe
             recipe()
-                .displayItem("svcraftvehicles:vehicle/motorcycle")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_INGOT, 36))
@@ -358,10 +378,14 @@ public class VehicleTypes {
             Collections.singletonList(
                 new ThirdPersonPerspective(new RelativePos(0, 0, -12))
             ),
+            // Enableable
+            plugin,
+            // Preview
+            new NamespacedKey(plugin, "vehicle/truck/truck_preview"),
             // Max Health
             200,
-            // Enableable
-            SVCraftVehicles.getInstance(),
+            // Repairing
+            new RepairData(30000, 40, new ItemStack(Material.IRON_INGOT, 6), new ItemStack(Material.COPPER_INGOT, 2)),
             // Recipe
             recipe()
                 .addStep(step()
@@ -416,13 +440,16 @@ public class VehicleTypes {
             Collections.singletonList(
                 new ThirdPersonPerspective(new RelativePos(0, 0, -10))
             ),
+            // Enableable
+            plugin,
+            // Preview
+            new NamespacedKey(plugin, "vehicle/wooden_plane"),
             // Max Health
             80,
-            // Enableable
-            SVCraftVehicles.getInstance(),
+            // Repairing
+            new RepairData(30000, 20, new ItemStack(Material.OAK_PLANKS, 5), new ItemStack(Material.OAK_SLAB, 4)),
             // Recipe
             recipe()
-                .displayItem("svcraftvehicles:vehicle/wooden_plane")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.OAK_BOAT, 1))
@@ -453,6 +480,7 @@ public class VehicleTypes {
                 )
         );
 
+        /*
         // Mini Submarine
         MINI_SUBMARINE = new VehicleType(
             "mini_submarine",
@@ -469,13 +497,16 @@ public class VehicleTypes {
             Collections.singletonList(
                 new ThirdPersonPerspective(new RelativePos(0, 0, -5))
             ),
+            // Enableable
+            plugin,
+            // Preview
+            new NamespacedKey(plugin, "vehicle/mini_submarine"),
             // Max Health
             50,
-            // Enableable
-            SVCraftVehicles.getInstance(),
+            // Repairing
+            new RepairData(30000, 10, new ItemStack(Material.IRON_INGOT, 3), new ItemStack(Material.PRISMARINE)),
             // Recipe
             recipe()
-                .displayItem("svcraftvehicles:vehicle/mini_submarine")
                 .addStep(step()
                     .name(Component.text("Body"))
                     .addItem(new ItemStack(Material.IRON_BLOCK, 4))
@@ -498,6 +529,7 @@ public class VehicleTypes {
                     .completeTime(120000)
                 )
         );
+         */
     }
 
     public static void register(VehicleRegistry registry) {
@@ -509,6 +541,6 @@ public class VehicleTypes {
         registry.registerVehicle(MOTORCYCLE);
         registry.registerVehicle(TRUCK);
         registry.registerVehicle(WOODEN_PLANE);
-        registry.registerVehicle(MINI_SUBMARINE);
+        // registry.registerVehicle(MINI_SUBMARINE);
     }
 }

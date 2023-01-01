@@ -55,7 +55,7 @@ public class VehicleSpawnerTask extends BukkitRunnable {
             if (this.vehicle == null) {
                 VehicleType vehicleType = this.getVehicleType(selectedItem);
                 if (vehicleType == null) return;
-                this.vehicle = vehicleType.construct(vehicleLocation, this.player, VehicleSpawnReason.CREATIVE);
+                this.vehicle = vehicleType.construct(vehicleLocation, this.player, VehicleSpawnReason.CREATIVE_HOLOGRAM);
                 this.vehicle.becomeHologram();
             }
 

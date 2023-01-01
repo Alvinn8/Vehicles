@@ -1,25 +1,28 @@
 package me.alvin.vehicles.item;
 
+import ca.bkaw.praeter.core.ItemUtils;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.VehicleSpawnerTask;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
-import org.bukkit.World;
-import svcraft.core.item.CustomItem;
-import svcraft.core.util.CustomInventory;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import svcraft.core.item.CustomItem;
+import svcraft.core.util.CustomInventory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,10 +84,12 @@ public class VehicleSpawnerItem extends CustomItem {
             }
         }, size, Component.text("Select the vehicle type to spawn"));
         for (VehicleType vehicleType : vehicleTypes) {
-            ItemStack item = new ItemStack(Material.DIAMOND);
-            ItemMeta meta = item.getItemMeta();
-            meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(vehicleType.getName()));
-            item.setItemMeta(meta);
+            ItemStack item = SVCraftVehicles.getInstance().getModelDB().generateItem(vehicleType.getPreviewModel().toString());
+            item.editMeta(LeatherArmorMeta.class, meta -> {
+                meta.setColor(Color.WHITE);
+                meta.addItemFlags(ItemFlag.HIDE_DYE);
+            });
+            ItemUtils.setItemText(item, List.of(vehicleType.getName()));
             inventory.addItem(item);
         }
         player.openInventory(inventory);

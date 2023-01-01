@@ -1,5 +1,6 @@
 {
 	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
 	"textures": {
 		"0": "block/glass",
 		"1": "svcraftvehicles:item/transparent",
@@ -7,7 +8,6 @@
 		"3": "block/gray_wool",
 		"particle": "block/quartz_block_top"
 	},
-	"ambientocclusion": false,
 	"elements": [
 		{
 			"from": [12.32957, 6, 11.5475],
@@ -682,6 +682,11 @@
 		}
 	],
 	"display": {
+		"gui": {
+			"rotation": [17, -138, 0],
+			"translation": [-0.5, 0, 0],
+			"scale": [0.4, 0.4, 0.4]
+		},
 		"head": {
 			"rotation": [0, 94, 0],
 			"translation": [0, -21.5, 0],
@@ -692,46 +697,61 @@
 		{
 			"name": "frontTop",
 			"origin": [20.32957, 8, 11.4525],
+			"color": 0,
 			"children": [0, 1, 2, 3]
 		},
 		{
 			"name": "frontmiddle",
 			"origin": [20.32957, 8, 11.4525],
+			"color": 0,
 			"children": [4, 5, 6, 7]
 		},
 		{
 			"name": "frontBottom",
 			"origin": [20.32957, 8, 11.4525],
+			"color": 0,
 			"children": [8, 9, 10, 11]
 		},
 		{
 			"name": "floor",
 			"origin": [0.04776, 8, 10.76537],
+			"color": 0,
 			"children": [12, 13, 14, 15, 16, 17, 18]
 		},
 		{
 			"name": "top",
 			"origin": [0.04776, 8, 10.76537],
+			"color": 0,
 			"children": [19, 20, 21, 22, 23, 24, 25, 26]
 		},
 		{
 			"name": "sideRight",
 			"origin": [0.04776, 2, 6.23463],
+			"color": 0,
 			"children": [27, 28, 29, 30, 31, 32]
 		},
 		{
 			"name": "sideLeft",
 			"origin": [0.04776, 2, 9.76537],
+			"color": 0,
 			"children": [33, 34, 35, 36, 37, 38]
-		}, 39, 40, 41, 42, 43, 44,
+		},
+		39,
+		40,
+		41,
+		42,
+		43,
+		44,
 		{
 			"name": "driverchair",
 			"origin": [12.32957, 11.4525, 16],
+			"color": 0,
 			"children": [45, 46]
 		},
 		{
 			"name": "passengerchair",
 			"origin": [12.32957, 11.4525, 16],
+			"color": 0,
 			"children": [47, 48]
 		}
 	]

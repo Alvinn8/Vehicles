@@ -2,6 +2,7 @@ package me.alvin.vehicles.crafting.progress;
 
 import me.alvin.vehicles.crafting.recipe.RecipeStep;
 import me.alvin.vehicles.crafting.recipe.VehicleCraftingRecipe;
+import net.kyori.adventure.text.Component;
 
 public class RecipeProgress {
     private final VehicleCraftingRecipe recipe;
@@ -33,5 +34,12 @@ public class RecipeProgress {
 
     public int getIndex() {
         return this.index;
+    }
+
+    public Component getStepComponent() {
+        return Component.text()
+            .content("Step " + (this.getIndex() + 1) + " / " + this.getRecipe().steps().size() + ": ")
+            .append(this.getCurrentStep().name())
+            .build();
     }
 }

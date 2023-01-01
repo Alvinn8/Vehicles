@@ -5,8 +5,8 @@ import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
-import me.alvin.vehicles.vehicle.seat.Seat;
 import me.alvin.vehicles.vehicle.seat.PassengerData;
+import me.alvin.vehicles.vehicle.seat.Seat;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.GameMode;
@@ -182,8 +182,8 @@ public class EventListener implements PerWorldListener {
             Block clickedBlock = event.getClickedBlock();
             if (clickedBlock != null) {
                 CustomTileEntity tileEntity = SVCraft.getInstance().getTileEntityManager().getTileEntity(clickedBlock);
-                if (tileEntity instanceof VehicleCraftingTable) {
-                    ((VehicleCraftingTable) tileEntity).openInventory(event.getPlayer());
+                if (tileEntity instanceof VehicleCraftingTable table) {
+                    table.openGui(event.getPlayer());
                     event.setCancelled(true);
                 }
             }

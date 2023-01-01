@@ -14,8 +14,17 @@ public enum VehicleSpawnReason {
      */
     CREATIVE,
     /**
+     * The vehicle was spawned as a hologram to preview the vehicle being placed.
+     */
+    CREATIVE_HOLOGRAM,
+    /**
      * The vehicle was spawned as it was crafted using a
      * vehicle crafting table.
      */
-    CRAFTING
+    CRAFTING,
+    /**
+     * The vehicle was spawned as a hologram to preview a vehicle in a vehicle
+     * crafting table.
+     */
+    CRAFTING_HOLOGRAM
 }

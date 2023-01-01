@@ -6,8 +6,13 @@ import ca.bkaw.praeter.gui.GuiRegistry;
 import ca.bkaw.praeter.gui.PraeterGui;
 import com.comphenix.protocol.ProtocolLibrary;
 import me.alvin.vehicles.commands.VehiclesCommand;
+import me.alvin.vehicles.gui.crafting.selecting.SelectingGui;
+import me.alvin.vehicles.gui.crafting.step.StepGui;
+import me.alvin.vehicles.gui.crafting.timer.CreatingStepGui;
+import me.alvin.vehicles.gui.crafting.viewing.ViewingGui;
 import me.alvin.vehicles.gui.fuel.FuelGui;
-import me.alvin.vehicles.gui.repair.RepairGui;
+import me.alvin.vehicles.gui.health.HealthGui;
+import me.alvin.vehicles.gui.repair.RepairingGui;
 import me.alvin.vehicles.nms.NMS;
 import me.alvin.vehicles.nms.v1_17_R1.NMS_v1_17_R1;
 import me.alvin.vehicles.nms.v1_18_R1.NMS_v1_18_R1;
@@ -62,8 +67,6 @@ public final class SVCraftVehicles extends SVCraftPlugin implements PraeterPlugi
 
         if (!this.setupNMS()) return;
 
-        // Bukkit.getPluginManager().registerEvents(new TestEventListener(), this);
-
         this.modelDB = new PraeterModelDB();
 
         try {
@@ -82,16 +85,13 @@ public final class SVCraftVehicles extends SVCraftPlugin implements PraeterPlugi
         this.registerItem(new NamespacedKey(this, "vehicle_spawner"), CustomItems.VEHICLE_SPAWNER);
 
         GuiRegistry guiRegistry = PraeterGui.get().getGuiRegistry();
-        guiRegistry.register(
-            FuelGui.TYPE,
-            new NamespacedKey(this, "fuel_gui"),
-            this
-        );
-        guiRegistry.register(
-            RepairGui.TYPE,
-            new NamespacedKey(this, "repair_gui"),
-            this
-        );
+        guiRegistry.register(FuelGui.TYPE, new NamespacedKey(this, "fuel_gui"), this);
+        guiRegistry.register(HealthGui.TYPE, new NamespacedKey(this, "health_gui"), this);
+        guiRegistry.register(RepairingGui.TYPE, new NamespacedKey(this, "repairing_gui"), this);
+        guiRegistry.register(SelectingGui.TYPE, new NamespacedKey(this, "crafting_selecting"), this);
+        guiRegistry.register(ViewingGui.TYPE, new NamespacedKey(this, "crafting_viewing"), this);
+        guiRegistry.register(StepGui.TYPE, new NamespacedKey(this, "crafting_step"), this);
+        guiRegistry.register(CreatingStepGui.TYPE, new NamespacedKey(this, "crafting_creating_step"), this);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
 

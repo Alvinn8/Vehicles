@@ -4,7 +4,6 @@ import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.vehicle.UnderwaterVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
-import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -35,7 +34,8 @@ public class MiniSubmarineVehicle extends UnderwaterVehicle {
 
     @Override
     public @NotNull VehicleType getType() {
-        return VehicleTypes.MINI_SUBMARINE;
+        throw new UnsupportedOperationException();
+        // return VehicleTypes.MINI_SUBMARINE;
     }
 
     @Override

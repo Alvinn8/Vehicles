@@ -1,19 +1,29 @@
 package me.alvin.vehicles.vehicle;
 
+import ca.bkaw.praeter.core.Praeter;
+import ca.bkaw.praeter.core.resources.ResourcePackList;
+import ca.bkaw.praeter.core.resources.pack.JsonResource;
+import ca.bkaw.praeter.core.resources.pack.ResourcePack;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.crafting.recipe.VehicleCraftingRecipe;
 import me.alvin.vehicles.vehicle.collision.VehicleCollisionType;
 import me.alvin.vehicles.vehicle.perspective.Perspective;
 import me.alvin.vehicles.vehicle.seat.Seat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import svcraft.core.world.Enableable;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -36,8 +46,11 @@ public class VehicleType {
     private final VehicleSpawnConstructorFunction spawnConstructor;
     private final VehicleCollisionType collisionType;
     private final List<Perspective> perspectives;
-    private final double maxHealth;
     private final Enableable enableable;
+    private final NamespacedKey previewModel;
+    private final NamespacedKey largePreviewModel;
+    private final double maxHealth;
+    private final RepairData repairData;
     private final VehicleCraftingRecipe recipe;
 
     public VehicleType(@NotNull String id,
@@ -49,14 +62,17 @@ public class VehicleType {
                        @NotNull Seat driverSeat,
                        @Nullable List<Seat> seats,
                        @Nullable List<Perspective> perspectives,
-                       double maxHealth,
                        @NotNull Enableable enableable,
+                       @NotNull NamespacedKey previewModel,
+                       double maxHealth,
+                       @NotNull RepairData repairData,
                        @Nullable VehicleCraftingRecipe.Builder recipe) {
         this.id = id;
         this.name = name;
         this.vehicleClass = vehicleClass;
         this.loadConstructor = loadConstructor;
         this.spawnConstructor = spawnConstructor;
+        this.repairData = repairData;
         Set<Seat> seatSet = new HashSet<>();
         seatSet.add(driverSeat);
         if (seats != null) seatSet.addAll(seats);
@@ -64,9 +80,60 @@ public class VehicleType {
         this.driverSeat = driverSeat;
         this.collisionType = collisionType;
         this.perspectives = perspectives == null ? Collections.emptyList() : perspectives;
-        this.maxHealth = maxHealth;
         this.enableable = enableable;
+        this.previewModel = previewModel;
+        this.maxHealth = maxHealth;
         this.recipe = recipe == null ? null : recipe.build();
+
+        try {
+            this.largePreviewModel = this.createPreview();
+        } catch (IOException e) {
+            throw new UncheckedIOException("Failed to create large preview for " + this.id, e);
+        }
+    }
+
+    /**
+     * Create a large preview from the small preview.
+     *
+     * @return The large preview.
+     * @throws IOException If an I/O error occurs.
+     */
+    private NamespacedKey createPreview() throws IOException {
+        NamespacedKey largePreviewModel = new NamespacedKey(this.previewModel.getNamespace(), this.previewModel.getKey() + "_large");
+        ResourcePackList resourcePacks = Praeter.get().getResourceManager().getResourcePacks(SVCraftVehicles.getInstance());
+        for (ResourcePack resourcePack : resourcePacks) {
+            Path previewModelPath = resourcePacks.getModelPath(this.previewModel);
+            JsonResource previewModel = new JsonResource(resourcePack, previewModelPath);
+
+            JsonObject largePreview = new JsonObject();
+            largePreview.addProperty("parent", this.previewModel.toString());
+            JsonObject display = new JsonObject();
+            largePreview.add("display", display);
+            JsonObject guiDisplay = previewModel.getJson().getAsJsonObject("display").getAsJsonObject("gui");
+            JsonArray scale = guiDisplay.getAsJsonArray("scale");
+            JsonArray translation = guiDisplay.getAsJsonArray("translation");
+            for (int i = 0; i < scale.size(); i++) {
+                scale.set(i, new JsonPrimitive(scale.get(i).getAsNumber().doubleValue() * 4));
+            }
+            if (translation == null) {
+                translation = new JsonArray(3);
+                for (int i = 0; i < 3; i++) {
+                    translation.add(0);
+                }
+                guiDisplay.add("translation", translation);
+            }
+            translation.set(0, new JsonPrimitive(translation.get(0).getAsNumber().doubleValue() - 28));
+            translation.set(1, new JsonPrimitive(translation.get(1).getAsNumber().doubleValue() + 32));
+            display.add("gui", guiDisplay);
+
+            JsonResource largeModel = new JsonResource(resourcePack, resourcePack.getModelPath(largePreviewModel), largePreview);
+            largeModel.save();
+
+            NamespacedKey vanillaModel = NamespacedKey.minecraft("item/leather_boots");
+            resourcePack.addCustomModelData(vanillaModel, this.previewModel);
+            resourcePack.addCustomModelData(vanillaModel, largePreviewModel);
+        }
+        return largePreviewModel;
     }
 
     /**
@@ -200,6 +267,24 @@ public class VehicleType {
      * @return The data.
      */
     public RepairData getRepairData() {
-        return new RepairData(60_000, 10, new ItemStack(Material.IRON_INGOT, 3), new ItemStack(Material.COPPER_INGOT));
+        return this.repairData;
+    }
+
+    /**
+     * Get the small model (one slot) to use when previewing the vehicle.
+     *
+     * @return The key to the model.
+     */
+    public NamespacedKey getPreviewModel() {
+        return this.previewModel;
+    }
+
+    /**
+     * Get the large model (4 slots) to use when previewing the vehicle.
+     *
+     * @return The key to the model.
+     */
+    public NamespacedKey getLargePreviewModel() {
+        return this.largePreviewModel;
     }
 }

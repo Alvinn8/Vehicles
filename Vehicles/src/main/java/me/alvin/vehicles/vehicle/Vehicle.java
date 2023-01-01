@@ -98,6 +98,7 @@ public abstract class Vehicle {
     public RelativePos debugRelativePos; // TEMP
     protected VehicleText text = null;
     protected double health;
+    private RepairProgress repairProgress;
     // Movement
     protected @NotNull Location location;
     protected float speed = 0;
@@ -1397,11 +1398,25 @@ public abstract class Vehicle {
         }
 
         float pitch = (float) Math.random() + 1.0F;
-        this.location.getWorld().playSound(this.location, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 1, pitch);
+        this.location.getWorld().playSound(this.location, Sound.ENTITY_ZOMBIE_ATTACK_IRON_DOOR, SoundCategory.PLAYERS, 2, pitch);
 
         if (this.health <= 0) {
             this.onZeroHealth(source);
         }
+    }
+
+    /**
+     * Heal the vehicle by the specified amount.
+     *
+     * @param amount The amount of health points to heal the vehicle by.
+     */
+    public void repair(double amount) {
+        this.health += amount;
+        if (this.health > this.getType().getMaxHealth()) {
+            this.health = this.getType().getMaxHealth();
+        }
+
+        this.location.getWorld().playSound(this.location, Sound.BLOCK_ANVIL_USE, SoundCategory.PLAYERS, 1, 1);
     }
 
     /**
@@ -1428,6 +1443,38 @@ public abstract class Vehicle {
      */
     public int getExplosionPower() {
         return 3;
+    }
+
+    /**
+     * Check if the vehicle is being repaired.
+     *
+     * @return If the vehicle is being repaired.
+     */
+    public boolean isBeingRepaired() {
+        return this.repairProgress != null;
+    }
+
+    /**
+     * Get the vehicle's current {@link RepairProgress} in case the vehicle is being
+     * repaired.
+     *
+     * @return The progress.
+     */
+    @Nullable
+    public RepairProgress getRepairProgress() {
+        return this.repairProgress;
+    }
+
+    /**
+     * Set the repair progress.
+     *
+     * @param repairProgress The repair progres.
+     */
+    public void setRepairProgress(@Nullable RepairProgress repairProgress) {
+        if (repairProgress == null && this.repairProgress != null && !this.repairProgress.isCancelled()) {
+            this.repairProgress.cancel();
+        }
+        this.repairProgress = repairProgress;
     }
 
     //</editor-fold>

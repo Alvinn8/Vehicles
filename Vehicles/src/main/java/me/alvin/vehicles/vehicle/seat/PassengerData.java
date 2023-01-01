@@ -63,7 +63,9 @@ public class PassengerData {
             mule.setSilent(true);
             mule.customName(vehicle.getType().getName());
             mule.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20);
-            mule.setHealth((vehicle.getHealth() / vehicle.getType().getMaxHealth()) * 20);
+            double health = (vehicle.getHealth() / vehicle.getType().getMaxHealth()) * 20;
+            if (health > 20) health = 20;
+            mule.setHealth(health);
         });
         if (this.passenger instanceof Player) {
             vehicle.updateMenuInventory(spawnedMule.getInventory(), (Player) this.passenger);

@@ -1,7 +1,9 @@
 package me.alvin.vehicles.actions;
 
 import me.alvin.vehicles.SVCraftVehicles;
-import me.alvin.vehicles.gui.repair.RepairGui;
+import me.alvin.vehicles.gui.health.HealthGui;
+import me.alvin.vehicles.gui.repair.RepairingGui;
+import me.alvin.vehicles.vehicle.RepairProgress;
 import me.alvin.vehicles.vehicle.Vehicle;
 import me.alvin.vehicles.vehicle.action.VehicleMenuAction;
 import net.kyori.adventure.text.Component;
@@ -24,7 +26,15 @@ public class HealthAction implements VehicleMenuAction {
 
     @Override
     public void onMenuClick(Vehicle vehicle, Player player) {
-        RepairGui gui = new RepairGui(vehicle, player);
-        gui.show(player);
+        RepairProgress repairProgress = vehicle.getRepairProgress();
+        if (repairProgress != null) {
+            RepairingGui gui = repairProgress.getRepairingGui();
+            gui.updateTimer();
+            gui.show(player);
+            gui.update();
+        } else {
+            HealthGui gui = new HealthGui(vehicle, player);
+            gui.show(player);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package me.alvin.vehicles.gui.repair;
+package me.alvin.vehicles.gui.health;
 
 import ca.bkaw.praeter.gui.GuiUtils;
 import ca.bkaw.praeter.gui.component.GuiComponent;

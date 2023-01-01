@@ -69,7 +69,7 @@ public class AssetsManager {
         this.resourcePack.addCustomModelData(vanillaKey, key);
 
         NamespacedKey hologramKey = this.createHologram(key);
-        this.resourcePack.addCustomModelData(vanillaKey, hologramKey);
+        this.resourcePack.addCustomModelData(barrier, hologramKey);
     }
 
     public void processColorableModel(NamespacedKey modelKey, String... colorableTextures) throws IOException {
