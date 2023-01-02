@@ -1,0 +1,7 @@
+{
+    "parent": "item/generated",
+    "textures": {
+        "layer0": "svcraftvehicles:item/paint_bucket_layer0",
+        "layer1": "svcraftvehicles:item/paint_bucket_layer1"
+    }
+}

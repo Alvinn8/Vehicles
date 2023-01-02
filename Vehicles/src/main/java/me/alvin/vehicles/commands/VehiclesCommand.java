@@ -380,7 +380,7 @@ public class VehiclesCommand {
                     .executes(context -> {
                         CommandSource source = Cmd.getSource(context);
                         Player player = source.getPlayerRequired();
-                        Block targetBlock = player.getTargetBlock(50);
+                        Block targetBlock = player.getTargetBlockExact(50);
                         if (targetBlock == null) throw NO_BLOCK_IN_SIGHT.create();
                         CoolExplosion.explode(targetBlock.getLocation().add(0, 2, 0), 3, player);
                         return 1;

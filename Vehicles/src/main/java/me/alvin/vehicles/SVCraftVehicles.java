@@ -12,6 +12,7 @@ import me.alvin.vehicles.gui.crafting.timer.CreatingStepGui;
 import me.alvin.vehicles.gui.crafting.viewing.ViewingGui;
 import me.alvin.vehicles.gui.fuel.FuelGui;
 import me.alvin.vehicles.gui.health.HealthGui;
+import me.alvin.vehicles.gui.paint.PaintGui;
 import me.alvin.vehicles.gui.repair.RepairingGui;
 import me.alvin.vehicles.nms.NMS;
 import me.alvin.vehicles.nms.v1_17_R1.NMS_v1_17_R1;
@@ -83,6 +84,7 @@ public final class SVCraftVehicles extends SVCraftPlugin implements PraeterPlugi
         this.registerItem(new NamespacedKey(this, "vehicle_crafting_table"), CustomItems.VEHICLE_CRAFTING_TABLE);
         this.registerItem(new NamespacedKey(this, "fuel"), CustomItems.FUEL);
         this.registerItem(new NamespacedKey(this, "vehicle_spawner"), CustomItems.VEHICLE_SPAWNER);
+        this.registerItem(new NamespacedKey(this, "paint_bucket"), CustomItems.PAINT_BUCKET);
 
         GuiRegistry guiRegistry = PraeterGui.get().getGuiRegistry();
         guiRegistry.register(FuelGui.TYPE, new NamespacedKey(this, "fuel_gui"), this);
@@ -92,6 +94,7 @@ public final class SVCraftVehicles extends SVCraftPlugin implements PraeterPlugi
         guiRegistry.register(ViewingGui.TYPE, new NamespacedKey(this, "crafting_viewing"), this);
         guiRegistry.register(StepGui.TYPE, new NamespacedKey(this, "crafting_step"), this);
         guiRegistry.register(CreatingStepGui.TYPE, new NamespacedKey(this, "crafting_creating_step"), this);
+        guiRegistry.register(PaintGui.TYPE, new NamespacedKey(this, "paint"), this);
 
         ProtocolLibrary.getProtocolManager().addPacketListener(new PacketListener(this));
 

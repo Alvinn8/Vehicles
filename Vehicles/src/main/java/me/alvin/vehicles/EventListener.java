@@ -162,7 +162,7 @@ public class EventListener implements PerWorldListener {
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
         Player player = event.getPlayer();
         this.onInteract(event, player, true);
@@ -173,7 +173,7 @@ public class EventListener implements PerWorldListener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent event) {
         if (event.getHand() != EquipmentSlot.HAND) return;
         this.onInteract(event, event.getPlayer(), event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK);

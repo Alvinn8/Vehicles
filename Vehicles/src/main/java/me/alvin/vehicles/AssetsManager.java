@@ -42,6 +42,8 @@ public class AssetsManager {
         addCustomModelData("item/fuel");
         addCustomModelData("item/transparent");
         addCustomModelData("item/vehicle_spawner");
+        addCustomModelData("item/leather_boots", "item/paint_bucket");
+        addCustomModelData("item/leather_boots", "item/color_preview");
         addCustomModelData("gui/vehicle_crafting_table/selecting");
         addCustomModelData("gui/vehicle_crafting_table/viewing_enabled");
         addCustomModelData("gui/vehicle_crafting_table/viewing_disabled");
@@ -53,9 +55,12 @@ public class AssetsManager {
     }
 
     private void addCustomModelData(String model) throws IOException {
-        NamespacedKey vanillaModel = NamespacedKey.minecraft("item/barrier");
+        addCustomModelData("item/barrier", model);
+    }
+    private void addCustomModelData(String vanillaModel, String model) throws IOException {
+        NamespacedKey vanillaModelKey = NamespacedKey.minecraft(vanillaModel);
         NamespacedKey modelKey = new NamespacedKey("svcraftvehicles", model);
-        this.resourcePack.addCustomModelData(vanillaModel, modelKey);
+        this.resourcePack.addCustomModelData(vanillaModelKey, modelKey);
     }
 
     public void processVehiclePart(String path, boolean colorable, String... colorableTextures) throws IOException {
