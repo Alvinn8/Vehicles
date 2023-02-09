@@ -113,7 +113,7 @@ public class VehicleType {
             JsonArray scale = guiDisplay.getAsJsonArray("scale");
             JsonArray translation = guiDisplay.getAsJsonArray("translation");
             for (int i = 0; i < scale.size(); i++) {
-                scale.set(i, new JsonPrimitive(scale.get(i).getAsNumber().doubleValue() * 4));
+                scale.set(i, new JsonPrimitive(scale.get(i).getAsDouble() * 4));
             }
             if (translation == null) {
                 translation = new JsonArray(3);
@@ -122,8 +122,8 @@ public class VehicleType {
                 }
                 guiDisplay.add("translation", translation);
             }
-            translation.set(0, new JsonPrimitive(translation.get(0).getAsNumber().doubleValue() - 28));
-            translation.set(1, new JsonPrimitive(translation.get(1).getAsNumber().doubleValue() + 32));
+            translation.set(0, new JsonPrimitive(translation.get(0).getAsDouble() - 28));
+            translation.set(1, new JsonPrimitive(translation.get(1).getAsDouble() + 32));
             display.add("gui", guiDisplay);
 
             JsonResource largeModel = new JsonResource(resourcePack, resourcePack.getModelPath(largePreviewModel), largePreview);

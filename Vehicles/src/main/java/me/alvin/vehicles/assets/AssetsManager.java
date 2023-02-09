@@ -1,11 +1,13 @@
-package me.alvin.vehicles;
+package me.alvin.vehicles.assets;
 
 import ca.bkaw.praeter.core.resources.pack.JsonResource;
 import ca.bkaw.praeter.core.resources.pack.ResourcePack;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import me.alvin.vehicles.commands.ModelSplitTestCommand;
 import org.bukkit.NamespacedKey;
+import org.bukkit.util.Vector;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,6 +38,11 @@ public class AssetsManager {
         this.processVehiclePart("truck/truck", true, "block/quartz_block_side");
         this.processVehiclePart("truck/truck_back", false);
         this.processVehiclePart("wooden_plane", false);
+        this.processVehiclePart("plane/plane_front", true, "block/quartz_block_top");
+        this.processVehiclePart("plane/plane_back", true, "block/quartz_block_top");
+        this.processVehiclePart("plane/plane_left_wing", true, "block/quartz_block_top");
+        this.processVehiclePart("plane/plane_right_wing", true, "block/quartz_block_top");
+        this.processVehiclePart("plane/plane_propeller", false);
 
         addCustomModelData("block/testblock");
         addCustomModelData("block/vehicle_crafting_table");
@@ -52,6 +59,21 @@ public class AssetsManager {
         addCustomModelData("gui/vehicle_crafting_table/timer");
         addCustomModelData("gui/vehicle_menu_icon/fuel");
         addCustomModelData("gui/vehicle_menu_icon/health");
+
+        addCustomModelData("vehicle/plane_test");
+
+        ModelSplitter modelSplitter = new ModelSplitter(this.resourcePack, new NamespacedKey("svcraftvehicles", "vehicle/plane_test"));
+        modelSplitter.setElementScale(2);
+        modelSplitter.setDisplayScale(44.0 / 15.0);
+        modelSplitter.addTranslationModifier("back", translation -> translation.add(new Vector(0, 0, 12)));
+        modelSplitter.addTranslationModifier("front", translation -> translation.add(new Vector(0, -18, 10)));
+        modelSplitter.addTranslationModifier("left_wing", translation -> translation.add(new Vector(-10, 0, 0)));
+        modelSplitter.addTranslationModifier("right_wing", translation -> translation.add(new Vector(10, 0, 0)));
+        modelSplitter.split();
+        for (ModelSplitter.Part part : modelSplitter.getParts()) {
+            this.resourcePack.addCustomModelData(NamespacedKey.minecraft("item/barrier"), part.key());
+        }
+        ModelSplitTestCommand.parts = modelSplitter.getParts();
     }
 
     private void addCustomModelData(String model) throws IOException {

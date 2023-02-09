@@ -7,6 +7,7 @@ import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -25,18 +26,16 @@ public class SimpleBoatVehicle extends BoatVehicle {
     }
 
     @Override
-    protected void init() {
-        super.init();
-
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/boat"));
-
-        this.setMaxFuel(20000);
-        this.setFuelUsage(1);
+    protected void addParts() {
+        this.mainPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/boat"), RelativePos.ZERO, false);
     }
 
     @Override
-    public void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/boat_hologram"));
+    protected void init() {
+        super.init();
+
+        this.setMaxFuel(20000);
+        this.setFuelUsage(1);
     }
 
     @NotNull

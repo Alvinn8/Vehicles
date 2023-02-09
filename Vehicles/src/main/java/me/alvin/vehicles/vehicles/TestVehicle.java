@@ -3,11 +3,13 @@ package me.alvin.vehicles.vehicles;
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.actions.StorageAction;
 import me.alvin.vehicles.actions.TestArrowAction;
+import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.GroundVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +24,13 @@ public class TestVehicle extends GroundVehicle {
     }
 
     @Override
+    protected void addParts() {
+        this.mainPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/golf_cart"), RelativePos.ZERO, false);
+    }
+
+    @Override
     protected void init() {
         super.init();
-
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/golf_cart"));
 
         this.setMaxFuel(10000);
         this.setFuelUsage(1);
@@ -33,11 +38,6 @@ public class TestVehicle extends GroundVehicle {
         // Actions
         this.addAction(new TestArrowAction());
         this.addAction(new StorageAction(18));
-    }
-
-    @Override
-    public void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/golf_cart_hologram"));
     }
 
     @NotNull

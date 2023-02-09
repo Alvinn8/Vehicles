@@ -2,18 +2,17 @@ package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.RelativePos;
-import me.alvin.vehicles.util.ni.NIArmorStand;
 import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.HelicopterVehicle;
+import me.alvin.vehicles.vehicle.VehiclePart;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
-import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 // TODO: Make the helicopter offset the main entity instead of the
 //       model being offset backwards.
@@ -23,10 +22,7 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     private static final RelativePos TAIL_OFFSET = new RelativePos(-0.13, 0.6, -4);
     private static final RelativePos ROTOR_OFFSET = new RelativePos(-0.15, 2.275, -1.65);
 
-    protected @NotNull ArmorStand tailEntity;
-    protected @Nullable NIArmorStand tailNiEntity;
-    protected @NotNull ArmorStand rotorEntity;
-    protected @Nullable NIArmorStand rotorNiEntity;
+    private VehiclePart rotorPart;
 
     public SimpleHelicopterVehicle(@NotNull ArmorStand entity) {
         super(entity);
@@ -40,25 +36,15 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
     protected void init() {
         super.init();
 
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_front"));
-
-        this.tailEntity = spawnArmorStand(TAIL_OFFSET.relativeTo(this.location, this.getRoll()));
-        this.tailEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_tail"));
-        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.tailEntity, this);
-
-        this.rotorEntity = spawnArmorStand(ROTOR_OFFSET.relativeTo(this.location, this.getRoll()));
-        this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor"));
-        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.rotorEntity, this);
-
         this.setMaxFuel(40000);
         this.setFuelUsage(5);
     }
 
     @Override
-    public void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_front_hologram"));
-        this.tailEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_tail_hologram"));
-        this.rotorEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/helicopter/helicopter_rotor_hologram"));
+    protected void addParts() {
+        this.mainPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/helicopter/helicopter_front"), RelativePos.ZERO, false);
+        this.addPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/helicopter/helicopter_tail"), TAIL_OFFSET, false);
+        this.rotorPart = this.addPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/helicopter/helicopter_rotor"), ROTOR_OFFSET, false);
     }
 
     @NotNull
@@ -77,74 +63,34 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
         return 20;
     }
 
+
+    @Override
+    public void calculateVelocity() {
+        super.calculateVelocity();
+
+        /*
+        if (this.health > 0) {
+            float desiredPitch = this.speed * 2;
+
+            this.location.setPitch(interpolatedRotation(this.location.getPitch(), desiredPitch));
+        }
+        */
+    }
+
     @Override
     public void updateRenderedLocation() {
-        NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
-        NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
-
-        Location tailLocation = TAIL_OFFSET.relativeTo(this.location, this.getRoll());
-        NIArmorStand.setLocation(this.tailNiEntity, this.tailEntity, tailLocation.getX(), tailLocation.getY(), tailLocation.getZ(), tailLocation.getYaw(), 0);
+        super.updateRenderedLocation();
 
         Location rotorLocation = ROTOR_OFFSET.relativeTo(this.location, this.getRoll());
-        NIArmorStand.setLocation(this.rotorNiEntity, this.rotorEntity, rotorLocation.getX(), rotorLocation.getY(), rotorLocation.getZ(), this.rotorRotation, 0);
+        NIE.setLocation(this.rotorPart.getNiEntity(), this.rotorPart.getEntity(), rotorLocation.getX(), rotorLocation.getY(), rotorLocation.getZ(), this.rotorRotation, 0);
+
+        // EulerAngle propellerAngles = new EulerAngle(0, Math.toRadians(this.rotorRotation), 0);
+        // this.rotorPart.getEntity().setHeadPose(propellerAngles);
     }
 
     @Override
     public boolean canBeColored() {
         return true;
-    }
-
-    @Override
-    public boolean setColor(Color color) {
-        if (!super.setColor(color)) return false;
-        if (!this.colorArmorStand(this.tailEntity, color)) return false;
-        return this.colorArmorStand(this.rotorEntity, color);
-    }
-
-    private void removeExtraEntities() {
-        SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.tailEntity);
-        SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.rotorEntity);
-
-        if (this.tailNiEntity != null) {
-            SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.tailNiEntity.getAreaEffectCloud());
-            this.tailNiEntity.remove();
-        }
-        else this.tailEntity.remove();
-
-        if (this.rotorNiEntity != null) {
-            SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.rotorNiEntity.getAreaEffectCloud());
-            this.rotorNiEntity.remove();
-        }
-        else this.rotorEntity.remove();
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-
-        this.removeExtraEntities();
-    }
-
-    @Override
-    public void remove() {
-        super.remove();
-
-        this.removeExtraEntities();
-    }
-
-    @Override
-    public void setNonInterpolating(boolean nonInterpolating) {
-        super.setNonInterpolating(nonInterpolating);
-
-        if (nonInterpolating) {
-            this.tailNiEntity = new NIArmorStand(this.tailEntity);
-            this.rotorNiEntity = new NIArmorStand(this.rotorEntity);
-        } else {
-            this.tailNiEntity.toArmorStand();
-            this.tailNiEntity = null;
-            this.rotorNiEntity.toArmorStand();
-            this.rotorNiEntity = null;
-        }
     }
 
     @Override

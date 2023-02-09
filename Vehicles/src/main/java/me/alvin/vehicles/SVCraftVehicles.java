@@ -5,6 +5,8 @@ import ca.bkaw.praeter.core.resources.pack.ResourcePack;
 import ca.bkaw.praeter.gui.GuiRegistry;
 import ca.bkaw.praeter.gui.PraeterGui;
 import com.comphenix.protocol.ProtocolLibrary;
+import me.alvin.vehicles.assets.AssetsManager;
+import me.alvin.vehicles.commands.ModelSplitTestCommand;
 import me.alvin.vehicles.commands.VehiclesCommand;
 import me.alvin.vehicles.gui.crafting.selecting.SelectingGui;
 import me.alvin.vehicles.gui.crafting.step.StepGui;
@@ -77,6 +79,7 @@ public final class SVCraftVehicles extends SVCraftPlugin implements PraeterPlugi
         }
 
         this.registerCommand(VehiclesCommand::register);
+        this.registerCommand(ModelSplitTestCommand::register);
         this.registerPerWorldEvents(new EventListener());
 
         this.registerBlock(new NamespacedKey(this, "vehicle_crafting_table"), CustomBlocks.VEHICLE_CRAFTING_TABLE);

@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class PaintGui extends CustomGui {
-    private static final SlotGroup<DyeSlot> SLOTS = SlotGroup.box(0, 0, 8, 1, DyeSlot::new);
+    private static final SlotGroup<DyeSlot> SLOTS = new SlotGroup<>(0, 0, 8, 1, DyeSlot::new);
     private static final ColorPreview COLOR_PREVIEW = new ColorPreview(8, 0);
 
     public static final CustomGuiType TYPE = CustomGuiType.builder()

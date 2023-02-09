@@ -10,7 +10,6 @@ import me.alvin.vehicles.nms.VehicleSteeringMovement;
 import me.alvin.vehicles.util.DebugUtil;
 import me.alvin.vehicles.util.ExtraPersistentDataTypes;
 import me.alvin.vehicles.util.RelativePos;
-import me.alvin.vehicles.util.ni.NIArmorStand;
 import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.action.VehicleAction;
 import me.alvin.vehicles.vehicle.action.VehicleClickAction;
@@ -85,16 +84,13 @@ public abstract class Vehicle {
      */
     protected final @NotNull ArmorStand entity;
     /**
-     * The main entity as a non interpolating armor stand. This will only
-     * be present if the vehicle is in motion.
-     */
-    protected @Nullable NIArmorStand niEntity;
-    /**
      * The invisible slime around the vehicle that ensures client send
-     * right click packets.
+     * right click packets, handles vehicle damage, and collision.
      */
     protected Slime slime;
     protected NIE<Slime> niSlime;
+    protected VehiclePart mainPart;
+    private final List<VehiclePart> parts = new ArrayList<>();
     public RelativePos debugRelativePos; // TEMP
     protected VehicleText text = null;
     protected double health;
@@ -222,6 +218,36 @@ public abstract class Vehicle {
         SVCraftVehicles.getInstance().getVehiclePartMap().put(this.entity, this);
 
         this.spawnSlime();
+
+        this.addParts();
+    }
+
+    protected /* abstract */ void addParts() {}
+
+    /**
+     * Initialize the main part of the vehicle.
+     *
+     * @param model The model to render.
+     * @param relativePos The position to render at.
+     * @param rotate Whether to apply pitch and roll rotations.
+     */
+    protected void mainPart(NamespacedKey model, RelativePos relativePos, boolean rotate) {
+        this.mainPart = new VehiclePart(this, model, relativePos, rotate, this.entity);
+        this.parts.add(this.mainPart);
+    }
+
+    /**
+     * Add a part of the vehicle.
+     *
+     * @param model The model to render.
+     * @param relativePos The position to render at.
+     * @param rotate Whether to apply pitch and roll rotations.
+     * @return The created part.
+     */
+    protected VehiclePart addPart(NamespacedKey model, RelativePos relativePos, boolean rotate) {
+        VehiclePart part = new VehiclePart(this, model, relativePos, rotate, null);
+        this.parts.add(part);
+        return part;
     }
 
     private void spawnSlime() {
@@ -334,6 +360,13 @@ public abstract class Vehicle {
         DebugUtil.debug("Unloading vehicle");
         this.save();
         this.slime.remove();
+        for (VehiclePart part : this.parts) {
+            if (part == this.mainPart) continue;
+            part.remove();
+        }
+        if (this.mainPart.isNonInterpolating()) {
+            this.mainPart.setNonInterpolating(false);
+        }
         SVCraftVehicles.getInstance().getLoadedVehicles().remove(this.entity);
         SVCraftVehicles.getInstance().getVehiclePartMap().entrySet().removeIf(entry -> entry.getValue() == this);
     }
@@ -351,7 +384,6 @@ public abstract class Vehicle {
             action.onRemove(this);
         }
 
-        if (this.niEntity != null) this.niEntity.remove();
         this.entity.remove();
 
         for (PassengerData passengerData : this.passengerData.values()) {
@@ -360,6 +392,10 @@ public abstract class Vehicle {
 
         if (this.niSlime != null) this.niSlime.remove();
         this.slime.remove();
+
+        for (VehiclePart part : this.parts) {
+            part.remove();
+        }
 
         if (this.isAttached()) {
             this.detach();
@@ -377,21 +413,15 @@ public abstract class Vehicle {
     }
 
     /**
-     * The method that actually turns the entity into a hologram.
-     *
-     * <p>This method should change the render item of all render entities a
-     * part of this vehicle to hologram variants.</p>
-     */
-    protected abstract void becomeHologramImpl();
-
-    /**
      * Turn the vehicle into a hologram. This method should not be used
      * for normal vehicles and should only be used for the creative mode
      * vehicle spawner or other occasions where a hologram would be desired.
      */
     public final void becomeHologram() {
         this.isHologram = true;
-        this.becomeHologramImpl();
+        for (VehiclePart part : this.parts) {
+            part.becomeHologram();
+        }
     }
 
     /**
@@ -423,11 +453,6 @@ public abstract class Vehicle {
         return this.entity;
     }
 
-    @Nullable
-    public NIArmorStand getNIEntity() {
-        return this.niEntity;
-    }
-
     public Slime getSlime() {
         return this.slime;
     }
@@ -451,7 +476,7 @@ public abstract class Vehicle {
      * @param color The color to set
      * @return See {@link #setColor(Color)} return value
      */
-    protected boolean colorArmorStand(ArmorStand entity, Color color) {
+    public static boolean colorArmorStand(ArmorStand entity, Color color) {
         EntityEquipment equipment = entity.getEquipment();
         ItemStack helmet = equipment.getHelmet();
         if (helmet == null) return false;
@@ -478,7 +503,13 @@ public abstract class Vehicle {
     public boolean setColor(Color color) {
         if (!this.canBeColored()) return false;
 
-        return this.colorArmorStand(this.entity, color);
+        boolean success = colorArmorStand(this.entity, color);
+        for (VehiclePart part : this.parts) {
+            if (!part.setColor(color)) {
+                success = false;
+            }
+        }
+        return success;
     }
 
     /**
@@ -701,6 +732,7 @@ public abstract class Vehicle {
      */
     public boolean canAccelerate() {
         if (this.health <= 0) return false;
+        if (this.isBeingRepaired()) return false;
         if (!this.usesFuel()) return true;
 
         return this.currentFuel > 0;
@@ -841,8 +873,10 @@ public abstract class Vehicle {
      * if the vehicle's speed is not 0.
      */
     public void updateRenderedLocation() {
-        NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY(), this.location.getZ(), this.location.getYaw(), this.location.getPitch());
         NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
+        for (VehiclePart part : this.parts) {
+            part.updateRenderedLocation();
+        }
     }
 
     /**
@@ -878,7 +912,7 @@ public abstract class Vehicle {
      * @return Whether the vehicle is non interpolating
      */
     public boolean isNonInterpolating() {
-        return this.niEntity != null;
+        return this.mainPart.isNonInterpolating();
     }
 
     /**
@@ -897,14 +931,14 @@ public abstract class Vehicle {
         if (this.isNonInterpolating() == nonInterpolating) throw new IllegalStateException("The vehicle is already non interpolating");
         if (nonInterpolating) {
             DebugUtil.debug("Creating niEntity");
-            this.niEntity = new NIArmorStand(this.entity);
             this.niSlime = new NIE<>(this.slime);
         } else {
             DebugUtil.debug("Removing niEntity");
-            this.niEntity.toArmorStand();
-            this.niEntity = null;
             this.niSlime.toNormalEntity();
             this.niSlime = null;
+        }
+        for (VehiclePart part : this.parts) {
+            part.setNonInterpolating(nonInterpolating);
         }
         if (this.attachedVehicles != null) {
             for (Vehicle vehicle : this.attachedVehicles.keySet()) {

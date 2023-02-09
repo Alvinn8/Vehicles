@@ -12,6 +12,7 @@ import me.alvin.vehicles.vehicles.MotorcycleVehicle;
 import me.alvin.vehicles.vehicles.SimpleBoatVehicle;
 import me.alvin.vehicles.vehicles.SimpleCarVehicle;
 import me.alvin.vehicles.vehicles.SimpleHelicopterVehicle;
+import me.alvin.vehicles.vehicles.SimplePlaneVehicle;
 import me.alvin.vehicles.vehicles.TestVehicle;
 import me.alvin.vehicles.vehicles.TruckVehicle;
 import me.alvin.vehicles.vehicles.WoodenPlaneVehicle;
@@ -24,6 +25,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static me.alvin.vehicles.crafting.recipe.RecipeStep.step;
 import static me.alvin.vehicles.crafting.recipe.VehicleCraftingRecipe.recipe;
@@ -38,6 +40,7 @@ public class VehicleTypes {
     public static final VehicleType TRUCK;
     public static final VehicleType WOODEN_PLANE;
     // public static final VehicleType MINI_SUBMARINE;
+    public static final VehicleType PLANE;
 
     static {
         SVCraftVehicles plugin = SVCraftVehicles.getInstance();
@@ -491,7 +494,7 @@ public class VehicleTypes {
             // Collision
             new AABBCollision(1.5, 2),
             // Seats
-            new Seat(new RelativePos(0, 0, 0)),
+            new Seat(RelativePos.ZERO),
             null,
             // Perspectives
             Collections.singletonList(
@@ -530,6 +533,36 @@ public class VehicleTypes {
                 )
         );
          */
+
+        // Plane
+        PLANE = new VehicleType(
+            "plane",
+            Component.text("Plane"),
+            SimplePlaneVehicle.class,
+            SimplePlaneVehicle::new,
+            SimplePlaneVehicle::new,
+            // Collision
+            new AABBCollision(5, 2),
+            // Seats
+            new Seat(new RelativePos(0, 0.5, -0.2)),
+            List.of(
+                new Seat( new RelativePos(0, 0.4, -0.8))
+            ),
+            // Perspectives
+            Collections.singletonList(
+                new ThirdPersonPerspective(new RelativePos(0, 0, -15))
+            ),
+            // Enableable
+            plugin,
+            // Preview
+            new NamespacedKey(plugin, "vehicle/wooden_plane"), // TODO
+            // Max Health
+            150,
+            // Repairing
+            new RepairData(60000, 30, new ItemStack(Material.IRON_INGOT, 5), new ItemStack(Material.COPPER_INGOT, 2)),
+            // Recipe
+            null
+        );
     }
 
     public static void register(VehicleRegistry registry) {
@@ -542,5 +575,6 @@ public class VehicleTypes {
         registry.registerVehicle(TRUCK);
         registry.registerVehicle(WOODEN_PLANE);
         // registry.registerVehicle(MINI_SUBMARINE);
+        registry.registerVehicle(PLANE);
     }
 }

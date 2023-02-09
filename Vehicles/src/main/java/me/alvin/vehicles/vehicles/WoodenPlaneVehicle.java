@@ -7,6 +7,7 @@ import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -23,10 +24,13 @@ public class WoodenPlaneVehicle extends PlaneVehicle {
     }
 
     @Override
+    protected void addParts() {
+        this.mainPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/wooden_plane"), RelativePos.ZERO, false);
+    }
+
+    @Override
     protected void init() {
         super.init();
-
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/wooden_plane"));
 
         this.setMaxFuel(30000);
         this.setFuelUsage(2);
@@ -35,11 +39,6 @@ public class WoodenPlaneVehicle extends PlaneVehicle {
     @Override
     public float getMinTakeoffSpeed() {
         return 9;
-    }
-
-    @Override
-    protected void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/wooden_plane_hologram"));
     }
 
     @Override

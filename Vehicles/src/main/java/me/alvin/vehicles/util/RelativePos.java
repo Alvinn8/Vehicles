@@ -19,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
  * methods create new instances.</p>
  */
 public class RelativePos {
+    public static final RelativePos ZERO = new RelativePos(0, 0, 0);
     private final double left;
     private final double up;
     private final double forward;

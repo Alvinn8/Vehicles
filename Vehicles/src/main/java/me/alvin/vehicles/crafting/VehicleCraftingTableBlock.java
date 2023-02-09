@@ -4,35 +4,19 @@ import me.alvin.vehicles.CustomItems;
 import me.alvin.vehicles.util.DebugUtil;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import svcraft.core.block.CustomBlock;
 import svcraft.core.tileentity.CustomTileEntity;
 import svcraft.core.tileentity.TileEntityBlock;
 import svcraft.core.util.BlockLocation;
 
-import java.util.function.Supplier;
-
 /**
  * The vehicle crafting table custom block.
  */
 public class VehicleCraftingTableBlock extends CustomBlock implements TileEntityBlock {
-    private Supplier<ItemStack> renderItemSupplier;
-
-    public VehicleCraftingTableBlock(Supplier<ItemStack> renderItem) {
-        super(null);
-        this.renderItemSupplier = renderItem;
-    }
-
-    @Override
-    public ItemStack getRenderItemStack() {
-        ItemStack renderItemStack = super.getRenderItemStack();
-        if (renderItemStack == null) {
-            renderItemStack = this.renderItemSupplier.get();
-            setRenderItemStack(renderItemStack);
-            this.renderItemSupplier = null;
-        }
-        return renderItemStack;
+    public VehicleCraftingTableBlock(@Nullable BlockProperties properties) {
+        super(properties);
     }
 
     @Override

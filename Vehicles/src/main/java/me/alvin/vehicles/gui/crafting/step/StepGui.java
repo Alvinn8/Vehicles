@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class StepGui extends CustomGui {
-    private static final SlotGroup<StaticSlot> SLOTS = SlotGroup.box(1, 1, 4, 4, StaticSlot::new);
+    private static final SlotGroup<StaticSlot> SLOTS = new SlotGroup<>(1, 1, 4, 4, StaticSlot::new);
     private static final DisableableButton CRAFT_BUTTON = new DisableableButton("Craft", 7, 1, 2, 1);
     private static final DisableableButton CANCEL_BUTTON = new DisableableButton("Cancel", 7, 4, 2, 1);
 

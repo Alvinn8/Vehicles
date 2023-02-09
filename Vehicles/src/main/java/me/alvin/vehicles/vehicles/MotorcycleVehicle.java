@@ -2,16 +2,14 @@ package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.util.RelativePos;
-import me.alvin.vehicles.util.ni.NIArmorStand;
-import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.GroundVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.bukkit.util.EulerAngle;
 import org.jetbrains.annotations.NotNull;
 
 public class MotorcycleVehicle extends GroundVehicle {
@@ -29,18 +27,16 @@ public class MotorcycleVehicle extends GroundVehicle {
     }
 
     @Override
-    protected void init() {
-        super.init();
-
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/motorcycle"));
-
-        this.setMaxFuel(40000);
-        this.setFuelUsage(4);
+    protected void addParts() {
+        this.mainPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/motorcycle"), new RelativePos(0, -1.5, 0), true);
     }
 
     @Override
-    public void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/motorcycle_hologram"));
+    protected void init() {
+        super.init();
+
+        this.setMaxFuel(40000);
+        this.setFuelUsage(4);
     }
 
     @Override
@@ -70,8 +66,7 @@ public class MotorcycleVehicle extends GroundVehicle {
 
     @Override
     public void updateRenderedLocation() {
-        NIArmorStand.setLocation(this.niEntity, this.entity, this.location.getX(), this.location.getY() - 1.5D, this.location.getZ(), this.location.getYaw(), this.location.getPitch());
-        if (this.slime != null) NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
+        super.updateRenderedLocation();
 
         if (this.roll != 0) {
             if (Math.abs(this.roll) < 1) this.roll = 0;
@@ -94,7 +89,7 @@ public class MotorcycleVehicle extends GroundVehicle {
 
         // Apply roll
         if (oldRoll != this.roll) {
-            this.entity.setHeadPose(new EulerAngle(0, 0, Math.toRadians(this.roll)));
+        //     this.entity.setHeadPose(new EulerAngle(0, 0, Math.toRadians(this.roll)));
         }
     }
 

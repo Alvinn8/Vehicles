@@ -1,10 +1,12 @@
 package me.alvin.vehicles.vehicles;
 
 import me.alvin.vehicles.SVCraftVehicles;
+import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.vehicle.UnderwaterVehicle;
 import me.alvin.vehicles.vehicle.VehicleSpawnReason;
 import me.alvin.vehicles.vehicle.VehicleType;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -21,15 +23,8 @@ public class MiniSubmarineVehicle extends UnderwaterVehicle {
     }
 
     @Override
-    protected void init() {
-        super.init();
-
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/mini_submarine"));
-    }
-
-    @Override
-    protected void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/mini_submarine_hologram"));
+    protected void addParts() {
+        this.mainPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/mini_submarine"), RelativePos.ZERO, false);
     }
 
     @Override

@@ -111,7 +111,7 @@ public class VehiclesCommand {
                                 message.append(": ");
                                 message.append(vehicle.getType().getId());
                                 message.append(' ');
-                                message.append(vehicle.getNIEntity() == null ? "regular armor stand" : "ni armor stand");
+                                // message.append(vehicle.getNIEntity() == null ? "regular armor stand" : "ni armor stand");
                                 message.append(' ');
                                 if (!vehicle.getEntity().isValid()) {
                                     message.append(" §c[INVALID ENTITY]§r");
@@ -236,7 +236,7 @@ public class VehiclesCommand {
                         // Seat to modify
                         Seat seat = vehicle.getType().getDriverSeat();
                         // New relativepos for the seat
-                        RelativePos newDriverSeatRelPos = new RelativePos(0, 1.2, -1.25);
+                        RelativePos newDriverSeatRelPos = new RelativePos(0, 0.4, -0.8);
 
                         try {
                             Field field = Seat.class.getDeclaredField("relativePos");

@@ -4,7 +4,6 @@ import me.alvin.vehicles.SVCraftVehicles;
 import me.alvin.vehicles.actions.StorageAction;
 import me.alvin.vehicles.util.RelativePos;
 import me.alvin.vehicles.util.ni.NIArmorStand;
-import me.alvin.vehicles.util.ni.NIE;
 import me.alvin.vehicles.vehicle.AttachmentData;
 import me.alvin.vehicles.vehicle.GroundVehicle;
 import me.alvin.vehicles.vehicle.Vehicle;
@@ -14,6 +13,7 @@ import me.alvin.vehicles.vehicle.VehicleTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -41,36 +41,20 @@ public class TruckVehicle extends GroundVehicle {
     }
 
     @Override
+    protected void addParts() {
+        this.mainPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/truck/truck"), MAIN_PART_OFFSET, false);
+        this.addPart(new NamespacedKey(SVCraftVehicles.getInstance(), "vehicle/truck/truck_back"), BACK_PART_OFFSET, false);
+    }
+
+    @Override
     protected void init() {
         super.init();
-
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/truck/truck"));
-
-        this.backEntity = spawnArmorStand(BACK_PART_OFFSET.relativeTo(this.location, this.getRoll()));
-        this.backEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/truck/truck_back"));
-        SVCraftVehicles.getInstance().getVehiclePartMap().put(this.backEntity, this);
 
         this.setMaxFuel(40000);
         this.setFuelUsage(5);
 
         // Actions
         this.addAction(new StorageAction(54));
-    }
-
-    private void removeExtraEntities() {
-        SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.backEntity);
-
-        if (this.backNiEntity != null) {
-            SVCraftVehicles.getInstance().getVehiclePartMap().remove(this.backNiEntity.getAreaEffectCloud());
-            this.backNiEntity.remove();
-        }
-        else this.backEntity.remove();
-    }
-
-    @Override
-    public void becomeHologramImpl() {
-        this.entity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/truck/truck_hologram"));
-        this.backEntity.getEquipment().setHelmet(SVCraftVehicles.getInstance().getModelDB().generateItem("svcraftvehicles:vehicle/truck/truck_back_hologram"));
     }
 
     @Override
@@ -96,44 +80,7 @@ public class TruckVehicle extends GroundVehicle {
     @Override
     public boolean setColor(Color color) {
         if (!super.setColor(color)) return false;
-        return this.colorArmorStand(this.backEntity, color);
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-
-        this.removeExtraEntities();
-    }
-
-    @Override
-    public void remove() {
-        super.remove();
-
-        this.removeExtraEntities();
-    }
-
-    @Override
-    public void setNonInterpolating(boolean nonInterpolating) {
-        super.setNonInterpolating(nonInterpolating);
-
-        if (nonInterpolating) {
-            this.backNiEntity = new NIArmorStand(this.backEntity);
-        } else {
-            this.backNiEntity.toArmorStand();
-            this.backNiEntity = null;
-        }
-    }
-
-    @Override
-    public void updateRenderedLocation() {
-        NIE.setLocation(this.niSlime, this.slime, this.location.getX(), this.location.getY(), this.location.getZ(), 0, 0);
-
-        Location mainLocation = MAIN_PART_OFFSET.relativeTo(this.location, this.getRoll());
-        NIArmorStand.setLocation(this.niEntity, this.entity, mainLocation.getX(), mainLocation.getY(), mainLocation.getZ(), this.location.getYaw(), this.location.getPitch());
-
-        Location backLocation = BACK_PART_OFFSET.relativeTo(this.location, this.getRoll());
-        NIArmorStand.setLocation(this.backNiEntity, this.backEntity, backLocation.getX(), backLocation.getY(), backLocation.getZ(), backLocation.getYaw(), 0);
+        return colorArmorStand(this.backEntity, color);
     }
 
     @Override

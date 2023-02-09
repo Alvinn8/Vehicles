@@ -21,7 +21,7 @@ import java.util.List;
  * The gui where the player selects which vehicle to craft.
  */
 public class SelectingGui extends CustomGui {
-    private static final SlotGroup<StaticSlot> SLOTS = SlotGroup.box(1, 1, 7, 5, StaticSlot::new);
+    private static final SlotGroup<StaticSlot> SLOTS = new SlotGroup<>(1, 1, 7, 5, StaticSlot::new);
 
     public static final CustomGuiType TYPE = CustomGuiType.builder()
         .title(Component.text("Select a vehicle to craft"))
