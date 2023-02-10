@@ -60,7 +60,7 @@ public class SimpleHelicopterVehicle extends HelicopterVehicle {
 
     @Override
     public float getMaxSpeed() {
-        return 20;
+        return 30;
     }
 
 

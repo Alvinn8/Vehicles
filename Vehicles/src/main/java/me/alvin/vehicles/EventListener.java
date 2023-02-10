@@ -27,8 +27,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
-import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
+import org.bukkit.event.world.EntitiesUnloadEvent;
 import org.bukkit.inventory.AbstractHorseInventory;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -49,7 +49,7 @@ public class EventListener implements PerWorldListener {
     }
 
     @EventHandler
-    public void onChunkLoad(EntitiesLoadEvent event) {
+    public void onEntitiesULoad(EntitiesLoadEvent event) {
         for (Entity entity : event.getEntities()) {
             if (entity instanceof ArmorStand) {
                 PersistentDataContainer data = entity.getPersistentDataContainer();
@@ -72,13 +72,8 @@ public class EventListener implements PerWorldListener {
     }
 
     @EventHandler
-    public void onChunkUnload(ChunkUnloadEvent event) {
-        if (!event.getChunk().isLoaded()) {
-            SVCraftVehicles.getInstance().getLogger().warning("ChunkUnloadEvent was called with an already unloaded chunk! x: " + event.getChunk().getX() + " z: " + event.getChunk().getZ());
-            new Exception().printStackTrace();
-            return;
-        }
-        for (Entity entity : event.getChunk().getEntities()) {
+    public void onEntitiesUnload(EntitiesUnloadEvent event) {
+        for (Entity entity : event.getEntities()) {
             if (!(entity instanceof ArmorStand)) continue;
             if (!SVCraftVehicles.getInstance().getVehiclePartMap().containsKey(entity)) continue;
 
