@@ -120,8 +120,8 @@ public class VehicleCraftingTable extends CustomTileEntity {
     public void viewVehicleType(@NotNull VehicleType vehicleType, Player player) {
         this.vehicleType = vehicleType;
         this.player = player;
-        this.setGui(new ViewingGui(this, vehicleType));
         this.spawnHologram();
+        this.setGui(new ViewingGui(this, vehicleType));
     }
 
     public void stopViewing() {
