@@ -452,6 +452,8 @@ public class VehicleTypes {
             // Repairing
             new RepairData(30000, 20, new ItemStack(Material.OAK_PLANKS, 5), new ItemStack(Material.OAK_SLAB, 4)),
             // Recipe
+            null
+            /*
             recipe()
                 .addStep(step()
                     .name(Component.text("Body"))
@@ -481,6 +483,7 @@ public class VehicleTypes {
                     .addItem(new ItemStack(Material.REPEATER, 5))
                     .completeTime(60000)
                 )
+             */
         );
 
         /*
@@ -555,13 +558,47 @@ public class VehicleTypes {
             // Enableable
             plugin,
             // Preview
-            new NamespacedKey(plugin, "vehicle/wooden_plane"), // TODO
+            new NamespacedKey(plugin, "vehicle/plane/plane_preview"),
             // Max Health
             150,
             // Repairing
             new RepairData(60000, 30, new ItemStack(Material.IRON_INGOT, 5), new ItemStack(Material.COPPER_INGOT, 2)),
             // Recipe
-            null
+            recipe()
+                .addStep(step()
+                    .name(Component.text("Body"))
+                    .addItem(new ItemStack(Material.IRON_BLOCK, 2))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 18))
+                    .addItem(new ItemStack(Material.IRON_NUGGET, 6))
+                    .addItem(new ItemStack(Material.COPPER_INGOT, 14))
+                    .addItem(new ItemStack(Material.GLASS_PANE, 6))
+                    .addItem(new ItemStack(Material.STICK, 4))
+                    .completeTime(240000)
+                )
+                .addStep(step()
+                    .name(Component.text("Wings"))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 28))
+                    .addItem(new ItemStack(Material.HEAVY_WEIGHTED_PRESSURE_PLATE, 8))
+                    .completeTime(180000)
+                )
+                .addStep(step()
+                    .name(Component.text("Wheels"))
+                    .addItem(new ItemStack(Material.BLACK_WOOL, 3))
+                    .addItem(new ItemStack(Material.IRON_INGOT, 6))
+                    .addItem(new ItemStack(Material.IRON_NUGGET, 6))
+                    .completeTime(30000)
+                )
+                .addStep(step()
+                    .name(Component.text("Engine"))
+                    .addItem(new ItemStack(Material.DISPENSER, 1))
+                    .addItem(new ItemStack(Material.FURNACE, 2))
+                    .addItem(new ItemStack(Material.DROPPER, 1))
+                    .addItem(new ItemStack(Material.REDSTONE, 18))
+                    .addItem(new ItemStack(Material.REDSTONE_TORCH, 8))
+                    .addItem(new ItemStack(Material.REPEATER, 5))
+                    .addItem(new ItemStack(Material.COMPARATOR, 3))
+                    .completeTime(180000)
+                )
         );
     }
 
